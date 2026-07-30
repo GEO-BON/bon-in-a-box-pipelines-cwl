@@ -1,0 +1,20 @@
+[1;30mINFO[0m /home/jean-michel/.local/bin/cwl-runner 3.2.20260413085819
+[1;30mINFO[0m Resolved '/home/jean-michel/code/cwl-temp/export/tools/site_selection_BAS/Block_creation.cwl' to 'file:///home/jean-michel/code/cwl-temp/export/tools/site_selection_BAS/Block_creation.cwl'
+[1;30mWARNING[0m [33m../../cwl-temp/export/tools/site_selection_BAS/Block_creation.cwl:163:7: Warning: Field 'path'
+                                                                         contains undefined
+                                                                         reference to
+                                                                         'file:///home/jean-michel/code/cwl-temp/export/tools/site_selection_BAS/envs'[0m
+[1;30mERROR[0m [31mTool definition failed validation:
+../../cwl-temp/export/tools/site_selection_BAS/Block_creation.cwl:203:1: checking field 'outputs'
+../../cwl-temp/export/tools/site_selection_BAS/Block_creation.cwl:249:3:   checking object
+                                                                           '../../cwl-temp/export/tools/site_selection_BAS/Block_creation.cwl#colors_vect'
+../../cwl-temp/export/tools/site_selection_BAS/Block_creation.cwl:250:5:     Field 'type'
+                                                                             references unknown
+                                                                             identifier 'csv', tried
+                                                                             file:///home/jean-michel/code/cwl-temp/export/tools/site_selection_BAS/Block_creation.cwl#csv
+../../cwl-temp/export/tools/site_selection_BAS/Block_creation.cwl:236:3:   checking object
+                                                                           '../../cwl-temp/export/tools/site_selection_BAS/Block_creation.cwl#pca_summary_df'
+../../cwl-temp/export/tools/site_selection_BAS/Block_creation.cwl:237:5:     Field 'type'
+                                                                             references unknown
+                                                                             identifier 'csv', tried
+                                                                             file:///home/jean-michel/code/cwl-temp/export/tools/site_selection_BAS/Block_creation.cwl#csv[0m

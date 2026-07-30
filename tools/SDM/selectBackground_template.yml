@@ -1,0 +1,23 @@
+scripts_root:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+scriptPath: SDM/selectBackground.R  # default value of type 'string'.
+runFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+raster: /scripts/data/heatmapGBIF-reptiles.tif  # default value of type 'File'.
+presence: /scripts/SDM/selectBackground_presence.tsv  # default value of type 'File'.
+predictors: /scripts/filtering/cleanCoordinates_predictors.tif  # array of type 'File'
+n_background: 10000  # default value of type 'int'.
+method_background: random  # enum; valid values: "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/selectBackground.cwl#method_background/random", "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/selectBackground.cwl#method_background/inclusion_buffer", "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/selectBackground.cwl#method_background/weighted_raster", "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/selectBackground.cwl#method_background/unweighted_raster", "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/selectBackground.cwl#method_background/thickening"
+extent: /scripts/SDM/extentToBbox_extent.shp  # default value of type 'File'.
+environment:  # type 'File' (optional)
+    class: File
+    path: a/file/path
+envFolderWriteable: true  # default value of type 'boolean'.
+envFolder:  # default value of type 'Directory'.
+    class: Directory
+    path: file:///home/jean-michel/code/cwl-temp/export/tools/SDM/envs
+
+condaPackURL: 
+    https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.

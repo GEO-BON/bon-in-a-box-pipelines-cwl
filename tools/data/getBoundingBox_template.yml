@@ -1,0 +1,21 @@
+study_area_file:  # type 'File'
+    class: File
+    path: a/file/path
+scripts_root:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+scriptPath: data/getBoundingBox.R  # default value of type 'string'.
+runFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+environment:  # type 'File' (optional)
+    class: File
+    path: a/file/path
+envFolderWriteable: true  # default value of type 'boolean'.
+envFolder:  # default value of type 'Directory'.
+    class: Directory
+    path: file:///home/jean-michel/code/cwl-temp/export/tools/data/envs
+
+crs: EPSG:6622  # default value of type 'string'.
+condaPackURL: 
+    https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.

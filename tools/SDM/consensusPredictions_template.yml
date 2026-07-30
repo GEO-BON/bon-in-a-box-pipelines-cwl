@@ -1,0 +1,22 @@
+top_k_auc: 10  # default value of type 'int'.
+scripts_root:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+scriptPath: SDM/consensusPredictions.R  # default value of type 'string'.
+runFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+presence_background: /scripts/consensusPredictions_presence_background.tsv  # default value of type 'File'.
+predictions: /scripts/consensusPredictions_predictions.tif  # default value of type 'File'.
+min_auc: 0.5  # default value of type 'float'.
+environment:  # type 'File' (optional)
+    class: File
+    path: a/file/path
+envFolderWriteable: true  # default value of type 'boolean'.
+envFolder:  # default value of type 'Directory'.
+    class: Directory
+    path: file:///home/jean-michel/code/cwl-temp/export/tools/SDM/envs
+
+consensus_method: median  # enum; valid values: "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/consensusPredictions.cwl#consensus_method/median", "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/consensusPredictions.cwl#consensus_method/mean", "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/consensusPredictions.cwl#consensus_method/WA"
+condaPackURL: 
+    https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.

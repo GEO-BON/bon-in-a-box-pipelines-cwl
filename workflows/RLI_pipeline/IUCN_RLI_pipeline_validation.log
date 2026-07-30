@@ -1,0 +1,50 @@
+[1;30mINFO[0m /home/jean-michel/.local/bin/cwl-runner 3.2.20260413085819
+[1;30mINFO[0m Resolved '/home/jean-michel/code/cwl-temp/export/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl' to 'file:///home/jean-michel/code/cwl-temp/export/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl'
+[1;30mWARNING[0m [33m../../cwl-temp/export/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:230:7: Warning: Field 'path'
+                                                                          contains undefined
+                                                                          reference to
+                                                                          'file:///home/jean-michel/code/cwl-temp/export/workflows/RLI_pipeline/envs'[0m
+[1;30mWARNING[0m [33m../../cwl-temp/export/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:130:3: object id '../../cwl-temp/export/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl#IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82|taxonomic_group' previously defined[0m
+[1;30mWARNING[0m [33m../../cwl-temp/export/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:190:3: object id '../../cwl-temp/export/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl#IUCNRedlistIndex>IUCN_redlist_spUse.yml@77|species_use' previously defined[0m
+[1;30mERROR[0m [31mTool definition failed validation:
+../../cwl-temp/export/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:1:1:     Object
+                                                                          '../../cwl-temp/export/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl'
+                                                                          is not valid because
+                                                                            tried 'Workflow' but
+../../cwl-temp/export/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:83:1:       the 'inputs' field is
+                                                                              not valid because
+../../cwl-temp/export/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:130:3:       item is invalid
+                                                                                because
+../../cwl-temp/export/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:131:5:         the 'type' field
+                                                                                  is not valid because
+                                                                                    - tried
+                                                                                    InputRecordSchema but
+../../cwl-temp/export/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:132:7:             * the 'type'
+                                                                                      field is not valid because
+                                                                                        value is a
+                                                                                        CommentedMap but expected
+                                                                                        a string
+../../cwl-temp/export/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:133:7:             * invalid
+                                                                                      field 'symbols', expected
+                                                                                      one of: 'fields', 'type',
+                                                                                      'label', 'doc', 'name'
+../../cwl-temp/export/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:131:5:           - tried
+                                                                                    InputEnumSchema but
+../../cwl-temp/export/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:132:7:             the 'type'
+                                                                                      field is not valid because
+                                                                                        value is a
+                                                                                        CommentedMap but expected
+                                                                                        a string
+../../cwl-temp/export/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:131:5:           - tried
+                                                                                    InputArraySchema but
+                                                                                      * missing
+                                                                                      required field 'items'
+../../cwl-temp/export/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:132:7:             * the 'type'
+                                                                                      field is not valid because
+                                                                                        value is a
+                                                                                        CommentedMap but expected
+                                                                                        a string
+../../cwl-temp/export/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:133:7:             * invalid
+                                                                                      field 'symbols', expected
+                                                                                      one of: 'items', 'type',
+                                                                                      'label', 'doc', 'name'[0m

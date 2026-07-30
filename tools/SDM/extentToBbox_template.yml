@@ -1,0 +1,28 @@
+ymin: -1971146  # default value of type 'float'.
+ymax: 1511916  # default value of type 'float'.
+xmin: -2316297  # default value of type 'float'.
+xmax: 1015207  # default value of type 'float'.
+source: box_coordinates  # enum; valid values: "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/extentToBbox.cwl#source/df_coordinates", "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/extentToBbox.cwl#source/box_coordinates", "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/extentToBbox.cwl#source/shapefile"
+scripts_root:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+scriptPath: SDM/extentToBbox.R  # default value of type 'string'.
+runFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+proj_to: EPSG:6623  # default value of type 'string'.
+proj_from: EPSG:6623  # default value of type 'string'.
+path_shp: /scripts/SDM/extentToBbox_extent.shp  # default value of type 'File'.
+lon: lon  # default value of type 'string'.
+lat: lat  # default value of type 'string'.
+environment:  # type 'File' (optional)
+    class: File
+    path: a/file/path
+envFolderWriteable: true  # default value of type 'boolean'.
+envFolder:  # default value of type 'Directory'.
+    class: Directory
+    path: file:///home/jean-michel/code/cwl-temp/export/tools/SDM/envs
+
+df_coordinates: /scripts/SDM/runModel_presence_background.tsv  # default value of type 'File'.
+condaPackURL: 
+    https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
