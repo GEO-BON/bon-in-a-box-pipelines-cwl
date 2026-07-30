@@ -1,4 +1,4 @@
-# pipelines-repo-cwl
+# BON in a Box pipelines CWL
 
 CWL export of the [pipeline-repo](https://github.com/GEO-BON/bon-in-a-box-pipelines) scripts and pipelines to CWL tools and workflows.
 
