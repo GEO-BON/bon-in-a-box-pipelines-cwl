@@ -28,7 +28,7 @@ inputs:
   # Script inputs #
   #################
   helloWorld>helloPython.yml@0|some_int:
-    type: int
+    type: int?
     label: Some int
     doc: A number that we will increment
     default: 3
@@ -174,17 +174,19 @@ steps:
             
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-            "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
+              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
             if [[ ! -d "$unpackedFolder" ]]; then
-              mkdir -p "$unpackedFolder"
-              tar -xf "$unpackedFolder.tar.gz" -C "$unpackedFolder" --use-compress-program=pigz
+              # remove the env to force using the conda-pack
+              mamba env remove -y -n "$condaEnvName"
+              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
+                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             fi
             echo "Done."
           }
           export -f exportEnv
           
-          bash -c 'exportEnv "pythonbase" ""'
+
           
       inputs:
         envFolderWrite:
@@ -208,7 +210,7 @@ steps:
     out: [envFolder]
 
   helloWorld>helloPython.yml@0:
-    run: ../tools/helloPython.cwl
+    run: ../tools/helloWorld/helloPython.cwl
     in:
       some_int: helloWorld>helloPython.yml@0|some_int
       study_area_bbox: helloWorld>helloPython.yml@0|study_area_bbox

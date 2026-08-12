@@ -30,19 +30,19 @@ inputs:
   # Script inputs #
   #################
   GFS_IndicatorsTool>get_TCY.yml@23|res:
-    type: float
+    type: float?
     label: Resolution of tree cover map
     doc: Desired resolution for tree cover map, will be obtained via resampling. To be specified in decimal degrees (0.01 ~ 1 km). Minimal value 0.001 (~100m).
     default: 0.01
 
   GFS_IndicatorsTool>get_TCY.yml@23|population_polygons:
-    type: File
+    type: File?
     label: Polygons of populations
     doc: Path to geojson file storing polygons of populations.
     default: /userdata/populations.geojson
 
   GFS_IndicatorsTool>get_TCY.yml@23|yoi:
-    type: int[]
+    type: int[]?
     label: Years of interest
     doc: List of years for which tree cover should be extracted (maximum range 2000 - 2023).
     default:
@@ -140,17 +140,19 @@ steps:
             
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-            "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
+              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
             if [[ ! -d "$unpackedFolder" ]]; then
-              mkdir -p "$unpackedFolder"
-              tar -xf "$unpackedFolder.tar.gz" -C "$unpackedFolder" --use-compress-program=pigz
+              # remove the env to force using the conda-pack
+              mamba env remove -y -n "$condaEnvName"
+              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
+                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             fi
             echo "Done."
           }
           export -f exportEnv
           
-          bash -c 'exportEnv "rbase" ""'
+
           
       inputs:
         envFolderWrite:
@@ -174,7 +176,7 @@ steps:
     out: [envFolder]
 
   GFS_IndicatorsTool>get_TCY.yml@23:
-    run: ../../../../tools/get_TCY.cwl
+    run: ../../../../tools/GFS_IndicatorsTool/get_TCY.cwl
     in:
       population_polygons: GFS_IndicatorsTool>get_TCY.yml@23|population_polygons
       res: GFS_IndicatorsTool>get_TCY.yml@23|res

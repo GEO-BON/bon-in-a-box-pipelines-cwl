@@ -1,4 +1,4 @@
-splist: /scripts/IUCNRedlistIndex/species_list.csv  # default value of type 'File'.
+splist: /scripts/IUCNRedlistIndex/species_list.csv  # default value of type 'File'. (optional)
 scripts_root:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
@@ -10,10 +10,8 @@ environment:  # type 'File' (optional)
     class: File
     path: a/file/path
 envFolderWriteable: true  # default value of type 'boolean'.
-envFolder:  # default value of type 'Directory'.
+envFolder:  # type 'Directory' (optional)
     class: Directory
-    path: 
-        file:///home/jean-michel/code/cwl-temp/export/tools/IUCNRedlistIndex/envs
-
+    path: a/directory/path
 condaPackURL: 
     https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.

@@ -28,19 +28,19 @@ inputs:
   # Script inputs #
   #################
   GFS_IndicatorsTool>get_pop_poly.yml@5|buffer_size:
-    type: float
+    type: float?
     label: Size of buffer
     doc: Radius size [in km] to determine population presence around the coordinates of species observations.
     default: 10
 
   GFS_IndicatorsTool>get_pop_poly.yml@5|pop_distance:
-    type: float
+    type: float?
     label: Distance between populations
     doc: Distance [in km] to separate species observations in different populations.
     default: 50
 
   GFS_IndicatorsTool>get_pop_poly.yml@5|species_obs:
-    type: File
+    type: File?
     label: Coordinates of species occurrence
     doc: Path to the table storing the species observation coordinates. The table must incude header with "decimal_longitude" and "decimal_latitude" columns, indicating the coordinates of every observation.
     default: /userdata/obs_data.tsv
@@ -133,17 +133,19 @@ steps:
             
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-            "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
+              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
             if [[ ! -d "$unpackedFolder" ]]; then
-              mkdir -p "$unpackedFolder"
-              tar -xf "$unpackedFolder.tar.gz" -C "$unpackedFolder" --use-compress-program=pigz
+              # remove the env to force using the conda-pack
+              mamba env remove -y -n "$condaEnvName"
+              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
+                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             fi
             echo "Done."
           }
           export -f exportEnv
           
-          bash -c 'exportEnv "rbase" ""'
+
           
       inputs:
         envFolderWrite:
@@ -167,7 +169,7 @@ steps:
     out: [envFolder]
 
   GFS_IndicatorsTool>get_pop_poly.yml@5:
-    run: ../../../../tools/get_pop_poly.cwl
+    run: ../../../../tools/GFS_IndicatorsTool/get_pop_poly.cwl
     in:
       species_obs: GFS_IndicatorsTool>get_pop_poly.yml@5|species_obs
       buffer_size: GFS_IndicatorsTool>get_pop_poly.yml@5|buffer_size

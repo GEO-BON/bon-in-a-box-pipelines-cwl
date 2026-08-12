@@ -31,6 +31,16 @@ requirements:
           if (!outputFiles || outputFiles.length === 0) return null;
           var value = JSON.parse(outputFiles[0].contents)[key]
           if (value === undefined) return null
+
+          if(inputs.runFolder != null) {
+            if(Array.isArray(value)) {
+              value = value.map(function (item) {
+                return item.replace(inputs.runFolder.path, runtime.outdir);
+              });
+            } else {
+              value = value.replace(inputs.runFolder.path, runtime.outdir);
+            }
+          }
           return value;
         }
   InplaceUpdateRequirement:
@@ -42,16 +52,19 @@ requirements:
       ${
         return [
           {
-            entry: inputs.envFolder,
-            entryname: "/conda-envs",
-            writable: inputs.envFolderWritable
-          },
-          {
             entry: { "class": "Directory", "basename": "conda-env-yml", "listing": [] },
             entryname: "/conda-env-yml",
             writable: true
           }
         ].concat(
+          inputs.envFolder
+            ? {
+                entry: inputs.envFolder,
+                entryname: "/conda-envs",
+                writable: inputs.envFolderWritable
+              }
+            : []
+        ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
             : []
@@ -71,7 +84,7 @@ requirements:
     dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:cwl-poc
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
-    #     $include: ../runners/cwl/conda-cwl-dockerfile
+    #     $include: ../runners/cwl/conda-cwl.dockerfile
 
   EnvVarRequirement:
     envDef:
@@ -102,11 +115,10 @@ arguments:
     cat $OUTPUT_LOCATION/input.json | tee -a $log
 
     source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "SHI__calculateSHI" \
-      "
-        channels: [conda-forge, r]
-        dependencies: [r-dplyr, r-purrr, r-readr, r-ggplot2, r-rjson]
-        name: SHI__calculateSHI
-      " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
+    "channels: [conda-forge, r]
+    dependencies: [r-dplyr, r-purrr, r-readr, r-ggplot2, r-rjson]
+    name: SHI__calculateSHI
+    " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
 
     Rscript \
       $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \
@@ -115,6 +127,11 @@ arguments:
       2>&1 | tee -a $log
     scriptExitCode=\${PIPESTATUS[0]}
     echo "Script exited with code $scriptExitCode" | tee -a $log
+  
+    if [[ "$OUTPUT_LOCATION" != "$(runtime.outdir)" ]]; then
+      echo "Copying results from run folder to CWL output directory" | tee -a $log
+      cp -a "$OUTPUT_LOCATION"/. "$(runtime.outdir)"/
+    fi
 
     source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh SHI__calculateSHI /conda-envs >> "$log" 2>&1
 
@@ -125,7 +142,7 @@ inputs:
   # Script inputs #
   #################
   df_shs_tidy:
-    type: File[]
+    type: File[]?
     label: SHS table (long format)
     doc: A TSV (Tab Separated Values) file containing Habitat Score, Connectivity Score, and SHI by time step. Percentage of change, 100% being equal to the reference year.
     default:
@@ -133,7 +150,7 @@ inputs:
     - /scripts/SHI/Ateles fusciceps_SHS_table_tidy.tsv
 
   df_aoh_areas:
-    type: File
+    type: File?
     label: table with size of areas of reference.
     doc: A TSV (Tab Separated Values) file containing the area of the range map loaded (area_range_map), the size of the study area (area_study_a), the area of the bounding box for the analysis (area_bbox_analysis), size of the buffer used to create the bounding box for the analysis, the size of the area of habitat(area_aoh).
     default: /scripts/SHI/df_aoh_areas.tsv
@@ -145,11 +162,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   envFolderWriteable:
     type: boolean
@@ -195,7 +209,7 @@ outputs:
     label: SHI table
     doc: Table with SHI and Steward’s SHI values for the complete area of study.
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -209,7 +223,7 @@ outputs:
     label: SHI time series
     doc: Figure showing a time series of SHI values for each time step, 100% being equal to the reference year.
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -223,7 +237,7 @@ outputs:
     label: Steward’s SHI time series
     doc: Figure showing a time series of Steward’s SHI values for each time step. This is weighted by the proportion between the area of habitat for the study area and the total range map of the species. The reference year will start at the proportion of area of habitat in the study area. For example, if half of the species habitat is covered by the study area, the reference year’s value will be 50%.
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -236,4 +250,4 @@ outputs:
   logs:
     type: File
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'logs.txt')"
+      glob: "logs.txt"

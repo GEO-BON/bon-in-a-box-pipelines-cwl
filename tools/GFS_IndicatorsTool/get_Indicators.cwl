@@ -24,6 +24,16 @@ requirements:
           if (!outputFiles || outputFiles.length === 0) return null;
           var value = JSON.parse(outputFiles[0].contents)[key]
           if (value === undefined) return null
+
+          if(inputs.runFolder != null) {
+            if(Array.isArray(value)) {
+              value = value.map(function (item) {
+                return item.replace(inputs.runFolder.path, runtime.outdir);
+              });
+            } else {
+              value = value.replace(inputs.runFolder.path, runtime.outdir);
+            }
+          }
           return value;
         }
   InplaceUpdateRequirement:
@@ -35,16 +45,19 @@ requirements:
       ${
         return [
           {
-            entry: inputs.envFolder,
-            entryname: "/conda-envs",
-            writable: inputs.envFolderWritable
-          },
-          {
             entry: { "class": "Directory", "basename": "conda-env-yml", "listing": [] },
             entryname: "/conda-env-yml",
             writable: true
           }
         ].concat(
+          inputs.envFolder
+            ? {
+                entry: inputs.envFolder,
+                entryname: "/conda-envs",
+                writable: inputs.envFolderWritable
+              }
+            : []
+        ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
             : []
@@ -64,7 +77,7 @@ requirements:
     dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:cwl-poc
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
-    #     $include: ../runners/cwl/conda-cwl-dockerfile
+    #     $include: ../runners/cwl/conda-cwl.dockerfile
 
   EnvVarRequirement:
     envDef:
@@ -99,12 +112,11 @@ arguments:
     cat $OUTPUT_LOCATION/input.json | tee -a $log
 
     source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "GFS_IndicatorsTool__get_Indicators" \
-      "
-        channels: [conda-forge, r]
-        dependencies: [r-devtools, r-rjson, r-terra, r-sf, r-rnaturalearth, r-teachingdemos,
-          r-dplyr, r-plotly, r-geojsonsf, r-colorspace, r-lwgeom]
-        name: GFS_IndicatorsTool__get_Indicators
-      " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
+    "channels: [conda-forge, r]
+    dependencies: [r-devtools, r-rjson, r-terra, r-sf, r-rnaturalearth, r-teachingdemos,
+      r-dplyr, r-plotly, r-geojsonsf, r-colorspace, r-lwgeom]
+    name: GFS_IndicatorsTool__get_Indicators
+    " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
 
     Rscript \
       $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \
@@ -113,6 +125,11 @@ arguments:
       2>&1 | tee -a $log
     scriptExitCode=\${PIPESTATUS[0]}
     echo "Script exited with code $scriptExitCode" | tee -a $log
+  
+    if [[ "$OUTPUT_LOCATION" != "$(runtime.outdir)" ]]; then
+      echo "Copying results from run folder to CWL output directory" | tee -a $log
+      cp -a "$OUTPUT_LOCATION"/. "$(runtime.outdir)"/
+    fi
 
     source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh GFS_IndicatorsTool__get_Indicators /conda-envs >> "$log" 2>&1
 
@@ -123,25 +140,25 @@ inputs:
   # Script inputs #
   #################
   population_polygons:
-    type: File
+    type: File?
     label: Polygons of populations
     doc: Path to geojson file storing polygons of populations.
     default: /userdata/population_polygons.geojson
 
   habitat_map:
-    type: File
+    type: File?
     label: Binary map of habitat presence/absence
     doc: Tif file of maps of presence (1) or absence (0) of suitable habitat. Multiple layers can stacked and used to describe habitat availability at different time points.
     default: /userdata/tcyy.tif
 
   pop_area:
-    type: File
+    type: File?
     label: Table of habitat area by population
     doc: Table of estimated habitat area by population (rows). If provided, time points are displayed as columns.
     default: /userdata/pop_habitat_area.tsv
 
   ne_nc:
-    type: float[]
+    type: float[]?
     label: Ne:Nc ratio estimate
     doc: Estimated Ne:Nc ratio for the studied species. Multiple values can be provided, separated by a comma.
     default:
@@ -149,7 +166,7 @@ inputs:
     - 0.2
 
   pop_density:
-    type: float[]
+    type: float[]?
     label: Population density
     doc: Estimated density of the population [number of individuals per km2]. Multiple values can be provided, separated by a comma.
     default:
@@ -158,7 +175,7 @@ inputs:
     - 1000
 
   runtitle:
-    type: string
+    type: string?
     label: Title of the run
     doc: Set a name for the pipeline run.
     default: Quercus sartorii, Mexico, Habitat decline by tree cover loss, 2000-2023
@@ -170,11 +187,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   envFolderWriteable:
     type: boolean
@@ -220,7 +234,7 @@ outputs:
     label: Effective population size
     doc: Estimated effective size of every population, based on the latest time point of the habitat cover map.
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -234,7 +248,7 @@ outputs:
     label: Population maintained indicator
     doc: Estimated proportion of mantained populations, comparing earliest and latest time point. A value of 1 means that no populations went extinct over the time frame.
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -248,7 +262,7 @@ outputs:
     label: Interactive plot
     doc: An interactive interface to explore indicators trends across geographical space and time.
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -262,7 +276,7 @@ outputs:
     label: Ne>500 indicator
     doc: Estimated proportion of populations with Ne>500 at latest time point.
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -275,4 +289,4 @@ outputs:
   logs:
     type: File
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'logs.txt')"
+      glob: "logs.txt"

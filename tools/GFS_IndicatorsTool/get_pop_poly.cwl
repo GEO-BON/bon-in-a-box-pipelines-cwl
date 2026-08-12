@@ -24,6 +24,16 @@ requirements:
           if (!outputFiles || outputFiles.length === 0) return null;
           var value = JSON.parse(outputFiles[0].contents)[key]
           if (value === undefined) return null
+
+          if(inputs.runFolder != null) {
+            if(Array.isArray(value)) {
+              value = value.map(function (item) {
+                return item.replace(inputs.runFolder.path, runtime.outdir);
+              });
+            } else {
+              value = value.replace(inputs.runFolder.path, runtime.outdir);
+            }
+          }
           return value;
         }
   InplaceUpdateRequirement:
@@ -35,16 +45,19 @@ requirements:
       ${
         return [
           {
-            entry: inputs.envFolder,
-            entryname: "/conda-envs",
-            writable: inputs.envFolderWritable
-          },
-          {
             entry: { "class": "Directory", "basename": "conda-env-yml", "listing": [] },
             entryname: "/conda-env-yml",
             writable: true
           }
         ].concat(
+          inputs.envFolder
+            ? {
+                entry: inputs.envFolder,
+                entryname: "/conda-envs",
+                writable: inputs.envFolderWritable
+              }
+            : []
+        ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
             : []
@@ -64,7 +77,7 @@ requirements:
     dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:cwl-poc
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
-    #     $include: ../runners/cwl/conda-cwl-dockerfile
+    #     $include: ../runners/cwl/conda-cwl.dockerfile
 
   EnvVarRequirement:
     envDef:
@@ -97,7 +110,7 @@ arguments:
     cat $OUTPUT_LOCATION/input.json | tee -a $log
 
     source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "rbase" \
-      "" /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
+    "" /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
 
     Rscript \
       $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \
@@ -106,6 +119,11 @@ arguments:
       2>&1 | tee -a $log
     scriptExitCode=\${PIPESTATUS[0]}
     echo "Script exited with code $scriptExitCode" | tee -a $log
+  
+    if [[ "$OUTPUT_LOCATION" != "$(runtime.outdir)" ]]; then
+      echo "Copying results from run folder to CWL output directory" | tee -a $log
+      cp -a "$OUTPUT_LOCATION"/. "$(runtime.outdir)"/
+    fi
 
     source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh rbase /conda-envs >> "$log" 2>&1
 
@@ -116,25 +134,25 @@ inputs:
   # Script inputs #
   #################
   species_obs:
-    type: File
+    type: File?
     label: Coordinates of species occurrence
     doc: Path to the table storing the species observation coordinates. The table must incude header with "decimal_longitude" and "decimal_latitude" columns, indicating the coordinates of every observation.
     default: /userdata/obs_data.tsv
 
   buffer_size:
-    type: float
+    type: float?
     label: Size of buffer
     doc: Radius size [in km] to determine population presence around the coordinates of species observations.
     default: 10
 
   pop_distance:
-    type: float
+    type: float?
     label: Distance between populations
     doc: Distance [in km] to separate species observations in different populations.
     default: 50
 
   countries:
-    type: string[]
+    type: string[]?
     label: Countries of interest
     doc: Optional list of countries to restrict the population polygons calculations.
     default:
@@ -148,11 +166,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   envFolderWriteable:
     type: boolean
@@ -198,7 +213,7 @@ outputs:
     label: Polygons of populations
     doc: Path to geojson file storing polygons of populations.
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -211,4 +226,4 @@ outputs:
   logs:
     type: File
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'logs.txt')"
+      glob: "logs.txt"

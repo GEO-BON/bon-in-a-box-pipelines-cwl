@@ -24,6 +24,16 @@ requirements:
           if (!outputFiles || outputFiles.length === 0) return null;
           var value = JSON.parse(outputFiles[0].contents)[key]
           if (value === undefined) return null
+
+          if(inputs.runFolder != null) {
+            if(Array.isArray(value)) {
+              value = value.map(function (item) {
+                return item.replace(inputs.runFolder.path, runtime.outdir);
+              });
+            } else {
+              value = value.replace(inputs.runFolder.path, runtime.outdir);
+            }
+          }
           return value;
         }
   InplaceUpdateRequirement:
@@ -35,16 +45,19 @@ requirements:
       ${
         return [
           {
-            entry: inputs.envFolder,
-            entryname: "/conda-envs",
-            writable: inputs.envFolderWritable
-          },
-          {
             entry: { "class": "Directory", "basename": "conda-env-yml", "listing": [] },
             entryname: "/conda-env-yml",
             writable: true
           }
         ].concat(
+          inputs.envFolder
+            ? {
+                entry: inputs.envFolder,
+                entryname: "/conda-envs",
+                writable: inputs.envFolderWritable
+              }
+            : []
+        ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
             : []
@@ -64,7 +77,7 @@ requirements:
     dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:cwl-poc
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
-    #     $include: ../runners/cwl/conda-cwl-dockerfile
+    #     $include: ../runners/cwl/conda-cwl.dockerfile
 
   EnvVarRequirement:
     envDef:
@@ -96,11 +109,10 @@ arguments:
     cat $OUTPUT_LOCATION/input.json | tee -a $log
 
     source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "binaryLayer__binaryLayer" \
-      "
-        channels: [conda-forge, r]
-        dependencies: [r-rjson, r-dplyr, r-raster]
-        name: binaryLayer__binaryLayer
-      " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
+    "channels: [conda-forge, r]
+    dependencies: [r-rjson, r-dplyr, r-raster]
+    name: binaryLayer__binaryLayer
+    " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
 
     Rscript \
       $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \
@@ -109,6 +121,11 @@ arguments:
       2>&1 | tee -a $log
     scriptExitCode=\${PIPESTATUS[0]}
     echo "Script exited with code $scriptExitCode" | tee -a $log
+  
+    if [[ "$OUTPUT_LOCATION" != "$(runtime.outdir)" ]]; then
+      echo "Copying results from run folder to CWL output directory" | tee -a $log
+      cp -a "$OUTPUT_LOCATION"/. "$(runtime.outdir)"/
+    fi
 
     source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh binaryLayer__binaryLayer /conda-envs >> "$log" 2>&1
 
@@ -119,7 +136,7 @@ inputs:
   # Script inputs #
   #################
   lc_classes:
-    type: File[]
+    type: File[]?
     label: input list of layers
     doc: layer names (land cover classes) as a list, or path to a list
     default:
@@ -127,7 +144,7 @@ inputs:
     - /output/data/loadLandCover/9cbf6206cd62b38e0ccc6392559f488e/y2010_class220.tif
 
   select_class:
-    type: int[]
+    type: int[]?
     label: select class to binary
     doc: Vector of integers, list of land cover classes to select (in the example all ESA classes are presented)
     default:
@@ -136,7 +153,7 @@ inputs:
     - 220
 
   threshold_prop:
-    type: float
+    type: float?
     label: threshold value
     doc: land cover class proportion  threshold value (e.g.land cover class proportion above 0.8 will be 1 and below 0).
     default: 0.8
@@ -148,11 +165,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   envFolderWriteable:
     type: boolean
@@ -198,7 +212,7 @@ outputs:
     label: binary layer output
     doc: land cover raster classes, where 1 is above threshold and 0 below threshold.
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -215,4 +229,4 @@ outputs:
   logs:
     type: File
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'logs.txt')"
+      glob: "logs.txt"

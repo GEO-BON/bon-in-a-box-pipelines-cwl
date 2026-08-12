@@ -28,13 +28,13 @@ inputs:
   # Script inputs #
   #################
   pipeline@12:
-    type: string
+    type: string?
     label: Species names
     doc: Scientific name of the species, used to look for occurrences in GBIF. 
     default: Quercus sartorii
 
   pipeline@22:
-    type: string[]
+    type: string[]?
     label: Countries list
     doc: countries of interest, will be used to look for GBIF observations.
     default:
@@ -42,31 +42,31 @@ inputs:
     - Guatemala
 
   GFS_IndicatorsTool>get_pop_poly.yml@5|buffer_size:
-    type: float
+    type: float?
     label: Size of buffer
     doc: Radius size [in km] to determine population presence around the coordinates of species observations.
     default: 10
 
   GFS_IndicatorsTool>get_pop_poly.yml@5|pop_distance:
-    type: float
+    type: float?
     label: Distance between populations
     doc: Distance [in km] to separate species observations in different populations.
     default: 50
 
   pipeline@16:
-    type: string
+    type: string?
     label: projection system
     doc: String, projection system of the coordinates in bbox
     default: EPSG:4326
 
   pipeline@15:
-    type: int
+    type: int?
     label: End year
     doc: Integer, 4 digit year, end date to retrieve occurrences
     default: 2000
 
   pipeline@14:
-    type: int
+    type: int?
     label: Start year
     doc: Integer, 4 digit year, start date to retrieve occurrences
     default: 1980
@@ -159,17 +159,19 @@ steps:
             
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-            "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
+              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
             if [[ ! -d "$unpackedFolder" ]]; then
-              mkdir -p "$unpackedFolder"
-              tar -xf "$unpackedFolder.tar.gz" -C "$unpackedFolder" --use-compress-program=pigz
+              # remove the env to force using the conda-pack
+              mamba env remove -y -n "$condaEnvName"
+              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
+                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             fi
             echo "Done."
           }
           export -f exportEnv
           
-          bash -c 'exportEnv "rbase" ""'
+
           
       inputs:
         envFolderWrite:
@@ -193,7 +195,7 @@ steps:
     out: [envFolder]
 
   GFS_IndicatorsTool>get_pop_poly.yml@5:
-    run: ../../../../tools/get_pop_poly.cwl
+    run: ../../../../tools/GFS_IndicatorsTool/get_pop_poly.cwl
     in:
       species_obs: data>getObservations.yml@10/presence
       buffer_size: GFS_IndicatorsTool>get_pop_poly.yml@5|buffer_size
@@ -212,7 +214,7 @@ steps:
 
 
   data>getObservations.yml@10:
-    run: ../../../../tools/getObservations.cwl
+    run: ../../../../tools/data/getObservations.cwl
     in:
       species: pipeline@12
       country: { default: null }
@@ -236,7 +238,7 @@ steps:
 
 
   GFS_IndicatorsTool>get_bbox.yml@21:
-    run: ../../../../tools/get_bbox.cwl
+    run: ../../../../tools/GFS_IndicatorsTool/get_bbox.cwl
     in:
       countries: pipeline@22
       proj: pipeline@16

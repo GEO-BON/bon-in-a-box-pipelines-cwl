@@ -24,6 +24,16 @@ requirements:
           if (!outputFiles || outputFiles.length === 0) return null;
           var value = JSON.parse(outputFiles[0].contents)[key]
           if (value === undefined) return null
+
+          if(inputs.runFolder != null) {
+            if(Array.isArray(value)) {
+              value = value.map(function (item) {
+                return item.replace(inputs.runFolder.path, runtime.outdir);
+              });
+            } else {
+              value = value.replace(inputs.runFolder.path, runtime.outdir);
+            }
+          }
           return value;
         }
   InplaceUpdateRequirement:
@@ -35,16 +45,19 @@ requirements:
       ${
         return [
           {
-            entry: inputs.envFolder,
-            entryname: "/conda-envs",
-            writable: inputs.envFolderWritable
-          },
-          {
             entry: { "class": "Directory", "basename": "conda-env-yml", "listing": [] },
             entryname: "/conda-env-yml",
             writable: true
           }
         ].concat(
+          inputs.envFolder
+            ? {
+                entry: inputs.envFolder,
+                entryname: "/conda-envs",
+                writable: inputs.envFolderWritable
+              }
+            : []
+        ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
             : []
@@ -64,7 +77,7 @@ requirements:
     dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:cwl-poc
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
-    #     $include: ../runners/cwl/conda-cwl-dockerfile
+    #     $include: ../runners/cwl/conda-cwl.dockerfile
 
   EnvVarRequirement:
     envDef:
@@ -95,11 +108,10 @@ arguments:
     cat $OUTPUT_LOCATION/input.json | tee -a $log
 
     source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "STAC__createSTAC" \
-      "
-        channels: [conda-forge]
-        dependencies: [pystac, jsonschema]
-        name: STAC__createSTAC
-      " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
+    "channels: [conda-forge]
+    dependencies: [pystac, jsonschema]
+    name: STAC__createSTAC
+    " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
 
     python3 \
       $SCRIPT_STUBS_LOCATION/system/scriptWrapper.py \
@@ -108,6 +120,11 @@ arguments:
       2>&1 | tee -a $log
     scriptExitCode=\${PIPESTATUS[0]}
     echo "Script exited with code $scriptExitCode" | tee -a $log
+  
+    if [[ "$OUTPUT_LOCATION" != "$(runtime.outdir)" ]]; then
+      echo "Copying results from run folder to CWL output directory" | tee -a $log
+      cp -a "$OUTPUT_LOCATION"/. "$(runtime.outdir)"/
+    fi
 
     source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh STAC__createSTAC /conda-envs >> "$log" 2>&1
 
@@ -118,12 +135,12 @@ inputs:
   # Script inputs #
   #################
   stac_collections:
-    type: File[]
+    type: File[]?
     label: STAC collections
     doc: Input STAC collection(s) to convert to a STAC catalog. Can be a single collection or a list of collections.
 
   stac_name:
-    type: string
+    type: string?
     label: STAC Name
     doc: Name of the STAC catalog to be created, using lowercase letters and hyphens only. Default is "biab-stac".
     default: biab-stac
@@ -135,11 +152,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   envFolderWriteable:
     type: boolean
@@ -188,7 +202,7 @@ outputs:
       
       The official MIME type is application/json however, we use application/stac+json to indicate that this is a STAC catalog and differentiate from other json files.
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -201,4 +215,4 @@ outputs:
   logs:
     type: File
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'logs.txt')"
+      glob: "logs.txt"

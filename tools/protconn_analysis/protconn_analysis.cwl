@@ -35,6 +35,16 @@ requirements:
           if (!outputFiles || outputFiles.length === 0) return null;
           var value = JSON.parse(outputFiles[0].contents)[key]
           if (value === undefined) return null
+
+          if(inputs.runFolder != null) {
+            if(Array.isArray(value)) {
+              value = value.map(function (item) {
+                return item.replace(inputs.runFolder.path, runtime.outdir);
+              });
+            } else {
+              value = value.replace(inputs.runFolder.path, runtime.outdir);
+            }
+          }
           return value;
         }
   InplaceUpdateRequirement:
@@ -46,16 +56,19 @@ requirements:
       ${
         return [
           {
-            entry: inputs.envFolder,
-            entryname: "/conda-envs",
-            writable: inputs.envFolderWritable
-          },
-          {
             entry: { "class": "Directory", "basename": "conda-env-yml", "listing": [] },
             entryname: "/conda-env-yml",
             writable: true
           }
         ].concat(
+          inputs.envFolder
+            ? {
+                entry: inputs.envFolder,
+                entryname: "/conda-envs",
+                writable: inputs.envFolderWritable
+              }
+            : []
+        ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
             : []
@@ -75,7 +88,7 @@ requirements:
     dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:cwl-poc
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
-    #     $include: ../runners/cwl/conda-cwl-dockerfile
+    #     $include: ../runners/cwl/conda-cwl.dockerfile
 
   EnvVarRequirement:
     envDef:
@@ -116,7 +129,7 @@ arguments:
     cat $OUTPUT_LOCATION/input.json | tee -a $log
 
     source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "rbase" \
-      "" /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
+    "" /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
 
     Rscript \
       $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \
@@ -125,6 +138,11 @@ arguments:
       2>&1 | tee -a $log
     scriptExitCode=\${PIPESTATUS[0]}
     echo "Script exited with code $scriptExitCode" | tee -a $log
+  
+    if [[ "$OUTPUT_LOCATION" != "$(runtime.outdir)" ]]; then
+      echo "Copying results from run folder to CWL output directory" | tee -a $log
+      cp -a "$OUTPUT_LOCATION"/. "$(runtime.outdir)"/
+    fi
 
     source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh rbase /conda-envs >> "$log" 2>&1
 
@@ -135,23 +153,23 @@ inputs:
   # Script inputs #
   #################
   study_area_polygon:
-    type: File[]
+    type: File[]?
     label: Polygon of study area
     doc: Polygon of the study area, in GeoPackage format. To use a custom study area, input the path to the file in the userdata folder (e.g. /userdata/study_area_polygon.gpkg).
 
   protected_area_polygon:
-    type: File[]
+    type: File[]?
     label: Polygon of protected areas
     doc: The protected areas (PAs) of interest.
 
   buffer:
-    type: float
+    type: float?
     label: Transboundary buffer
     doc: Buffer for pulling transboundary protected areas (WDPA data only). The buffer will pull protected areas within that distance of the country border or bounding box in the unit of the coordinate reference system (meters or degrees). If pulling WDPA data with a custom bounding box, the buffer will not be applied.
     default: 0
 
   date_column_name:
-    type: string
+    type: string?
     label: Date column name
     doc: Name of the column in the user provided protected area file that specifies when the PA was created. Leave blank if only using WDPA data or your protected area file does not have a date column.
 
@@ -209,7 +227,7 @@ inputs:
             type: float[]?
 
   distance_threshold:
-    type: int[]
+    type: int[]?
     label: Distance analysis threshold
     doc: >
       Refers to the threshold distance (in meters) used to estimate if the areas are connected in a spatial analysis. This threshold represents the median dispersal probability (i.e. where the dispersal probability between patches is 0.5). Dispersal probability is calculated with an exponential decay function with increasing distance.
@@ -222,37 +240,37 @@ inputs:
     - 10000
 
   pa_size_threshold:
-    type: float
+    type: float?
     label: PA size threshold
     doc: Size threshold for PAs, in meters squared. Protected areas smaller than this area will be removed. A threshold of 1km2 was used in Saura et al. 2017 because at larger scales, protected areas less than 1km2 (1000 m2) do not have a large impact on ProtConn values. Removing small protected areas significantly speeds up calculation and is recommended for large areas. To not PAs filter by size threshold, input a value of 0.
     default: 1000
 
   years:
-    type: int
+    type: int?
     label: Year for cutoff
     doc: Year for which you want ProtConn calculated (e.g. an input of 2000 will calculate ProtConn for only PAs that were designated before the year 2000). Leave blank if only using WDPA data or your protected area file does not have dates. Note that if your protected area file doesn't have dates you cannot do the time series analysis.
     default: 2025
 
   time_series:
-    type: boolean
+    type: boolean?
     label: Time series
     doc: Whether to calculate time series plot of ProtConn values based on date of PA establishment
     default: true
 
   include_na_dates:
-    type: boolean
+    type: boolean?
     label: Include missing values for date
     doc: How missing values for date should be handled in the time series analysis. If the box is checked, protected areas with missing values for establishment date will be included in the time series analysis and assigned to the chosen value for start year. If not checked, these protected areas will be omitted from the time series analysis (note they will still be included in the main analysis).
     default: true
 
   start_year:
-    type: int
+    type: int?
     label: Start year
     doc: Year for the time series plot to start. Missing dates for protected area establishment will be automatically assigned to this year for the time series analysis. Leave blank if time series is not selected.
     default: 1980
 
   year_int:
-    type: int
+    type: int?
     label: Year interval
     doc: Year interval for the time series plot of ProtConn values (e.g. an input of 20 will calculate ProtConn for every 20 years by filtering out protected areas established before that year). The last year will always be the input year. Leave blank if time series is not selected.
     default: 20
@@ -264,11 +282,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   envFolderWriteable:
     type: boolean
@@ -314,7 +329,7 @@ outputs:
     label: Protected areas
     doc: Protected areas on which ProtConn has been calculated. Overlapping protected areas have been merged into one to speed up calculation. Protected areas less than the threshold size were also removed.
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -332,7 +347,7 @@ outputs:
     label: Area of study area
     doc: Area of the study area in square kilometers
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -345,7 +360,7 @@ outputs:
     label: Area of protected areas
     doc: Total area of the protected areas in square kilometers
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -359,7 +374,7 @@ outputs:
     doc: >
       The results of the ProtConn calculations. "Prot" and "Unprot" is the percentage of the study area that is protected and unprotected, respectively. "ProtConn" is the percentage of the study area that is protected, and connected, ProtUnconn is the percentage that is protected but unconnected. "ProtConn Within" is the percentage of the landscape that is connected within a single protected area, i.e. the contribution to overall connectivity coming from within the protected area, without species having to traverse unprotected land. "ProtConn Contig" is the proportion connected through direct physical adjascency, capturing the value of neighboring or touching PAs.
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -374,7 +389,7 @@ outputs:
     doc: >
       Donut plot of the percentage of total area that is unprotected, protected-connected, and protected-unconnected for each input dispersal distance (in meters).
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -388,7 +403,7 @@ outputs:
     label: ProtConn time series plot
     doc: Change in the percentage area that is protected and the percentage that is protected and connected over time, at the chosen time interval, compared to the Kunming-Montreal GBF goals.
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -406,7 +421,7 @@ outputs:
     label: ProtConn time series results
     doc: Table of the time series of ProtConn and ProtUnconn values, calculated at the time interval that is specified
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -419,4 +434,4 @@ outputs:
   logs:
     type: File
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'logs.txt')"
+      glob: "logs.txt"

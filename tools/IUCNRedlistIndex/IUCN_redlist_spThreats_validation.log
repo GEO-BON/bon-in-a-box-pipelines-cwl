@@ -1,62 +1,57 @@
 [1;30mINFO[0m /home/jean-michel/.local/bin/cwl-runner 3.2.20260413085819
 [1;30mINFO[0m Resolved '/home/jean-michel/code/cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl' to 'file:///home/jean-michel/code/cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl'
-[1;30mWARNING[0m [33m../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:153:7: Warning: Field
-                                                                               'path' contains
-                                                                               undefined reference
-                                                                               to
-                                                                               'file:///home/jean-michel/code/cwl-temp/export/tools/IUCNRedlistIndex/envs'[0m
 [1;30mERROR[0m [31mTool definition failed validation:
 ../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:2:1:     Object
                                                                                '../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl'
                                                                                is not valid because
                                                                                  tried
                                                                                  'CommandLineTool' but
-../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:114:1:     the 'inputs'
+../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:131:1:     the 'inputs'
                                                                                    field is not valid
                                                                                    because
-../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:118:3:       item is
+../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:135:3:       item is
                                                                                      invalid because
-../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:119:5:         the 'type'
+../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:136:5:         the 'type'
                                                                                        field is not valid
                                                                                        because
                                                                                          - tried
                                                                                          CommandInputRecordSchema
                                                                                          but
-../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:120:7:             * the
+../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:137:7:             * the
                                                                                            'type' field is not
                                                                                            valid because
                                                                                              value
                                                                                              is a CommentedMap
                                                                                              but expected a string
-../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:121:7:             *
+../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:138:7:             *
                                                                                            invalid field
                                                                                            'symbols', expected
                                                                                            one of: 'fields',
                                                                                            'type', 'label',
                                                                                            'doc', 'name',
                                                                                            'inputBinding'
-../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:119:5:           - tried
+../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:136:5:           - tried
                                                                                          CommandInputEnumSchema
                                                                                          but
-../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:120:7:             the
+../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:137:7:             the
                                                                                            'type' field is not
                                                                                            valid because
                                                                                              value
                                                                                              is a CommentedMap
                                                                                              but expected a string
-../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:119:5:           - tried
+../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:136:5:           - tried
                                                                                          CommandInputArraySchema
                                                                                          but
                                                                                            *
                                                                                            missing required
                                                                                            field 'items'
-../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:120:7:             * the
+../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:137:7:             * the
                                                                                            'type' field is not
                                                                                            valid because
                                                                                              value
                                                                                              is a CommentedMap
                                                                                              but expected a string
-../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:121:7:             *
+../../cwl-temp/export/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl:138:7:             *
                                                                                            invalid field
                                                                                            'symbols', expected
                                                                                            one of: 'items',

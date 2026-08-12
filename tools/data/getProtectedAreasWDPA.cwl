@@ -29,6 +29,16 @@ requirements:
           if (!outputFiles || outputFiles.length === 0) return null;
           var value = JSON.parse(outputFiles[0].contents)[key]
           if (value === undefined) return null
+
+          if(inputs.runFolder != null) {
+            if(Array.isArray(value)) {
+              value = value.map(function (item) {
+                return item.replace(inputs.runFolder.path, runtime.outdir);
+              });
+            } else {
+              value = value.replace(inputs.runFolder.path, runtime.outdir);
+            }
+          }
           return value;
         }
   InplaceUpdateRequirement:
@@ -40,16 +50,19 @@ requirements:
       ${
         return [
           {
-            entry: inputs.envFolder,
-            entryname: "/conda-envs",
-            writable: inputs.envFolderWritable
-          },
-          {
             entry: { "class": "Directory", "basename": "conda-env-yml", "listing": [] },
             entryname: "/conda-env-yml",
             writable: true
           }
         ].concat(
+          inputs.envFolder
+            ? {
+                entry: inputs.envFolder,
+                entryname: "/conda-envs",
+                writable: inputs.envFolderWritable
+              }
+            : []
+        ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
             : []
@@ -69,7 +82,7 @@ requirements:
     dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:cwl-poc
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
-    #     $include: ../runners/cwl/conda-cwl-dockerfile
+    #     $include: ../runners/cwl/conda-cwl.dockerfile
 
   EnvVarRequirement:
     envDef:
@@ -106,7 +119,7 @@ arguments:
     cat $OUTPUT_LOCATION/input.json | tee -a $log
 
     source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "rbase" \
-      "" /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
+    "" /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
 
     Rscript \
       $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \
@@ -115,6 +128,11 @@ arguments:
       2>&1 | tee -a $log
     scriptExitCode=\${PIPESTATUS[0]}
     echo "Script exited with code $scriptExitCode" | tee -a $log
+  
+    if [[ "$OUTPUT_LOCATION" != "$(runtime.outdir)" ]]; then
+      echo "Copying results from run folder to CWL output directory" | tee -a $log
+      cp -a "$OUTPUT_LOCATION"/. "$(runtime.outdir)"/
+    fi
 
     source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh rbase /conda-envs >> "$log" 2>&1
 
@@ -125,18 +143,18 @@ inputs:
   # Script inputs #
   #################
   country:
-    type: string
+    type: string?
     label: Country
     doc: Country of interest
     default: Colombia
 
   region:
-    type: string
+    type: string?
     label: State/Province
     doc: State of interest
 
   study_area_polygon:
-    type: File
+    type: File?
     label: Study area polygon
     doc: Study area of interest in a geopackage file
 
@@ -152,23 +170,23 @@ inputs:
     default: WDPA
 
   transboundary_distance:
-    type: int
+    type: int?
     label: Transboundary distance
     doc: Distance (in meters) beyond the boundary of the study area to be included in the ProtConn index. Protected areas within this distance of the edge of the study area will be included in the calculation of ProtConn. A transboundary distance of 0 will only include protected areas in the study area.
     default: 0
 
   protected_area_file:
-    type: string
+    type: string?
     label: Protected areas file
     doc: File path of the shapefile of protected areas (Leave blank if using data from WDPA). Must be in geopackage format.
 
   date_column_name:
-    type: string
+    type: string?
     label: Date column name
     doc: Name of the column in the user provided protected area file that specifies when the PA was created (leave blank if only using WDPA data).
 
   crs:
-    type: string
+    type: string?
     label: Coordinate reference system
     doc: Numerical value referring to the EPSG code (European Petroleum Survey Group) associated with the spatial reference system that will be used as a reference for the study area. This numerical value specifies the projection and geodetic datum used to define the coordinates and spatial representation of the data in the study area. For further information on coordinate systems and EPSG codes, you can access the official database on the EPSG website at https://epsg.org/home.html. The website provides documentation, resources, and tools for searching and understanding the EPSG codes used in various geospatial contexts.
     default: EPSG:4326
@@ -180,11 +198,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   envFolderWriteable:
     type: boolean
@@ -230,7 +245,7 @@ outputs:
     label: Polygon of study area
     doc: The map of the study area
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -244,7 +259,7 @@ outputs:
     label: Polygon of protected areas
     doc: The map of the protected areas within the study area
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -258,7 +273,7 @@ outputs:
     label: Number of protected areas
     doc: Number of protected areas in the country of interest
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -270,4 +285,4 @@ outputs:
   logs:
     type: File
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'logs.txt')"
+      glob: "logs.txt"

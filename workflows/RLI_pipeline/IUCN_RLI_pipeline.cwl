@@ -304,11 +304,13 @@ steps:
             
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-            "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
+              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
             if [[ ! -d "$unpackedFolder" ]]; then
-              mkdir -p "$unpackedFolder"
-              tar -xf "$unpackedFolder.tar.gz" -C "$unpackedFolder" --use-compress-program=pigz
+              # remove the env to force using the conda-pack
+              mamba env remove -y -n "$condaEnvName"
+              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
+                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             fi
             echo "Done."
           }
@@ -379,7 +381,7 @@ steps:
     out: [envFolder]
 
   IUCNRedlistIndex>IUCN_redlist_historyAssesment.yml@55:
-    run: ../../tools/IUCN_redlist_historyAssesment.cwl
+    run: ../../tools/IUCNRedlistIndex/IUCN_redlist_historyAssesment.cwl
     in:
       species_data: IUCNRedlistIndex>IUCN_redlist_spList.yml@58/iucn_splist
       sp_col: { default: scientific_name }
@@ -396,7 +398,7 @@ steps:
 
 
   IUCNRedlistIndex>IUCN_redlist_spList.yml@58:
-    run: ../../tools/IUCN_redlist_spList.cwl
+    run: ../../tools/IUCNRedlistIndex/IUCN_redlist_spList.cwl
     in:
       splist_taxon: IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82/iucn_taxon_splist
       splist_country: IUCNRedlistIndex>IUCN_redlist_spCountry.yml@96/iucn_country_splist
@@ -418,7 +420,7 @@ steps:
 
 
   IUCNRedlistIndex>RedListIndex.yml@59:
-    run: ../../tools/RedListIndex.cwl
+    run: ../../tools/IUCNRedlistIndex/RedListIndex.cwl
     in:
       history_assessment_data: IUCNRedlistIndex>IUCN_redlist_historyAssesment.yml@55/iucn_history_assessment_data
       country: pipeline@95
@@ -441,7 +443,7 @@ steps:
 
 
   IUCNRedlistIndex>IUCN_redlist_spUse.yml@77:
-    run: ../../tools/IUCN_redlist_spUse.cwl
+    run: ../../tools/IUCNRedlistIndex/IUCN_redlist_spUse.cwl
     in:
       species_use: IUCNRedlistIndex>IUCN_redlist_spUse.yml@77|species_use
       envFolder: prepareEnvironments/envFolder
@@ -457,7 +459,7 @@ steps:
 
 
   IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82:
-    run: ../../tools/IUCN_redlist_spGroup.cwl
+    run: ../../tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl
     in:
       taxonomic_group: IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82|taxonomic_group
       envFolder: prepareEnvironments/envFolder
@@ -473,7 +475,7 @@ steps:
 
 
   IUCNRedlistIndex>IUCN_redlist_spThreats.yml@92:
-    run: ../../tools/IUCN_redlist_spThreats.cwl
+    run: ../../tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl
     in:
       threat_category_input: IUCNRedlistIndex>IUCN_redlist_spThreats.yml@92|threat_category_input
       envFolder: prepareEnvironments/envFolder
@@ -489,7 +491,7 @@ steps:
 
 
   IUCNRedlistIndex>IUCN_redlist_spCountry.yml@96:
-    run: ../../tools/IUCN_redlist_spCountry.cwl
+    run: ../../tools/IUCNRedlistIndex/IUCN_redlist_spCountry.cwl
     in:
       country: pipeline@95
       envFolder: prepareEnvironments/envFolder

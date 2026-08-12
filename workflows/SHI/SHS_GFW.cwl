@@ -40,14 +40,14 @@ inputs:
     default: IUCN
 
   pipeline@76:
-    type: string[]
+    type: string[]?
     label: Species
     doc: Scientific name of the species. Multiple species names can be specified, separated with a comma.
     default:
     - Myrmecophaga tridactyla
 
   data>getAreaOfHabitat.yml@80|r_range_map:
-    type: File[]
+    type: File[]?
     label: Range map (raster)
     doc: Raster with expected area for the species if choosing option "Raster"
     default:
@@ -129,18 +129,18 @@ inputs:
             type: float[]?
 
   data>getAreaOfHabitat.yml@80|buff_size:
-    type: int
+    type: int?
     label: Buffer for study area
     doc: Size of the buffer around the study area. If it is not defined it will be estimated as half of the total width of the study area.
     default: 0
 
   pipeline@90:
-    type: File
+    type: File?
     label: Study area
     doc: Custom polygon of study area used to mask output layers, in geopackage format. This input is for user's to input their own polygon rather than inputing a country/region.
 
   data>getAreaOfHabitat.yml@80|elev_buffer:
-    type: int
+    type: int?
     label: Elevation buffer
     doc: Elevation buffer in meters to add (or substract) to the reported species elevation range. Default is zero. Positive values will increase the range in that value in meters and negative values will reduce the range in that value.
 
@@ -155,14 +155,14 @@ inputs:
     default: 'Yes'
 
   SHI>habitatChange_GFW.yml@67|max_forest:
-    type: int[]
+    type: int[]?
     label: Maximum forest cover percentage
     doc: Maximum tree cover percentage required for each species, based on suitable habitat of the species. Acts as a filter for the Global Forest Watch Data. If not available, use Map of Life Values (e.g. [https://mol.org/species/range/Saguinus_oedipus])
     default:
     - 100
 
   SHI>habitatChange_GFW.yml@67|t_0:
-    type: int
+    type: int?
     label: Start year
     doc: Year where the analysis should start. Starts in 2000, check the time interval available for the Global Forest Watch data at https://stac.geobon.org/collections/gfw-lossyear.
     default: 2000
@@ -179,7 +179,7 @@ inputs:
     default: Polygon
 
   SHI>habitatChange_GFW.yml@67|time_step:
-    type: int
+    type: int?
     label: Time step
     doc: Temporal resolution for analysis given in number of years. To get values for the end year, time step should fit evenly into the given analysis range.
     default: 10
@@ -198,20 +198,20 @@ inputs:
     default: first
 
   SHI>habitatChange_GFW.yml@67|t_n:
-    type: int
+    type: int?
     label: End year
     doc: Year where the analysis should end (it should be later than Initial time). It should be inside the time interval for the Global Forest Watch data at https://stac.geobon.org/collections/gfw-lossyear.
     default: 2020
 
   SHI>habitatChange_GFW.yml@67|min_forest:
-    type: int[]
+    type: int[]?
     label: Minimum forest cover percentage
     doc: Minimum tree cover percentage required for each species, based on suitable habitat of the species. Acts as a filter for the Global Forest Watch Data. If not available, use Map of Life Values (e.g. [https://mol.org/species/range/Saguinus_oedipus])
     default:
     - 50
 
   pipeline@79:
-    type: int
+    type: int?
     label: Spatial resolution
     doc: >
       Integer, spatial resolution of the rasters in the same units as the coordinate reference system (meters for projected reference systems and degrees for reference systems in lat long). 
@@ -309,11 +309,13 @@ steps:
             
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-            "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
+              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
             if [[ ! -d "$unpackedFolder" ]]; then
-              mkdir -p "$unpackedFolder"
-              tar -xf "$unpackedFolder.tar.gz" -C "$unpackedFolder" --use-compress-program=pigz
+              # remove the env to force using the conda-pack
+              mamba env remove -y -n "$condaEnvName"
+              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
+                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             fi
             echo "Done."
           }
@@ -372,7 +374,7 @@ steps:
     out: [envFolder]
 
   data>getRangeMap.yml@65:
-    run: ../../tools/getRangeMap.cwl
+    run: ../../tools/data/getRangeMap.cwl
     in:
       species: pipeline@76
       expert_source: pipeline@77
@@ -389,7 +391,7 @@ steps:
 
 
   SHI>habitatChange_GFW.yml@67:
-    run: ../../tools/habitatChange_GFW.cwl
+    run: ../../tools/SHI/habitatChange_GFW.cwl
     in:
       spat_res: pipeline@79
       crs: pipeline@93
@@ -414,7 +416,7 @@ steps:
 
 
   data>getAreaOfHabitat.yml@80:
-    run: ../../tools/getAreaOfHabitat.cwl
+    run: ../../tools/data/getAreaOfHabitat.cwl
     in:
       spat_res: pipeline@79
       crs: pipeline@93
@@ -441,7 +443,7 @@ steps:
 
 
   data>loadFromStac.yml@84:
-    run: ../../tools/loadFromStac.cwl
+    run: ../../tools/data/loadFromStac.cwl
     in:
       bbox_crs: pipeline@93
       stac_url: { default: https://stac.geobon.org/ }
@@ -466,7 +468,7 @@ steps:
 
 
   data>getCountryPolygon.yml@92:
-    run: ../../tools/getCountryPolygon.cwl
+    run: ../../tools/data/getCountryPolygon.cwl
     in:
       bbox_crs: pipeline@93
       envFolder: prepareEnvironments/envFolder

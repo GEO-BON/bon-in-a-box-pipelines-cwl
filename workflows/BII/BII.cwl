@@ -102,17 +102,17 @@ inputs:
     default: Country or region
 
   pipeline@64:
-    type: string
+    type: string?
     label: End date (optional)
     doc: End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
 
   pipeline@63:
-    type: string
+    type: string?
     label: Start date (optional)
     doc: Start date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
 
   data>loadFromStac.yml@56|spatial_res:
-    type: float
+    type: float?
     label: Spatial resolution (optional)
     doc: Integer, spatial resolution of the rasters in the same units as the coordinate reference system (meters for projected reference systems and degrees for reference systems in lat long). If this is left blank it will use the native resolution of the rasters. If the spatial resolution is coarser than the native resolution of the rasters, the layers will be resampled using method "near".
     default: 0.00833
@@ -222,17 +222,17 @@ steps:
             
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-            "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
+              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
             if [[ ! -d "$unpackedFolder" ]]; then
-              mkdir -p "$unpackedFolder"
-              tar -xf "$unpackedFolder.tar.gz" -C "$unpackedFolder" --use-compress-program=pigz
+              # remove the env to force using the conda-pack
+              mamba env remove -y -n "$condaEnvName"
+              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
+                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             fi
             echo "Done."
           }
           export -f exportEnv
-          
-          bash -c 'exportEnv "rbase" ""'
           
           bash -c 'exportEnv "zonal_statistics__zonal_stats" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-terra, r-dplyr, r-sf, r-exactextractr, r-tidyr]
@@ -274,7 +274,7 @@ steps:
     out: [envFolder]
 
   BII>BIIChange.yml@14:
-    run: ../../tools/BIIChange.cwl
+    run: ../../tools/BII/BIIChange.cwl
     in:
       rasters: data>loadFromStac.yml@56/rasters
       start_year: pipeline@63
@@ -292,7 +292,7 @@ steps:
 
 
   zonal_statistics>zonal_stats.yml@25:
-    run: ../../tools/zonal_stats.cwl
+    run: ../../tools/zonal_statistics/zonal_stats.cwl
     in:
       rasters: data>loadFromStac.yml@56/rasters
       bbox_crs: pipeline@67
@@ -311,7 +311,7 @@ steps:
 
 
   data>loadFromStac.yml@56:
-    run: ../../tools/loadFromStac.cwl
+    run: ../../tools/data/loadFromStac.cwl
     in:
       bbox_crs: data>load_polygons.yml@68/bbox_crs
       stac_url: { default: https://stac.geobon.org/ }
@@ -336,7 +336,7 @@ steps:
 
 
   data>load_polygons.yml@68:
-    run: ../../tools/load_polygons.cwl
+    run: ../../tools/data/load_polygons.cwl
     in:
       polygon_type: data>load_polygons.yml@68|polygon_type
       country_region_bbox: pipeline@67

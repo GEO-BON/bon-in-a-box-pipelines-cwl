@@ -1,46 +1,43 @@
 [1;30mINFO[0m /home/jean-michel/.local/bin/cwl-runner 3.2.20260413085819
 [1;30mINFO[0m Resolved '/home/jean-michel/code/cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl' to 'file:///home/jean-michel/code/cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl'
-[1;30mWARNING[0m [33m../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:216:7: Warning: Field 'path' contains
-                                                                    undefined reference to
-                                                                    'file:///home/jean-michel/code/cwl-temp/export/tools/zonal_statistics/envs'[0m
 [1;30mERROR[0m [31mTool definition failed validation:
 ../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:2:1:     Object
                                                                     '../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl'
                                                                     is not valid because
                                                                       tried 'CommandLineTool' but
-../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:120:1:     the 'inputs' field is not
+../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:137:1:     the 'inputs' field is not
                                                                         valid because
-../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:187:3:       item is invalid because
-../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:188:5:         the 'type' field is not
+../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:204:3:       item is invalid because
+../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:205:5:         the 'type' field is not
                                                                             valid because
                                                                               - tried
                                                                               CommandInputRecordSchema but
-../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:189:7:             * the 'type' field
+../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:206:7:             * the 'type' field
                                                                                 is not valid because
                                                                                   value is a
                                                                                   CommentedMap but expected a
                                                                                   string
-../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:190:7:             * invalid field
+../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:207:7:             * invalid field
                                                                                 'symbols', expected one of:
                                                                                 'fields', 'type', 'label',
                                                                                 'doc', 'name', 'inputBinding'
-../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:188:5:           - tried
+../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:205:5:           - tried
                                                                               CommandInputEnumSchema but
-../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:189:7:             the 'type' field is
+../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:206:7:             the 'type' field is
                                                                                 not valid because
                                                                                   value is a
                                                                                   CommentedMap but expected a
                                                                                   string
-../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:188:5:           - tried
+../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:205:5:           - tried
                                                                               CommandInputArraySchema but
                                                                                 * missing required
                                                                                 field 'items'
-../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:189:7:             * the 'type' field
+../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:206:7:             * the 'type' field
                                                                                 is not valid because
                                                                                   value is a
                                                                                   CommentedMap but expected a
                                                                                   string
-../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:190:7:             * invalid field
+../../cwl-temp/export/tools/zonal_statistics/zonal_stats.cwl:207:7:             * invalid field
                                                                                 'symbols', expected one of:
                                                                                 'items', 'type', 'label',
                                                                                 'doc', 'name', 'inputBinding'[0m

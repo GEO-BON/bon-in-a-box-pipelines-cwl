@@ -27,7 +27,7 @@ helloWorld>helloPython.yml@0|study_area_bbox:  # "file:///home/jean-michel/code/
           - 0.1
         ISO3: a_string  # type 'string' (optional)
         englishName: a_string  # type 'string' (optional)
-helloWorld>helloPython.yml@0|some_int: 3  # default value of type 'int'.
+helloWorld>helloPython.yml@0|some_int: 3  # default value of type 'int'. (optional)
 environment:  # type 'File' (optional)
     class: File
     path: a/file/path

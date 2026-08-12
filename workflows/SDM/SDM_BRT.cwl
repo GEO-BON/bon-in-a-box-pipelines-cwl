@@ -27,13 +27,13 @@ inputs:
   # Script inputs #
   #################
   data>getGBIFObservations>getGBIFObservations.yml@159|min_year:
-    type: int
+    type: int?
     label: minimum year
     doc: Min year observations wanted
     default: 2010
 
   pipeline@137:
-    type: string[]
+    type: string[]?
     label: Environmental Predictors
     doc: Vector of strings, collection name followed by '|' followed by item id. View GEO BON STAC catalog items [here](https://stac.geobon.org/viewer/). The collection name and item name can be found in the URL (e.g. for "https://stac.geobon.org/viewer/chelsa-clim/bio1" the collection name is chelsa-clim and the item id is bio1). 
     default:
@@ -44,19 +44,19 @@ inputs:
     - chelsa-clim|bio15
 
   pipeline@167:
-    type: File
+    type: File?
     label: Study area
     doc: Polygon of study area used to crop output layers
 
   pipeline@121:
-    type: string[]
+    type: string[]?
     label: Species
     doc: Name of species
     default:
     - Acer saccharum
 
   pipeline@154:
-    type: float
+    type: float?
     label: Pseudoabsence proportion
     doc: The number of PAs, given by the proportion of the total occurrences to use.
     default: 2.4
@@ -115,29 +115,29 @@ inputs:
             type: float[]?
 
   pipeline@152:
-    type: float
+    type: float?
     label: Pseudoabsence Buffer
     doc: The minimum distance a PA is allowed to be from a presence in kilometers
     default: 10
 
   pipeline@153:
-    type: int
+    type: int?
     label: Max Candidate Pseudoabsences
     doc: The maximum number of candidate pseudoabsences to consider. This speeds up PA generation on large rasters.
     default: 100000
 
   data>loadFromStac.yml@161|t1:
-    type: string
+    type: string?
     label: End date
     doc: End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. For example, ESA landcover can be extracted by specifying the item name or specifying the whole collection and the start and end date here. Leave blank if extracting items by name.
 
   data>loadFromStac.yml@161|temporal_res:
-    type: string
+    type: string?
     label: Temporal resolution
     doc: Temporal resolution to use when querying STAC items by date, in the format ("P", time interval, and time unit, e.g. "P1Y" is yearly, "P1M" is montly, and "P1D" is daily). Leave blank if not querying by date. If the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated with the aggregation method chosen below.
 
   pipeline@128:
-    type: float
+    type: float?
     label: Spatial Resolution
     doc: >
       Integer, spatial resolution of the rasters in the same units as the coordinate reference system (meters for projected reference systems and degrees for reference systems in lat long). 
@@ -148,12 +148,12 @@ inputs:
     default: 1000
 
   data>loadFromStac.yml@161|t0:
-    type: string
+    type: string?
     label: Start date
     doc: Start date for time series layers in STAC catalog. Can be in the format YYYY or YYYY-MM-DD. For example, ESA landcover can be extracted by specifying the item name or specifying the whole collection and the start and end date here. Leave blank if extracting items by name.
 
   data>getGBIFObservations>getGBIFObservations.yml@159|max_year:
-    type: int
+    type: int?
     label: maximum year
     doc: Max year observations wanted
     default: 2024
@@ -246,11 +246,13 @@ steps:
             
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-            "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
+              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
             if [[ ! -d "$unpackedFolder" ]]; then
-              mkdir -p "$unpackedFolder"
-              tar -xf "$unpackedFolder.tar.gz" -C "$unpackedFolder" --use-compress-program=pigz
+              # remove the env to force using the conda-pack
+              mamba env remove -y -n "$condaEnvName"
+              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
+                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             fi
             echo "Done."
           }
@@ -294,7 +296,7 @@ steps:
     out: [envFolder]
 
   filtering>cleanCoordinates.yml@34:
-    run: ../../tools/cleanCoordinates.cwl
+    run: ../../tools/filtering/cleanCoordinates.cwl
     in:
       presence: data>getGBIFObservations>getGBIFObservations.yml@159/observations_file
       predictors: data>loadFromStac.yml@160/rasters
@@ -313,7 +315,7 @@ steps:
 
 
   SDM>BRT>fitBRT.yml@132:
-    run: ../../tools/fitBRT.cwl
+    run: ../../tools/SDM/BRT/fitBRT.cwl
     in:
       occurrence: filtering>cleanCoordinates.yml@34/clean_presence
       predictors: data>loadFromStac.yml@160/rasters
@@ -335,7 +337,7 @@ steps:
 
 
   data>getGBIFObservations>getGBIFObservations.yml@159:
-    run: ../../tools/getGBIFObservations.cwl
+    run: ../../tools/data/getGBIFObservations/getGBIFObservations.cwl
     in:
       taxa: pipeline@121
       bbox_crs: pipeline@174
@@ -354,7 +356,7 @@ steps:
 
 
   data>loadFromStac.yml@160:
-    run: ../../tools/loadFromStac.cwl
+    run: ../../tools/data/loadFromStac.cwl
     in:
       bbox_crs: pipeline@174
       stac_url: { default: https://stac.geobon.org/ }
@@ -379,7 +381,7 @@ steps:
 
 
   data>loadFromStac.yml@161:
-    run: ../../tools/loadFromStac.cwl
+    run: ../../tools/data/loadFromStac.cwl
     in:
       bbox_crs: pipeline@174
       stac_url: { default: https://stac.geobon.org/ }

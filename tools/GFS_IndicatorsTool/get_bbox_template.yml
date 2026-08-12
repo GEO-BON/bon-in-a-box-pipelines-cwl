@@ -5,17 +5,15 @@ scriptPath: GFS_IndicatorsTool/get_bbox.R  # default value of type 'string'.
 runFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-proj: 4326  # default value of type 'string'.
+proj: 4326  # default value of type 'string'. (optional)
 environment:  # type 'File' (optional)
     class: File
     path: a/file/path
 envFolderWriteable: true  # default value of type 'boolean'.
-envFolder:  # default value of type 'Directory'.
+envFolder:  # type 'Directory' (optional)
     class: Directory
-    path: 
-        file:///home/jean-michel/code/cwl-temp/export/tools/GFS_IndicatorsTool/envs
-
-countries:  # array of type 'string'
+    path: a/directory/path
+countries:  # array of type 'string' (optional)
   - Mexico
   - Guatemala
 

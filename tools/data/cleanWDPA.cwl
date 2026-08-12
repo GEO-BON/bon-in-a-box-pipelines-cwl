@@ -30,6 +30,16 @@ requirements:
           if (!outputFiles || outputFiles.length === 0) return null;
           var value = JSON.parse(outputFiles[0].contents)[key]
           if (value === undefined) return null
+
+          if(inputs.runFolder != null) {
+            if(Array.isArray(value)) {
+              value = value.map(function (item) {
+                return item.replace(inputs.runFolder.path, runtime.outdir);
+              });
+            } else {
+              value = value.replace(inputs.runFolder.path, runtime.outdir);
+            }
+          }
           return value;
         }
   InplaceUpdateRequirement:
@@ -41,16 +51,19 @@ requirements:
       ${
         return [
           {
-            entry: inputs.envFolder,
-            entryname: "/conda-envs",
-            writable: inputs.envFolderWritable
-          },
-          {
             entry: { "class": "Directory", "basename": "conda-env-yml", "listing": [] },
             entryname: "/conda-env-yml",
             writable: true
           }
         ].concat(
+          inputs.envFolder
+            ? {
+                entry: inputs.envFolder,
+                entryname: "/conda-envs",
+                writable: inputs.envFolderWritable
+              }
+            : []
+        ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
             : []
@@ -70,7 +83,7 @@ requirements:
     dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:cwl-poc
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
-    #     $include: ../runners/cwl/conda-cwl-dockerfile
+    #     $include: ../runners/cwl/conda-cwl.dockerfile
 
   EnvVarRequirement:
     envDef:
@@ -107,12 +120,11 @@ arguments:
     cat $OUTPUT_LOCATION/input.json | tee -a $log
 
     source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "data__cleanWDPA" \
-      "
-        channels: [conda-forge, r]
-        dependencies: [r-rjson=0.2.23, r-sf=1.1-0, r-lwgeom, r-remotes, r-lubridate=1.9.5,
-          r-tidyverse=2.0.0]
-        name: data__cleanWDPA
-      " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
+    "channels: [conda-forge, r]
+    dependencies: [r-rjson=0.2.23, r-sf=1.1-0, r-lwgeom, r-remotes, r-lubridate=1.9.5,
+      r-tidyverse=2.0.0]
+    name: data__cleanWDPA
+    " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
 
     Rscript \
       $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \
@@ -121,6 +133,11 @@ arguments:
       2>&1 | tee -a $log
     scriptExitCode=\${PIPESTATUS[0]}
     echo "Script exited with code $scriptExitCode" | tee -a $log
+  
+    if [[ "$OUTPUT_LOCATION" != "$(runtime.outdir)" ]]; then
+      echo "Copying results from run folder to CWL output directory" | tee -a $log
+      cp -a "$OUTPUT_LOCATION"/. "$(runtime.outdir)"/
+    fi
 
     source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh data__cleanWDPA /conda-envs >> "$log" 2>&1
 
@@ -131,13 +148,13 @@ inputs:
   # Script inputs #
   #################
   study_area_polygon:
-    type: File
+    type: File?
     label: Study area polygon
     doc: >
       Study area of interest in a GeoPackage file.
 
   protected_area_file:
-    type: File
+    type: File?
     label: Protected areas file
     doc: >
       Optional, additionnal user-provided protected areas in GeoPackage format. When left blank, the script will only use the protected areas from WDPA.
@@ -227,7 +244,7 @@ inputs:
     - Established
 
   include_unesco:
-    type: boolean
+    type: boolean?
     label: Include UNESCO Biosphere reserves
     doc: >
       Check to include UNESCO Biosphere reserves. These serve as learning sites for sustainable development and combine biodiversity conservation with the sustainable use of natural resources and sustainable development. They may not be legally protected and may not be fully conserved, because they are often used for development or human settlement.
@@ -236,7 +253,7 @@ inputs:
     default: true
 
   buffer_points:
-    type: boolean
+    type: boolean?
     label: Include protected area points
     doc: >
       Check to include protected area represented by points. These protected areas are reported as a single point rather than a polygon. If checked, this will create a circular protected area around the reported point that is equal to the reported area. If left unchecked, all protected areas represented as points will be removed.
@@ -245,7 +262,7 @@ inputs:
     default: true
 
   include_marine:
-    type: boolean
+    type: boolean?
     label: Include marine and coastal protected areas
     doc: >
       Check to include marine and coastal protected areas.
@@ -254,7 +271,7 @@ inputs:
     default: false
 
   include_oecm:
-    type: boolean
+    type: boolean?
     label: Include OECMs
     doc: >
       Check to include areas with other effective area-based conservation measures (OECMs). These are not officially designated protected areas but are still achieving conservation outcomes.
@@ -267,11 +284,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   envFolderWriteable:
     type: boolean
@@ -317,7 +331,7 @@ outputs:
     label: Study area
     doc: Study area with fixed geometry
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -331,7 +345,7 @@ outputs:
     label: Polygon of protected areas
     doc: Map of the protected areas in GeoPackage format, cleaned and filtered according to the input criteria.
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -344,4 +358,4 @@ outputs:
   logs:
     type: File
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'logs.txt')"
+      glob: "logs.txt"

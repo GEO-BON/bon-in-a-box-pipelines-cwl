@@ -30,19 +30,19 @@ inputs:
   # Script inputs #
   #################
   GFS_IndicatorsTool>get_LCY.yml@115|population_polygons:
-    type: File
+    type: File?
     label: Polygons of populations
     doc: Path to geojson file storing polygons of populations.
     default: /userdata/population_polygons.geojson
 
   GFS_IndicatorsTool>get_LCY.yml@115|res:
-    type: float
+    type: float?
     label: Resolution of the land cover map
     doc: Desired resolution for land cover map, will be obtained via resampling. To be specified in decimal degrees (0.01 ~ 1 km). Minimal value 0.003 (~300m).
     default: 0.01
 
   GFS_IndicatorsTool>get_LCY.yml@115|lc_classes:
-    type: int[]
+    type: int[]?
     label: Landcover classes
     doc: List of landcover class identifiers to be extract (for identifiers see https://savs.eumetsat.int/html/images/landcover_legend.png)
     default:
@@ -50,7 +50,7 @@ inputs:
     - 140
 
   GFS_IndicatorsTool>get_LCY.yml@115|yoi:
-    type: int[]
+    type: int[]?
     label: Years of interest
     doc: List of years for which landcover should be extracted (maximum range 1992 - 2020).
     default:
@@ -149,17 +149,19 @@ steps:
             
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-            "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
+              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
             if [[ ! -d "$unpackedFolder" ]]; then
-              mkdir -p "$unpackedFolder"
-              tar -xf "$unpackedFolder.tar.gz" -C "$unpackedFolder" --use-compress-program=pigz
+              # remove the env to force using the conda-pack
+              mamba env remove -y -n "$condaEnvName"
+              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
+                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             fi
             echo "Done."
           }
           export -f exportEnv
           
-          bash -c 'exportEnv "rbase" ""'
+
           
       inputs:
         envFolderWrite:
@@ -183,7 +185,7 @@ steps:
     out: [envFolder]
 
   GFS_IndicatorsTool>get_LCY.yml@115:
-    run: ../../../../tools/get_LCY.cwl
+    run: ../../../../tools/GFS_IndicatorsTool/get_LCY.cwl
     in:
       population_polygons: GFS_IndicatorsTool>get_LCY.yml@115|population_polygons
       res: GFS_IndicatorsTool>get_LCY.yml@115|res

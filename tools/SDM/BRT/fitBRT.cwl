@@ -24,6 +24,16 @@ requirements:
           if (!outputFiles || outputFiles.length === 0) return null;
           var value = JSON.parse(outputFiles[0].contents)[key]
           if (value === undefined) return null
+
+          if(inputs.runFolder != null) {
+            if(Array.isArray(value)) {
+              value = value.map(function (item) {
+                return item.replace(inputs.runFolder.path, runtime.outdir);
+              });
+            } else {
+              value = value.replace(inputs.runFolder.path, runtime.outdir);
+            }
+          }
           return value;
         }
   InplaceUpdateRequirement:
@@ -35,16 +45,19 @@ requirements:
       ${
         return [
           {
-            entry: inputs.envFolder,
-            entryname: "/conda-envs",
-            writable: inputs.envFolderWritable
-          },
-          {
             entry: { "class": "Directory", "basename": "conda-env-yml", "listing": [] },
             entryname: "/conda-env-yml",
             writable: true
           }
         ].concat(
+          inputs.envFolder
+            ? {
+                entry: inputs.envFolder,
+                entryname: "/conda-envs",
+                writable: inputs.envFolderWritable
+              }
+            : []
+        ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
             : []
@@ -64,7 +77,7 @@ requirements:
     dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:cwl-poc
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
-    #     $include: ../runners/cwl/conda-cwl-dockerfile
+    #     $include: ../runners/cwl/conda-cwl.dockerfile
 
   EnvVarRequirement:
     envDef:
@@ -100,7 +113,7 @@ arguments:
     cat $OUTPUT_LOCATION/input.json | tee -a $log
 
     source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "" \
-      "" /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
+    "" /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
 
     julia \
       $SCRIPT_STUBS_LOCATION/system/scriptWrapper.jl \
@@ -109,6 +122,11 @@ arguments:
       2>&1 | tee -a $log
     scriptExitCode=\${PIPESTATUS[0]}
     echo "Script exited with code $scriptExitCode" | tee -a $log
+  
+    if [[ "$OUTPUT_LOCATION" != "$(runtime.outdir)" ]]; then
+      echo "Copying results from run folder to CWL output directory" | tee -a $log
+      cp -a "$OUTPUT_LOCATION"/. "$(runtime.outdir)"/
+    fi
 
     source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh  /conda-envs >> "$log" 2>&1
 
@@ -119,13 +137,13 @@ inputs:
   # Script inputs #
   #################
   occurrence:
-    type: File
+    type: File?
     label: occurrence coordinate dataframe
     doc: Dataframe, presence data.
     default: /output/data/getObservations/9f7d1cc148464cd0517e01c67af0ab5b/obs_data.tsv
 
   predictors:
-    type: File[]
+    type: File[]?
     label: geotiff predictor paths
     doc: paths to geotiff
     default: /output/foo/bar
@@ -184,25 +202,25 @@ inputs:
             type: float[]?
 
   water_mask:
-    type: File[]
+    type: File[]?
     label: water mask
     doc: landcover layer containing open water pixels
     default: /output/foo/bar
 
   max_candidate_pseudoabsences:
-    type: int
+    type: int?
     label: max candidate pseudoabsences
     doc: helps w large rasters
     default: 100000
 
   pseudoabsence_buffer:
-    type: float
+    type: float?
     label: pseudoabsence buffer
     doc: minimum distance to a presence in kilometers
     default: 10.0
 
   pa_proportion:
-    type: float
+    type: float?
     label: Pseudoabsence proportion
     doc: The number of PAs, given by the proportion of the total occurrences to use.
     default: 2.4
@@ -214,11 +232,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   envFolderWriteable:
     type: boolean
@@ -264,7 +279,7 @@ outputs:
     label: predicted sdm
     doc: map of predicted occurrence probability
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -278,7 +293,7 @@ outputs:
     label: sdm uncertainty
     doc: map of relative uncertainty
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -292,7 +307,7 @@ outputs:
     label: fit statistics
     doc: JSON of model fit stats and threshold
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -306,7 +321,7 @@ outputs:
     label: range
     doc: range map thresholded at todo
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -320,7 +335,7 @@ outputs:
     label: pseudoabsences
     doc: pseudoabsence coordinates
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -334,7 +349,7 @@ outputs:
     label: env_corners
     doc: location of presences and pseudoabsences in environment space
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -348,7 +363,7 @@ outputs:
     label: tuning curve
     doc: tuning curve
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -361,4 +376,4 @@ outputs:
   logs:
     type: File
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'logs.txt')"
+      glob: "logs.txt"

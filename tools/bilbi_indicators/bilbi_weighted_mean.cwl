@@ -29,6 +29,16 @@ requirements:
           if (!outputFiles || outputFiles.length === 0) return null;
           var value = JSON.parse(outputFiles[0].contents)[key]
           if (value === undefined) return null
+
+          if(inputs.runFolder != null) {
+            if(Array.isArray(value)) {
+              value = value.map(function (item) {
+                return item.replace(inputs.runFolder.path, runtime.outdir);
+              });
+            } else {
+              value = value.replace(inputs.runFolder.path, runtime.outdir);
+            }
+          }
           return value;
         }
   InplaceUpdateRequirement:
@@ -40,16 +50,19 @@ requirements:
       ${
         return [
           {
-            entry: inputs.envFolder,
-            entryname: "/conda-envs",
-            writable: inputs.envFolderWritable
-          },
-          {
             entry: { "class": "Directory", "basename": "conda-env-yml", "listing": [] },
             entryname: "/conda-env-yml",
             writable: true
           }
         ].concat(
+          inputs.envFolder
+            ? {
+                entry: inputs.envFolder,
+                entryname: "/conda-envs",
+                writable: inputs.envFolderWritable
+              }
+            : []
+        ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
             : []
@@ -69,7 +82,7 @@ requirements:
     dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:cwl-poc
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
-    #     $include: ../runners/cwl/conda-cwl-dockerfile
+    #     $include: ../runners/cwl/conda-cwl.dockerfile
 
   EnvVarRequirement:
     envDef:
@@ -101,11 +114,10 @@ arguments:
     cat $OUTPUT_LOCATION/input.json | tee -a $log
 
     source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "bilbi_indicators__bilbi_weighted_mean" \
-      "
-        channels: [conda-forge, r]
-        dependencies: [r-rjson, r-terra, r-tidyverse]
-        name: bilbi_indicators__bilbi_weighted_mean
-      " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
+    "channels: [conda-forge, r]
+    dependencies: [r-rjson, r-terra, r-tidyverse]
+    name: bilbi_indicators__bilbi_weighted_mean
+    " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
 
     Rscript \
       $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \
@@ -114,6 +126,11 @@ arguments:
       2>&1 | tee -a $log
     scriptExitCode=\${PIPESTATUS[0]}
     echo "Script exited with code $scriptExitCode" | tee -a $log
+  
+    if [[ "$OUTPUT_LOCATION" != "$(runtime.outdir)" ]]; then
+      echo "Copying results from run folder to CWL output directory" | tee -a $log
+      cp -a "$OUTPUT_LOCATION"/. "$(runtime.outdir)"/
+    fi
 
     source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh bilbi_indicators__bilbi_weighted_mean /conda-envs >> "$log" 2>&1
 
@@ -124,19 +141,19 @@ inputs:
   # Script inputs #
   #################
   bilbi_indicator:
-    type: File[]
+    type: File[]?
     label: BILBI indicator tif file
     doc: >
       Tiff file of the BILBI CSIRO indicator of choice. Can be Protected Area Representativeness and Connectedness (PARC), Bioclimatic
       Ecosystem Resilience Index (BERI), or the Biodiversity Habitat Index (BHI)
 
   bilbi_denominator:
-    type: File[]
+    type: File[]?
     label: BILBI denominator tif file
     doc: Tiff file to calculate the weighted geometric mean
 
   study_area:
-    type: File
+    type: File?
     label: Study area
     doc: Study area over which to calculate the weighted geometric mean value for the indicator
 
@@ -147,11 +164,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   envFolderWriteable:
     type: boolean
@@ -197,7 +211,7 @@ outputs:
     label: Indicator summary
     doc: Weighted geometric mean of the indicator over the time period of interest in the study area
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -211,7 +225,7 @@ outputs:
     label: Time series plot
     doc: Plot of the geometric mean of the indicator over time in the study area of interest
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -224,4 +238,4 @@ outputs:
   logs:
     type: File
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'logs.txt')"
+      glob: "logs.txt"

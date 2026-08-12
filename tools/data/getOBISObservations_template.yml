@@ -1,8 +1,8 @@
-study_area:  # type 'File'
+study_area:  # type 'File' (optional)
     class: File
     path: a/file/path
-start_date: a_string  # type 'string'
-species_name:  # array of type 'string'
+start_date: a_string  # type 'string' (optional)
+species_name:  # array of type 'string' (optional)
   - Stenella coeruleoalba
   - Thunnus thynnus
 
@@ -13,17 +13,16 @@ scriptPath: data/getOBISObservations.R  # default value of type 'string'.
 runFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-min_depth: 0  # type 'int'
-max_depth: 0  # type 'int'
+min_depth: 0  # type 'int' (optional)
+max_depth: 0  # type 'int' (optional)
 environment:  # type 'File' (optional)
     class: File
     path: a/file/path
 envFolderWriteable: true  # default value of type 'boolean'.
-envFolder:  # default value of type 'Directory'.
+envFolder:  # type 'Directory' (optional)
     class: Directory
-    path: file:///home/jean-michel/code/cwl-temp/export/tools/data/envs
-
-end_date: a_string  # type 'string'
+    path: a/directory/path
+end_date: a_string  # type 'string' (optional)
 condaPackURL: 
     https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
 bbox:  # "file:///home/jean-michel/code/cwl-temp/export/tools/data/getOBISObservations.cwl#bbox/bboxCRS" record type.

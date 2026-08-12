@@ -27,12 +27,12 @@ inputs:
   # Script inputs #
   #################
   data>loadFromStac.yml@25|t0:
-    type: string
+    type: string?
     label: Start date (optional)
     doc: Start date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if extracting items by name.
 
   data>loadFromStac.yml@25|t1:
-    type: string
+    type: string?
     label: End date (optional)
     doc: End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if extracting items by name.
 
@@ -71,13 +71,13 @@ inputs:
     - variance
 
   data>loadFromStac.yml@25|stac_url:
-    type: string
+    type: string?
     label: STAC URL
     doc: URL of the STAC catalog.
     default: https://stac.geobon.org/
 
   data>loadFromStac.yml@25|collections_items:
-    type: string[]
+    type: string[]?
     label: STAC collection items
     doc: Vector of strings. To pull specific collection items, input the collection name followed by '|' followed by item id (e.g. "chelsa-clim|bio1"). To extract a whole collection, type the collection name only (e.g. "chelsa-clim"). To pull collection items by date, write the collection name and provide a start date, end date, and temporal resolution.
     default:
@@ -85,7 +85,7 @@ inputs:
     - chelsa-clim|bio2
 
   data>loadFromStac.yml@25|temporal_res:
-    type: string
+    type: string?
     label: Temporal resolution (optional)
     doc: Temporal resolution to use when querying STAC items by date, in the format ("P", time interval, and time unit, e.g. "P1Y" is yearly, "P1M" is montly, and "P1D" is daily). Leave blank if not querying by date. If the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated with the aggregation method chosen below.
 
@@ -179,7 +179,7 @@ inputs:
             type: float[]?
 
   data>loadFromStac.yml@25|spatial_res:
-    type: float
+    type: float?
     label: Spatial resolution (optional)
     doc: >
       Integer, spatial resolution of the rasters in the same units as the coordinate reference system (meters for projected reference systems and degrees for reference systems in lat long). 
@@ -277,11 +277,13 @@ steps:
             
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-            "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
+              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
             if [[ ! -d "$unpackedFolder" ]]; then
-              mkdir -p "$unpackedFolder"
-              tar -xf "$unpackedFolder.tar.gz" -C "$unpackedFolder" --use-compress-program=pigz
+              # remove the env to force using the conda-pack
+              mamba env remove -y -n "$condaEnvName"
+              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
+                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             fi
             echo "Done."
           }
@@ -327,7 +329,7 @@ steps:
     out: [envFolder]
 
   zonal_statistics>zonal_stats.yml@4:
-    run: ../tools/zonal_stats.cwl
+    run: ../tools/zonal_statistics/zonal_stats.cwl
     in:
       rasters: data>loadFromStac.yml@25/rasters
       bbox_crs: pipeline@27
@@ -346,7 +348,7 @@ steps:
 
 
   data>loadFromStac.yml@25:
-    run: ../tools/loadFromStac.cwl
+    run: ../tools/data/loadFromStac.cwl
     in:
       bbox_crs: pipeline@27
       stac_url: data>loadFromStac.yml@25|stac_url
@@ -371,7 +373,7 @@ steps:
 
 
   data>load_polygons.yml@28:
-    run: ../tools/load_polygons.cwl
+    run: ../tools/data/load_polygons.cwl
     in:
       polygon_type: data>load_polygons.yml@28|polygon_type
       country_region_bbox: pipeline@27

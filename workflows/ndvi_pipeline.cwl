@@ -98,13 +98,13 @@ inputs:
             type: float[]?
 
   NDVI>calculateNDVI.yml@199|start_date:
-    type: string
+    type: string?
     label: Start date
     doc: Start date for summarizing vegetation index
     default: '2024-01-01'
 
   NDVI>calculateNDVI.yml@199|spatial_resolution:
-    type: float
+    type: float?
     label: Spatial resolution
     doc: >
       Spatial resolution of the raster for plotting, leave blank to have the original spatial resolution of the layer (10m x 10m). If using a projected CRS, the resolution should be in meters. If using an unprojected CRS (e.g. EPSG:4326), this must be in degrees (0.008 degrees is ~1km at the equator).
@@ -125,7 +125,7 @@ inputs:
     default: mean
 
   NDVI>calculateNDVI.yml@199|end_date:
-    type: string
+    type: string?
     label: End date
     doc: End date for summarizing vegetation index
     default: '2024-01-31'
@@ -218,11 +218,13 @@ steps:
             
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-            "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
+              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
             if [[ ! -d "$unpackedFolder" ]]; then
-              mkdir -p "$unpackedFolder"
-              tar -xf "$unpackedFolder.tar.gz" -C "$unpackedFolder" --use-compress-program=pigz
+              # remove the env to force using the conda-pack
+              mamba env remove -y -n "$condaEnvName"
+              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
+                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             fi
             echo "Done."
           }
@@ -262,7 +264,7 @@ steps:
     out: [envFolder]
 
   NDVI>calculateNDVI.yml@199:
-    run: ../tools/calculateNDVI.cwl
+    run: ../tools/NDVI/calculateNDVI.cwl
     in:
       bbox_crs: pipeline@210
       study_area_polygon: data>load_polygons.yml@211/polygon
@@ -283,7 +285,7 @@ steps:
 
 
   data>load_polygons.yml@211:
-    run: ../tools/load_polygons.cwl
+    run: ../tools/data/load_polygons.cwl
     in:
       polygon_type: data>load_polygons.yml@211|polygon_type
       country_region_bbox: pipeline@210

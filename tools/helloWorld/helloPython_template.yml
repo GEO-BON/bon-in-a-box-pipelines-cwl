@@ -21,7 +21,7 @@ study_area_bbox:  # "file:///home/jean-michel/code/cwl-temp/export/tools/helloWo
           - 0.1
         ISO3: a_string  # type 'string' (optional)
         englishName: a_string  # type 'string' (optional)
-some_int: 3  # default value of type 'int'.
+some_int: 3  # default value of type 'int'. (optional)
 scripts_root:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
@@ -33,9 +33,8 @@ environment:  # type 'File' (optional)
     class: File
     path: a/file/path
 envFolderWriteable: true  # default value of type 'boolean'.
-envFolder:  # default value of type 'Directory'.
+envFolder:  # type 'Directory' (optional)
     class: Directory
-    path: file:///home/jean-michel/code/cwl-temp/export/tools/helloWorld/envs
-
+    path: a/directory/path
 condaPackURL: 
     https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.

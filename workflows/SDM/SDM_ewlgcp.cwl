@@ -28,13 +28,13 @@ inputs:
   # Script inputs #
   #################
   data>loadFromStac.yml@140|stac_url:
-    type: string
+    type: string?
     label: STAC URL
     doc: URL of the STAC catalog to pull predictor layers.
     default: https://stac.geobon.org/
 
   data>loadFromStac.yml@140|collections_items:
-    type: string[]
+    type: string[]?
     label: STAC collection items
     doc: Collection name of STAC layers followed by '|' followed by item id
     default:
@@ -59,14 +59,14 @@ inputs:
     default: plants
 
   pipeline@121:
-    type: string[]
+    type: string[]?
     label: Taxa list
     doc: Array of taxa values
     default:
     - Acer saccharum
 
   data>loadFromStac.yml@140|study_area:
-    type: File
+    type: File?
     label: Study area
     doc: Polygon of study area used to crop output layers
 
@@ -83,13 +83,13 @@ inputs:
     default: weighted_raster
 
   SDM>selectBackground.yml@40|n_background:
-    type: int
+    type: int?
     label: Number of background points
     doc: Number of background points
     default: 100000
 
   data>getGBIFObservations>getGBIFObservations.yml@139|min_year:
-    type: int
+    type: int?
     label: minimum year
     doc: Min year observations wanted
     default: 2010
@@ -148,19 +148,19 @@ inputs:
             type: float[]?
 
   data>getGBIFObservations>getGBIFObservations.yml@139|max_year:
-    type: int
+    type: int?
     label: maximum year
     doc: Max year observations wanted
     default: 2024
 
   pipeline@46:
-    type: int
+    type: int?
     label: Number of blocks
     doc: Number of blocks (for crossvalidation method, currently ignored)
     default: 2
 
   pipeline@128:
-    type: float
+    type: float?
     label: Spatial resolution
     doc: >
       Integer, spatial resolution of the rasters in the same units as the coordinate reference system (meters for projected reference systems and degrees for reference systems in lat long). 
@@ -258,11 +258,13 @@ steps:
             
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-            "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
+              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
             if [[ ! -d "$unpackedFolder" ]]; then
-              mkdir -p "$unpackedFolder"
-              tar -xf "$unpackedFolder.tar.gz" -C "$unpackedFolder" --use-compress-program=pigz
+              # remove the env to force using the conda-pack
+              mamba env remove -y -n "$condaEnvName"
+              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
+                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             fi
             echo "Done."
           }
@@ -288,8 +290,6 @@ steps:
           dependencies: [r-terra, r-rjson, r-dplyr, r-gdalcubes]
           name: SDM__removeCollinearity
           "'
-          
-          bash -c 'exportEnv "rbase" ""'
           
           bash -c 'exportEnv "data__getGBIFObservations__getGBIFObservations" "channels: [conda-forge]
           dependencies: [pygbif, pandas, pyproj]
@@ -330,7 +330,7 @@ steps:
     out: [envFolder]
 
   filtering>cleanCoordinates.yml@34:
-    run: ../../tools/cleanCoordinates.cwl
+    run: ../../tools/filtering/cleanCoordinates.cwl
     in:
       presence: data>getGBIFObservations>getGBIFObservations.yml@139/observations_file
       predictors: SDM>removeCollinearity.yml@97/rasters_selected
@@ -349,7 +349,7 @@ steps:
 
 
   SDM>selectBackground.yml@40:
-    run: ../../tools/selectBackground.cwl
+    run: ../../tools/SDM/selectBackground.cwl
     in:
       presence: filtering>cleanCoordinates.yml@34/clean_presence
       extent: SDM>studyExtent.yml@104/study_extent
@@ -370,7 +370,7 @@ steps:
 
 
   SDM>setupDataSdm.yml@44:
-    run: ../../tools/setupDataSdm.cwl
+    run: ../../tools/SDM/setupDataSdm.cwl
     in:
       presence: filtering>cleanCoordinates.yml@34/clean_presence
       background: SDM>selectBackground.yml@40/background
@@ -392,7 +392,7 @@ steps:
 
 
   SDM>removeCollinearity.yml@97:
-    run: ../../tools/removeCollinearity.cwl
+    run: ../../tools/SDM/removeCollinearity.cwl
     in:
       rasters: data>loadFromStac.yml@140/rasters
       method: { default: vif.cor }
@@ -413,7 +413,7 @@ steps:
 
 
   SDM>studyExtent.yml@104:
-    run: ../../tools/studyExtent.cwl
+    run: ../../tools/SDM/studyExtent.cwl
     in:
       presence: filtering>cleanCoordinates.yml@34/clean_presence
       bbox_crs: pipeline@149
@@ -432,7 +432,7 @@ steps:
 
 
   data>getGBIFObservations>getGBIFObservations.yml@139:
-    run: ../../tools/getGBIFObservations.cwl
+    run: ../../tools/data/getGBIFObservations/getGBIFObservations.cwl
     in:
       taxa: pipeline@121
       bbox_crs: pipeline@149
@@ -451,7 +451,7 @@ steps:
 
 
   data>loadFromStac.yml@140:
-    run: ../../tools/loadFromStac.cwl
+    run: ../../tools/data/loadFromStac.cwl
     in:
       bbox_crs: pipeline@149
       stac_url: data>loadFromStac.yml@140|stac_url
@@ -476,7 +476,7 @@ steps:
 
 
   data>GBIFHeatmapFromSTAC.yml@145:
-    run: ../../tools/GBIFHeatmapFromSTAC.cwl
+    run: ../../tools/data/GBIFHeatmapFromSTAC.cwl
     in:
       taxa: data>GBIFHeatmapFromSTAC.yml@145|taxa
       bbox_crs: pipeline@149
@@ -494,7 +494,7 @@ steps:
 
 
   SDM>runewlgcp.yml@151:
-    run: ../../tools/runewlgcp.cwl
+    run: ../../tools/SDM/runewlgcp.cwl
     in:
       presence_background: SDM>setupDataSdm.yml@44/presence_background
       predictors: SDM>removeCollinearity.yml@97/rasters_selected

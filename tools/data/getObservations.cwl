@@ -25,6 +25,16 @@ requirements:
           if (!outputFiles || outputFiles.length === 0) return null;
           var value = JSON.parse(outputFiles[0].contents)[key]
           if (value === undefined) return null
+
+          if(inputs.runFolder != null) {
+            if(Array.isArray(value)) {
+              value = value.map(function (item) {
+                return item.replace(inputs.runFolder.path, runtime.outdir);
+              });
+            } else {
+              value = value.replace(inputs.runFolder.path, runtime.outdir);
+            }
+          }
           return value;
         }
   InplaceUpdateRequirement:
@@ -36,16 +46,19 @@ requirements:
       ${
         return [
           {
-            entry: inputs.envFolder,
-            entryname: "/conda-envs",
-            writable: inputs.envFolderWritable
-          },
-          {
             entry: { "class": "Directory", "basename": "conda-env-yml", "listing": [] },
             entryname: "/conda-env-yml",
             writable: true
           }
         ].concat(
+          inputs.envFolder
+            ? {
+                entry: inputs.envFolder,
+                entryname: "/conda-envs",
+                writable: inputs.envFolderWritable
+              }
+            : []
+        ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
             : []
@@ -65,7 +78,7 @@ requirements:
     dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:cwl-poc
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
-    #     $include: ../runners/cwl/conda-cwl-dockerfile
+    #     $include: ../runners/cwl/conda-cwl.dockerfile
 
   EnvVarRequirement:
     envDef:
@@ -103,7 +116,7 @@ arguments:
     cat $OUTPUT_LOCATION/input.json | tee -a $log
 
     source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "rbase" \
-      "" /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
+    "" /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
 
     Rscript \
       $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \
@@ -112,6 +125,11 @@ arguments:
       2>&1 | tee -a $log
     scriptExitCode=\${PIPESTATUS[0]}
     echo "Script exited with code $scriptExitCode" | tee -a $log
+  
+    if [[ "$OUTPUT_LOCATION" != "$(runtime.outdir)" ]]; then
+      echo "Copying results from run folder to CWL output directory" | tee -a $log
+      cp -a "$OUTPUT_LOCATION"/. "$(runtime.outdir)"/
+    fi
 
     source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh rbase /conda-envs >> "$log" 2>&1
 
@@ -122,30 +140,30 @@ inputs:
   # Script inputs #
   #################
   species:
-    type: string
+    type: string?
     label: species names
     doc: Scientific name of the species
     default: Glyptemys insculpta
 
   country:
-    type: string
+    type: string?
     label: country
     doc: Optional string, country to retrieve the occurrences from. Leave blank to ignore administrative boundaries.
 
   year_start:
-    type: int
+    type: int?
     label: start year
     doc: Integer, 4 digit year, start date to retrieve occurrences
     default: 1990
 
   year_end:
-    type: int
+    type: int?
     label: end year
     doc: Integer, 4 digit year, end date to retrieve occurrences
     default: 2020
 
   bbox:
-    type: float[]
+    type: float[]?
     label: bbox
     doc: Vector of float, bbox coordinates of the bbox in the order xmin, ymin, xmax, ymax
     default:
@@ -155,7 +173,7 @@ inputs:
     - 1511916
 
   proj:
-    type: string
+    type: string?
     label: projection system
     doc: String, projection system of the coordinates in bbox
     default: EPSG:6623
@@ -172,13 +190,13 @@ inputs:
     default: present
 
   limit:
-    type: int
+    type: int?
     label: limit
     doc: Integer, maximum number of observations to retrieve from GBIF database (upper limit 100000)
     default: 2000
 
   bbox_buffer:
-    type: int
+    type: int?
     label: bbox buffer
     doc: Interger, width of the buffer around the bbox containing the presence points.
     default: 0
@@ -190,11 +208,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   envFolderWriteable:
     type: boolean
@@ -240,7 +255,7 @@ outputs:
     label: number of presence points
     doc: Integer, number of presence points retrieved
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -254,7 +269,7 @@ outputs:
     label: presence
     doc: Table, observations retrieved from GBIF database
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -268,7 +283,7 @@ outputs:
     label: bbox
     doc: Vector of float, bbox coordinates of the extent in the order xmin, ymin, xmax, ymax
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -285,4 +300,4 @@ outputs:
   logs:
     type: File
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'logs.txt')"
+      glob: "logs.txt"
