@@ -32,31 +32,9 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build and inspect classes
+      - name: Inspect runtime dependencies
         working-directory: pipeline-engine/script-server
-        run: |
-          ./gradlew classes
-
-          echo "Current directory:"
-          pwd
-
-          echo "Build directory:"
-          ls -la build/
-
-          echo "CWL classes:"
-          find build/classes/kotlin/main/org/geobon/cwl -type f -print
-
-          echo "Java:"
-          java -version
-
-          echo "JAVA_HOME:"
-          echo "$JAVA_HOME"
-
-          echo "Java executable:"
-          which java
-
-          echo "Trying to load CWLExportMain:"
-          java -cp "$(pwd)/build/classes/kotlin/main" org.geobon.cwl.CWLExportMain
+        run: ./gradlew dependencies --configuration runtimeClasspath
 
       - name: Run exportCWL
         working-directory: pipeline-engine/script-server
