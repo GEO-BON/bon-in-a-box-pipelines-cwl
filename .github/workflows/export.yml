@@ -31,6 +31,11 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Check CWL compiled classes
+        working-directory: pipeline-engine/script-server
+        run: |
+          find build/classes -name 'CWLExportMain*' -print
+
       - name: Run exportCWL
         working-directory: pipeline-engine/script-server
         env:
@@ -39,4 +44,4 @@ jobs:
           SCRIPT_STUBS_LOCATION: ${{ github.workspace }}/pipeline-engine/script-stubs
           USERDATA_LOCATION: ${{ github.workspace }}/pipeline-engine/pipeline-repo/userdata
           SCRIPT_LOCATION: ${{ github.workspace }}/pipeline-engine/pipeline-repo/scripts
-        run: ./gradlew exportCWL --stacktrace --args="${{ github.workspace }}"
+        run: ./gradlew exportCWL --args="${{ github.workspace }}"
