@@ -1,10 +1,10 @@
-years: 2025  # default value of type 'int'.
-year_int: 20  # default value of type 'int'.
-time_series: true  # default value of type 'boolean'.
-study_area_polygon:  # array of type 'File'
+years: 2025  # default value of type 'int'. (optional)
+year_int: 20  # default value of type 'int'. (optional)
+time_series: true  # default value of type 'boolean'. (optional)
+study_area_polygon:  # array of type 'File' (optional)
   - class: File
     path: a/file/path
-start_year: 1980  # default value of type 'int'.
+start_year: 1980  # default value of type 'int'. (optional)
 scripts_root:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
@@ -12,25 +12,23 @@ scriptPath: protconn_analysis/protconn_analysis.R  # default value of type 'stri
 runFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-protected_area_polygon:  # array of type 'File'
+protected_area_polygon:  # array of type 'File' (optional)
   - class: File
     path: a/file/path
-pa_size_threshold: 1000  # default value of type 'float'.
-include_na_dates: true  # default value of type 'boolean'.
+pa_size_threshold: 1000  # default value of type 'float'. (optional)
+include_na_dates: true  # default value of type 'boolean'. (optional)
 environment:  # type 'File' (optional)
     class: File
     path: a/file/path
 envFolderWriteable: true  # default value of type 'boolean'.
-envFolder:  # default value of type 'Directory'.
+envFolder:  # type 'Directory' (optional)
     class: Directory
-    path: 
-        file:///home/jean-michel/code/cwl-temp/export/tools/protconn_analysis/envs
-
-distance_threshold:  # array of type 'int'
+    path: a/directory/path
+distance_threshold:  # array of type 'int' (optional)
   - 1000
   - 10000
 
-date_column_name: a_string  # type 'string'
+date_column_name: a_string  # type 'string' (optional)
 crs:  # "file:///home/jean-michel/code/cwl-temp/export/tools/protconn_analysis/protconn_analysis.cwl#crs/bboxCRS" record type.
     region:  # "file:///home/jean-michel/code/cwl-temp/export/tools/protconn_analysis/protconn_analysis.cwl#crs/bboxCRS/region/regionDefinition" record type.
         bboxWGS84:  # array of type 'float' (optional)
@@ -56,4 +54,4 @@ crs:  # "file:///home/jean-michel/code/cwl-temp/export/tools/protconn_analysis/p
         englishName: a_string  # type 'string' (optional)
 condaPackURL: 
     https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
-buffer: 0.1  # type 'float'
+buffer: 0.1  # type 'float' (optional)

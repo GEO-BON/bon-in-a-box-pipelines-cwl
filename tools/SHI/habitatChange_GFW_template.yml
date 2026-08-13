@@ -1,11 +1,11 @@
-time_step: 10  # default value of type 'int'.
-t_n: 2020  # default value of type 'int'.
-t_0: 2000  # default value of type 'int'.
-species:  # array of type 'string'
+time_step: 10  # default value of type 'int'. (optional)
+t_n: 2020  # default value of type 'int'. (optional)
+t_0: 2000  # default value of type 'int'. (optional)
+species:  # array of type 'string' (optional)
   - Myrmecophaga tridactyla
 
-spat_res: 1000  # default value of type 'float'.
-sf_bbox:  # array of type 'File'
+spat_res: 1000  # default value of type 'float'. (optional)
+sf_bbox:  # array of type 'File' (optional)
   - /scripts/SHI/Myrmecophaga tridactyla_range.gpkg
 
 scripts_root:  # type 'Directory' (optional)
@@ -15,23 +15,22 @@ scriptPath: SHI/habitatChange_GFW.R  # default value of type 'string'.
 runFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-r_area_of_habitat:  # array of type 'File'
+r_area_of_habitat:  # array of type 'File' (optional)
   - /scripts/SHI/myrmecophaga_tridactyla.tif
 
-min_forest:  # array of type 'int'
+min_forest:  # array of type 'int' (optional)
   - 0
 
-max_forest:  # array of type 'int'
+max_forest:  # array of type 'int' (optional)
   - 100
 
 environment:  # type 'File' (optional)
     class: File
     path: a/file/path
 envFolderWriteable: true  # default value of type 'boolean'.
-envFolder:  # default value of type 'Directory'.
+envFolder:  # type 'Directory' (optional)
     class: Directory
-    path: file:///home/jean-michel/code/cwl-temp/export/tools/SHI/envs
-
+    path: a/directory/path
 crs:  # "file:///home/jean-michel/code/cwl-temp/export/tools/SHI/habitatChange_GFW.cwl#crs/bboxCRS" record type.
     region:  # "file:///home/jean-michel/code/cwl-temp/export/tools/SHI/habitatChange_GFW.cwl#crs/bboxCRS/region/regionDefinition" record type.
         bboxWGS84:  # array of type 'float' (optional)

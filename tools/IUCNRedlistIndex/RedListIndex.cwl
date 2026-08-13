@@ -26,6 +26,16 @@ requirements:
           if (!outputFiles || outputFiles.length === 0) return null;
           var value = JSON.parse(outputFiles[0].contents)[key]
           if (value === undefined) return null
+
+          if(inputs.runFolder != null) {
+            if(Array.isArray(value)) {
+              value = value.map(function (item) {
+                return item.replace(inputs.runFolder.path, runtime.outdir);
+              });
+            } else {
+              value = value.replace(inputs.runFolder.path, runtime.outdir);
+            }
+          }
           return value;
         }
   InplaceUpdateRequirement:
@@ -37,16 +47,19 @@ requirements:
       ${
         return [
           {
-            entry: inputs.envFolder,
-            entryname: "/conda-envs",
-            writable: inputs.envFolderWritable
-          },
-          {
             entry: { "class": "Directory", "basename": "conda-env-yml", "listing": [] },
             entryname: "/conda-env-yml",
             writable: true
           }
         ].concat(
+          inputs.envFolder
+            ? {
+                entry: inputs.envFolder,
+                entryname: "/conda-envs",
+                writable: inputs.envFolderWritable
+              }
+            : []
+        ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
             : []
@@ -66,7 +79,7 @@ requirements:
     dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:cwl-poc
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
-    #     $include: ../runners/cwl/conda-cwl-dockerfile
+    #     $include: ../runners/cwl/conda-cwl.dockerfile
 
   EnvVarRequirement:
     envDef:
@@ -103,18 +116,17 @@ arguments:
     cat $OUTPUT_LOCATION/input.json | tee -a $log
 
     source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "IUCNRedlistIndex__RedListIndex" \
-      "
-        channels: [conda-forge, r]
-        dependencies: [r-magrittr, r-data.table, r-reshape2, r-dplyr, r-plyr, r-ggplot2, r-tibble,
-          r-pbapply, r-rredlist, r-plyr, r-gdistance, r-BAT, r-ape, r-geometry, r-magic, r-hypervolume,
-          r-ks, r-mclust, r-mvtnorm, r-pracma, r-fastcluster, r-pdist, r-palmerpenguins, r-caret,
-          r-recipes, r-timeDate, r-gower, r-hardhat, r-ipred, r-prodlim, r-lava, r-future.apply,
-          r-future, r-globals, r-listenv, r-parallelly, r-ModelMetrics, r-pROC, r-nls2, r-proto,
-          r-vegan, r-permute, r-phytools, r-combinat, r-clusterGeneration, r-DEoptim, r-expm,
-          r-optimParallel, r-phangorn, r-fastmatch, r-scatterplot3d, r-predicts, r-coda, r-mnormt,
-          r-numDeriv, r-quadprog, r-dismo, r-geosphere, r-rjson]
-        name: IUCNRedlistIndex__RedListIndex
-      " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
+    "channels: [conda-forge, r]
+    dependencies: [r-magrittr, r-data.table, r-reshape2, r-dplyr, r-plyr, r-ggplot2, r-tibble,
+      r-pbapply, r-rredlist, r-plyr, r-gdistance, r-BAT, r-ape, r-geometry, r-magic, r-hypervolume,
+      r-ks, r-mclust, r-mvtnorm, r-pracma, r-fastcluster, r-pdist, r-palmerpenguins, r-caret,
+      r-recipes, r-timeDate, r-gower, r-hardhat, r-ipred, r-prodlim, r-lava, r-future.apply,
+      r-future, r-globals, r-listenv, r-parallelly, r-ModelMetrics, r-pROC, r-nls2, r-proto,
+      r-vegan, r-permute, r-phytools, r-combinat, r-clusterGeneration, r-DEoptim, r-expm,
+      r-optimParallel, r-phangorn, r-fastmatch, r-scatterplot3d, r-predicts, r-coda, r-mnormt,
+      r-numDeriv, r-quadprog, r-dismo, r-geosphere, r-rjson]
+    name: IUCNRedlistIndex__RedListIndex
+    " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
 
     Rscript \
       $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \
@@ -123,6 +135,11 @@ arguments:
       2>&1 | tee -a $log
     scriptExitCode=\${PIPESTATUS[0]}
     echo "Script exited with code $scriptExitCode" | tee -a $log
+  
+    if [[ "$OUTPUT_LOCATION" != "$(runtime.outdir)" ]]; then
+      echo "Copying results from run folder to CWL output directory" | tee -a $log
+      cp -a "$OUTPUT_LOCATION"/. "$(runtime.outdir)"/
+    fi
 
     source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh IUCNRedlistIndex__RedListIndex /conda-envs >> "$log" 2>&1
 
@@ -133,7 +150,7 @@ inputs:
   # Script inputs #
   #################
   history_assessment_data:
-    type: File
+    type: File?
     label: History assessment data
     doc: Dataset that contains the list of species and their historical threat category assessments.
     default: scripts/RedListIndex/input/iucn_history_assessment_data.csv
@@ -158,34 +175,34 @@ inputs:
             type: float[]?
 
   taxonomic_group:
-    type: string[]
+    type: string[]?
     label: Taxonomic group
     doc: Name of taxonomic group of interest
 
   species_use:
-    type: string[]
+    type: string[]?
     label: Species use(s) or trade(s)
     doc: The species use or trade selected
 
   threat:
-    type: string[]
+    type: string[]?
     label: Species threat(s)
     doc: The threat category selected
 
   sp_col:
-    type: string
+    type: string?
     label: Species name column
     doc: Name of the column in 'history_assessment_data' that contains the scientific names of the species.
     default: scientific_name
 
   time_col:
-    type: string
+    type: string?
     label: Time column
     doc: Name of the column in 'history_assessment_data' that contains the periods (years) when the assessments were conducted for each species.
     default: assess_year
 
   threat_category_code_column:
-    type: string
+    type: string?
     label: Threat category column
     doc: Name of the column in 'history_assessment_data' that contains the threat category code. The codes should correspond to the IUCN threat category codes (EX, EW, RE, CR, EN, VU, NT, DD, LC).
     default: code
@@ -197,11 +214,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   envFolderWriteable:
     type: boolean
@@ -247,7 +261,7 @@ outputs:
     label: Red List trend
     doc: The Red List Index of species for the chosen taxonomy group over time. An RLI of 1.0 indicates that all species have a status of Least Concerned, while 0.0 indicates Extinct. If the RLI value is constant over time, the overall extinction risk remains unchanged. An upward trend shows a reduction in the rate of biodiversity loss.
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -261,7 +275,7 @@ outputs:
     label: Red List data
     doc: Dataset containing the results of the Red List Index (RLI) calculation.
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -275,7 +289,7 @@ outputs:
     label: Red List matrix
     doc: Matrix showing the distribution of threat categories over time for the group of species.
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -288,4 +302,4 @@ outputs:
   logs:
     type: File
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'logs.txt')"
+      glob: "logs.txt"

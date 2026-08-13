@@ -43,20 +43,20 @@ inputs:
   # Script inputs #
   #################
   pipeline@121:
-    type: string[]
+    type: string[]?
     label: Taxa list
     doc: Array of taxa
     default:
     - Acer saccharum
 
   data>getGBIFObservations>getGBIFObservations.yml@142|max_year:
-    type: int
+    type: int?
     label: Maximum year
     doc: Max year observations wanted
     default: 2024
 
   data>loadFromStac.yml@144|study_area:
-    type: File
+    type: File?
     label: Study area
     doc: Polygon of study area used to mask output layers, in geopackage format.
 
@@ -101,12 +101,12 @@ inputs:
     default: block
 
   data>loadFromStac.yml@144|t1:
-    type: string
+    type: string?
     label: End date
     doc: End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if extracting items by name.
 
   data>loadFromStac.yml@144|collections_items:
-    type: string[]
+    type: string[]?
     label: STAC collection items
     doc: Vector of strings. To pull specific collection items, input the collection name followed by '|' followed by item id (e.g. "chelsa-clim|bio1"). To extract a whole collection, type the collection name only (e.g. "chelsa-clim"). To pull collection items by date, write the collection name and provide a start date, end date, and temporal resolution. If pulling a layer that is tiled (e.g. https://stac.geobon.org/viewer/gfw-lossyear/_80N_180W), enter the collection name (e.g. gfw-lossyear), bounding box and time range if the layer is a time series, and the script will assemble the tiles into a continuous layer automatically.)
     default:
@@ -114,7 +114,7 @@ inputs:
     - chelsa-clim|bio2
 
   pipeline@128:
-    type: float
+    type: float?
     label: spatial resolution
     doc: >
       Integer, spatial resolution of the rasters in the same units as the coordinate reference system (meters for projected reference systems and degrees for reference systems in lat long). 
@@ -125,17 +125,17 @@ inputs:
     default: 1000
 
   data>loadFromStac.yml@144|t0:
-    type: string
+    type: string?
     label: Start date
     doc: Start date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if extracting items by name or to extract layers from all available dates.
 
   data>loadFromStac.yml@144|temporal_res:
-    type: string
+    type: string?
     label: Temporal resolution
     doc: Temporal resolution to use when querying STAC items by date, in the format ("P", time interval, and time unit, e.g. "P1Y" is yearly, "P1M" is montly, and "P1D" is daily). Leave blank if not querying by date. If the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated with the aggregation method chosen below.
 
   SDM>runMaxent.yml@108|rm:
-    type: float[]
+    type: float[]?
     label: regularization multiplier
     doc: Vector of numbers, regularization multipliers for MaxEnt algorithm.
     default:
@@ -144,7 +144,7 @@ inputs:
     - 2
 
   SDM>runMaxent.yml@108|fc:
-    type: string[]
+    type: string[]?
     label: feature classes
     doc: Vector of strings, feature classes for MaxEnt algorithm. Accepted values are combinations of L (linear), Q (quadratic), P (product), H (hinge) or T (threshold).
     default:
@@ -157,19 +157,8 @@ inputs:
     doc: Select a bounding box and CRS
     type:
       type: record
-      name: bboxCRS
+      name: crsBBox
       fields:
-      - name: country
-        type:
-          name: countryDefinition
-          type: record
-          fields:
-          - name: englishName
-            type: string?
-          - name: ISO3
-            type: string?
-          - name: bboxWGS84
-            type: float[]?
       - name: CRS
         type:
           name: CRSDefinition
@@ -191,40 +180,27 @@ inputs:
             type: string?
       - name: bbox
         type: float[]
-      - name: region
-        type:
-          name: regionDefinition
-          type: record
-          fields:
-          - name: countryEnglishName
-            type: string?
-          - name: regionID
-            type: string?
-          - name: regionName
-            type: string?
-          - name: bboxWGS84
-            type: float[]?
 
   SDM>selectBackground.yml@40|n_background:
-    type: int
+    type: int?
     label: Number of background points
     doc: number of background points
     default: 10000
 
   data>loadFromStac.yml@144|stac_url:
-    type: string
+    type: string?
     label: STAC URL
     doc: URL of the STAC catalog.
     default: https://stac.geobon.org/
 
   data>getGBIFObservations>getGBIFObservations.yml@142|min_year:
-    type: int
+    type: int?
     label: Minimum year
     doc: Min year observations wanted
     default: 2010
 
   pipeline@46:
-    type: int
+    type: int?
     label: number of runs
     doc: number of runs (in bootstrap or crossvalidation method)
     default: 2
@@ -317,11 +293,13 @@ steps:
             
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-            "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
+              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
             if [[ ! -d "$unpackedFolder" ]]; then
-              mkdir -p "$unpackedFolder"
-              tar -xf "$unpackedFolder.tar.gz" -C "$unpackedFolder" --use-compress-program=pigz
+              # remove the env to force using the conda-pack
+              mamba env remove -y -n "$condaEnvName"
+              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
+                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             fi
             echo "Done."
           }
@@ -352,8 +330,6 @@ steps:
           dependencies: [r-terra, r-rjson, r-dplyr, r-gdalcubes]
           name: SDM__removeCollinearity
           "'
-          
-          bash -c 'exportEnv "rbase" ""'
           
           bash -c 'exportEnv "SDM__runMaxent" "channels: [conda-forge, r]
           dependencies: [libgdal, r-abind, r-base, r-curl, r-dismo, r-downloader, r-dplyr, r-enmeval=2.0.3,
@@ -396,7 +372,7 @@ steps:
     out: [envFolder]
 
   filtering>cleanCoordinates.yml@34:
-    run: ../../tools/cleanCoordinates.cwl
+    run: ../../tools/filtering/cleanCoordinates.cwl
     in:
       presence: data>getGBIFObservations>getGBIFObservations.yml@142/observations_file
       predictors: SDM>removeCollinearity.yml@97/rasters_selected
@@ -415,7 +391,7 @@ steps:
 
 
   SDM>selectBackground.yml@40:
-    run: ../../tools/selectBackground.cwl
+    run: ../../tools/SDM/selectBackground.cwl
     in:
       presence: filtering>cleanCoordinates.yml@34/clean_presence
       extent: SDM>studyExtent.yml@104/study_extent
@@ -436,7 +412,7 @@ steps:
 
 
   SDM>setupDataSdm.yml@44:
-    run: ../../tools/setupDataSdm.cwl
+    run: ../../tools/SDM/setupDataSdm.cwl
     in:
       presence: filtering>cleanCoordinates.yml@34/clean_presence
       background: SDM>selectBackground.yml@40/background
@@ -458,7 +434,7 @@ steps:
 
 
   SDM>rangePredictions.yml@68:
-    run: ../../tools/rangePredictions.cwl
+    run: ../../tools/SDM/rangePredictions.cwl
     in:
       predictions: SDM>runMaxent.yml@108/sdm_runs
       envFolder: prepareEnvironments/envFolder
@@ -474,7 +450,7 @@ steps:
 
 
   SDM>removeCollinearity.yml@97:
-    run: ../../tools/removeCollinearity.cwl
+    run: ../../tools/SDM/removeCollinearity.cwl
     in:
       rasters: data>loadFromStac.yml@144/rasters
       method: { default: vif.cor }
@@ -495,7 +471,7 @@ steps:
 
 
   SDM>studyExtent.yml@104:
-    run: ../../tools/studyExtent.cwl
+    run: ../../tools/SDM/studyExtent.cwl
     in:
       presence: filtering>cleanCoordinates.yml@34/clean_presence
       bbox_crs: pipeline@140
@@ -514,7 +490,7 @@ steps:
 
 
   SDM>runMaxent.yml@108:
-    run: ../../tools/runMaxent.cwl
+    run: ../../tools/SDM/runMaxent.cwl
     in:
       presence_background: SDM>setupDataSdm.yml@44/presence_background
       predictors: SDM>removeCollinearity.yml@97/rasters_selected
@@ -538,7 +514,7 @@ steps:
 
 
   data>GBIFHeatmapFromSTAC.yml@139:
-    run: ../../tools/GBIFHeatmapFromSTAC.cwl
+    run: ../../tools/data/GBIFHeatmapFromSTAC.cwl
     in:
       taxa: data>GBIFHeatmapFromSTAC.yml@139|taxa
       bbox_crs: pipeline@140
@@ -556,7 +532,7 @@ steps:
 
 
   data>getGBIFObservations>getGBIFObservations.yml@142:
-    run: ../../tools/getGBIFObservations.cwl
+    run: ../../tools/data/getGBIFObservations/getGBIFObservations.cwl
     in:
       taxa: pipeline@121
       bbox_crs: pipeline@140
@@ -575,7 +551,7 @@ steps:
 
 
   data>loadFromStac.yml@144:
-    run: ../../tools/loadFromStac.cwl
+    run: ../../tools/data/loadFromStac.cwl
     in:
       bbox_crs: pipeline@140
       stac_url: data>loadFromStac.yml@144|stac_url

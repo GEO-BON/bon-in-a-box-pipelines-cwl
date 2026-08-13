@@ -47,13 +47,13 @@ inputs:
     default: Country or region
 
   pipeline@45:
-    type: string
+    type: string?
     label: End year
     doc: End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
     default: '2024'
 
   phenology>summarise_phenology.yml@37|spatial_resolution:
-    type: float
+    type: float?
     label: Spatial resolution
     doc: >
       Integer, spatial resolution of the rasters in the same units as the coordinate reference system (meters for projected reference systems and degrees for reference systems in lat long).
@@ -61,7 +61,7 @@ inputs:
     default: 0
 
   pipeline@44:
-    type: string
+    type: string?
     label: Start year
     doc: Start date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
     default: '2017'
@@ -270,11 +270,13 @@ steps:
             
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-            "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
+              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
             if [[ ! -d "$unpackedFolder" ]]; then
-              mkdir -p "$unpackedFolder"
-              tar -xf "$unpackedFolder.tar.gz" -C "$unpackedFolder" --use-compress-program=pigz
+              # remove the env to force using the conda-pack
+              mamba env remove -y -n "$condaEnvName"
+              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
+                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             fi
             echo "Done."
           }
@@ -284,8 +286,6 @@ steps:
           dependencies: [openeo, pandas, geopandas, shapely]
           name: phenology__summarise_phenology
           "'
-          
-          bash -c 'exportEnv "rbase" ""'
           
           bash -c 'exportEnv "data__load_polygons" "channels: [conda-forge]
           dependencies: [r-rjson, r-dbplyr=2.5.2, r-dplyr=1.2.1, r-duckdb=1.4.4, r-fs=2.1.0,
@@ -316,7 +316,7 @@ steps:
     out: [envFolder]
 
   phenology>summarise_phenology.yml@37:
-    run: ../../tools/summarise_phenology.cwl
+    run: ../../tools/phenology/summarise_phenology.cwl
     in:
       bbox_crs: pipeline@68
       study_area_polygon: data>load_polygons.yml@69/polygon
@@ -339,7 +339,7 @@ steps:
 
 
   phenology>phenology_difference.yml@48:
-    run: ../../tools/phenology_difference.cwl
+    run: ../../tools/phenology/phenology_difference.cwl
     in:
       rasters: phenology>summarise_phenology.yml@37/rasters
       start_year: pipeline@44
@@ -358,7 +358,7 @@ steps:
 
 
   data>load_polygons.yml@69:
-    run: ../../tools/load_polygons.cwl
+    run: ../../tools/data/load_polygons.cwl
     in:
       polygon_type: data>load_polygons.yml@69|polygon_type
       country_region_bbox: pipeline@68

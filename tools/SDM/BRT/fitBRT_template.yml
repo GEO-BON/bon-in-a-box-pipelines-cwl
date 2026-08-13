@@ -1,4 +1,4 @@
-water_mask: /output/foo/bar  # array of type 'File'
+water_mask: /output/foo/bar  # array of type 'File' (optional)
 scripts_root:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
@@ -6,20 +6,19 @@ scriptPath: SDM/BRT/fitBRT.jl  # default value of type 'string'.
 runFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-pseudoabsence_buffer: 10.0  # default value of type 'float'.
-predictors: /output/foo/bar  # array of type 'File'
-pa_proportion: 2.4  # default value of type 'float'.
+pseudoabsence_buffer: 10.0  # default value of type 'float'. (optional)
+predictors: /output/foo/bar  # array of type 'File' (optional)
+pa_proportion: 2.4  # default value of type 'float'. (optional)
 occurrence: 
-    /output/data/getObservations/9f7d1cc148464cd0517e01c67af0ab5b/obs_data.tsv  # default value of type 'File'.
-max_candidate_pseudoabsences: 100000  # default value of type 'int'.
+    /output/data/getObservations/9f7d1cc148464cd0517e01c67af0ab5b/obs_data.tsv  # default value of type 'File'. (optional)
+max_candidate_pseudoabsences: 100000  # default value of type 'int'. (optional)
 environment:  # type 'File' (optional)
     class: File
     path: a/file/path
 envFolderWriteable: true  # default value of type 'boolean'.
-envFolder:  # default value of type 'Directory'.
+envFolder:  # type 'Directory' (optional)
     class: Directory
-    path: file:///home/jean-michel/code/cwl-temp/export/tools/SDM/BRT/envs
-
+    path: a/directory/path
 condaPackURL: 
     https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
 bbox_crs:  # "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/BRT/fitBRT.cwl#bbox_crs/bboxCRS" record type.

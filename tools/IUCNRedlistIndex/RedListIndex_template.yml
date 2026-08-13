@@ -1,12 +1,12 @@
-time_col: assess_year  # default value of type 'string'.
-threat_category_code_column: code  # default value of type 'string'.
-threat:  # array of type 'string'
+time_col: assess_year  # default value of type 'string'. (optional)
+threat_category_code_column: code  # default value of type 'string'. (optional)
+threat:  # array of type 'string' (optional)
   - a_string
-taxonomic_group:  # array of type 'string'
+taxonomic_group:  # array of type 'string' (optional)
   - a_string
-species_use:  # array of type 'string'
+species_use:  # array of type 'string' (optional)
   - a_string
-sp_col: scientific_name  # default value of type 'string'.
+sp_col: scientific_name  # default value of type 'string'. (optional)
 scripts_root:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
@@ -15,16 +15,14 @@ runFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
 history_assessment_data: 
-    scripts/RedListIndex/input/iucn_history_assessment_data.csv  # default value of type 'File'.
+    scripts/RedListIndex/input/iucn_history_assessment_data.csv  # default value of type 'File'. (optional)
 environment:  # type 'File' (optional)
     class: File
     path: a/file/path
 envFolderWriteable: true  # default value of type 'boolean'.
-envFolder:  # default value of type 'Directory'.
+envFolder:  # type 'Directory' (optional)
     class: Directory
-    path: 
-        file:///home/jean-michel/code/cwl-temp/export/tools/IUCNRedlistIndex/envs
-
+    path: a/directory/path
 country:  # "file:///home/jean-michel/code/cwl-temp/export/tools/IUCNRedlistIndex/RedListIndex.cwl#country/country" record type.
     country:  # "file:///home/jean-michel/code/cwl-temp/export/tools/IUCNRedlistIndex/RedListIndex.cwl#country/country/country/countryDefinition" record type.
         bboxWGS84:  # array of type 'float' (optional)

@@ -27,21 +27,21 @@ pipeline@174:  # "file:///home/jean-michel/code/cwl-temp/export/workflows/SDM/SD
           - 0.1
         ISO3: a_string  # type 'string' (optional)
         englishName: a_string  # type 'string' (optional)
-pipeline@167:  # type 'File'
+pipeline@167:  # type 'File' (optional)
     class: File
     path: a/file/path
-pipeline@154: 2.4  # default value of type 'float'.
-pipeline@153: 100000  # default value of type 'int'.
-pipeline@152: 10  # default value of type 'float'.
-pipeline@137:  # array of type 'string'
+pipeline@154: 2.4  # default value of type 'float'. (optional)
+pipeline@153: 100000  # default value of type 'int'. (optional)
+pipeline@152: 10  # default value of type 'float'. (optional)
+pipeline@137:  # array of type 'string' (optional)
   - chelsa-clim|bio1
   - chelsa-clim|bio3
   - chelsa-clim|bio4
   - chelsa-clim|bio12
   - chelsa-clim|bio15
 
-pipeline@128: 1000  # default value of type 'float'.
-pipeline@121:  # array of type 'string'
+pipeline@128: 1000  # default value of type 'float'. (optional)
+pipeline@121:  # array of type 'string' (optional)
   - Acer saccharum
 
 environment:  # type 'File' (optional)
@@ -51,10 +51,10 @@ envFolder:  # default value of type 'Directory'.
     class: Directory
     path: file:///home/jean-michel/code/cwl-temp/export/workflows/SDM/envs
 
-data>loadFromStac.yml@161|temporal_res: a_string  # type 'string'
-data>loadFromStac.yml@161|t1: a_string  # type 'string'
-data>loadFromStac.yml@161|t0: a_string  # type 'string'
-data>getGBIFObservations>getGBIFObservations.yml@159|min_year: 2010  # default value of type 'int'.
-data>getGBIFObservations>getGBIFObservations.yml@159|max_year: 2024  # default value of type 'int'.
+data>loadFromStac.yml@161|temporal_res: a_string  # type 'string' (optional)
+data>loadFromStac.yml@161|t1: a_string  # type 'string' (optional)
+data>loadFromStac.yml@161|t0: a_string  # type 'string' (optional)
+data>getGBIFObservations>getGBIFObservations.yml@159|min_year: 2010  # default value of type 'int'. (optional)
+data>getGBIFObservations>getGBIFObservations.yml@159|max_year: 2024  # default value of type 'int'. (optional)
 condaPackURL: 
     https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.

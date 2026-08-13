@@ -34,13 +34,13 @@ envFolder:  # default value of type 'Directory'.
     class: Directory
     path: file:///home/jean-michel/code/cwl-temp/export/workflows/envs
 
-data>loadFromStac.yml@42|temporal_res: P1Y  # default value of type 'string'.
-data>loadFromStac.yml@42|t1: '2020-12-31'  # default value of type 'string'.
-data>loadFromStac.yml@42|t0: '2020-01-01'  # default value of type 'string'.
-data>loadFromStac.yml@42|stac_url: https://stac.geobon.org/  # default value of type 'string'.
-data>loadFromStac.yml@42|spatial_res: 0.008833  # default value of type 'float'.
+data>loadFromStac.yml@42|temporal_res: P1Y  # default value of type 'string'. (optional)
+data>loadFromStac.yml@42|t1: '2020-12-31'  # default value of type 'string'. (optional)
+data>loadFromStac.yml@42|t0: '2020-01-01'  # default value of type 'string'. (optional)
+data>loadFromStac.yml@42|stac_url: https://stac.geobon.org/  # default value of type 'string'. (optional)
+data>loadFromStac.yml@42|spatial_res: 0.008833  # default value of type 'float'. (optional)
 data>loadFromStac.yml@42|resampling: near  # enum; valid values: "file:///home/jean-michel/code/cwl-temp/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/near", "file:///home/jean-michel/code/cwl-temp/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/bilinear", "file:///home/jean-michel/code/cwl-temp/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/average", "file:///home/jean-michel/code/cwl-temp/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/mode", "file:///home/jean-michel/code/cwl-temp/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/cubic", "file:///home/jean-michel/code/cwl-temp/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/cubicspline", "file:///home/jean-michel/code/cwl-temp/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/lanczos", "file:///home/jean-michel/code/cwl-temp/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/rms", "file:///home/jean-michel/code/cwl-temp/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/min", "file:///home/jean-michel/code/cwl-temp/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/max", "file:///home/jean-michel/code/cwl-temp/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/sum", "file:///home/jean-michel/code/cwl-temp/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/med", "file:///home/jean-michel/code/cwl-temp/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/q1", "file:///home/jean-michel/code/cwl-temp/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/q3"
-data>loadFromStac.yml@42|collections_items:  # array of type 'string'
+data>loadFromStac.yml@42|collections_items:  # array of type 'string' (optional)
   - esacci-lc|esacci-lc-2020
 
 data>loadFromStac.yml@42|aggregation: first  # enum; valid values: "file:///home/jean-michel/code/cwl-temp/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|aggregation/first", "file:///home/jean-michel/code/cwl-temp/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|aggregation/min", "file:///home/jean-michel/code/cwl-temp/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|aggregation/max", "file:///home/jean-michel/code/cwl-temp/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|aggregation/mean", "file:///home/jean-michel/code/cwl-temp/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|aggregation/median"

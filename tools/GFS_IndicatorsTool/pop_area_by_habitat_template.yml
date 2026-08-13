@@ -1,4 +1,4 @@
-time_points:  # array of type 'string'
+time_points:  # array of type 'string' (optional)
   - y2000
   - y2001
   - y2002
@@ -37,16 +37,14 @@ scriptPath: GFS_IndicatorsTool/pop_area_by_habitat.R  # default value of type 's
 runFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-population_polygons: /userdata/population_polygons.geojson  # default value of type 'File'.
-habitat_map: /userdata/tcyy.tif  # default value of type 'File'.
+population_polygons: /userdata/population_polygons.geojson  # default value of type 'File'. (optional)
+habitat_map: /userdata/tcyy.tif  # default value of type 'File'. (optional)
 environment:  # type 'File' (optional)
     class: File
     path: a/file/path
 envFolderWriteable: true  # default value of type 'boolean'.
-envFolder:  # default value of type 'Directory'.
+envFolder:  # type 'Directory' (optional)
     class: Directory
-    path: 
-        file:///home/jean-michel/code/cwl-temp/export/tools/GFS_IndicatorsTool/envs
-
+    path: a/directory/path
 condaPackURL: 
     https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.

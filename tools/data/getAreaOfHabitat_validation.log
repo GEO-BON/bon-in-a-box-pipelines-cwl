@@ -1,5 +1,5 @@
 [1;30mINFO[0m /home/jean-michel/.local/bin/cwl-runner 3.2.20260413085819
 [1;30mINFO[0m Resolved '/home/jean-michel/code/cwl-temp/export/tools/data/getAreaOfHabitat.cwl' to 'file:///home/jean-michel/code/cwl-temp/export/tools/data/getAreaOfHabitat.cwl'
 [1;30mERROR[0m [31mTool definition failed validation:
-file:///home/jean-michel/code/cwl-temp/export/tools/data/getAreaOfHabitat.cwl:231:75: mapping values are
+file:///home/jean-michel/code/cwl-temp/export/tools/data/getAreaOfHabitat.cwl:248:75: mapping values are
                                                                                       not allowed here[0m

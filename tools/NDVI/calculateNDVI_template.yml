@@ -1,9 +1,9 @@
 summary_statistic: mean  # enum; valid values: "file:///home/jean-michel/code/cwl-temp/export/tools/NDVI/calculateNDVI.cwl#summary_statistic/mean", "file:///home/jean-michel/code/cwl-temp/export/tools/NDVI/calculateNDVI.cwl#summary_statistic/median", "file:///home/jean-michel/code/cwl-temp/export/tools/NDVI/calculateNDVI.cwl#summary_statistic/max", "file:///home/jean-michel/code/cwl-temp/export/tools/NDVI/calculateNDVI.cwl#summary_statistic/min"
-study_area_polygon:  # type 'File'
+study_area_polygon:  # type 'File' (optional)
     class: File
     path: a/file/path
-start_date: '2019-05-01'  # default value of type 'string'.
-spatial_resolution: 100  # default value of type 'float'.
+start_date: '2019-05-01'  # default value of type 'string'. (optional)
+spatial_resolution: 100  # default value of type 'float'. (optional)
 scripts_root:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
@@ -15,11 +15,10 @@ environment:  # type 'File' (optional)
     class: File
     path: a/file/path
 envFolderWriteable: true  # default value of type 'boolean'.
-envFolder:  # default value of type 'Directory'.
+envFolder:  # type 'Directory' (optional)
     class: Directory
-    path: file:///home/jean-michel/code/cwl-temp/export/tools/NDVI/envs
-
-end_date: '2019-09-30'  # default value of type 'string'.
+    path: a/directory/path
+end_date: '2019-09-30'  # default value of type 'string'. (optional)
 condaPackURL: 
     https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
 bbox_crs:  # "file:///home/jean-michel/code/cwl-temp/export/tools/NDVI/calculateNDVI.cwl#bbox_crs/bboxCRS" record type.

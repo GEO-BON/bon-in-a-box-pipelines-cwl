@@ -51,19 +51,19 @@ inputs:
   # Script inputs #
   #################
   site_selection_BAS>BAS_algorithm.yml@26|ndesign:
-    type: int
+    type: int?
     label: Target total sites
     doc: A number of target sampling sites to obtain with the algorithm
     default: 100
 
   site_selection_BAS>Block_creation.yml@0|n_cols:
-    type: int
+    type: int?
     label: Number of columns
     doc: Number of columns for the environmental space grid (together with rows will define the final number of environmental blocks)
     default: 10
 
   data>loadFromStac.yml@2|collections_items:
-    type: string[]
+    type: string[]?
     label: Environmental variables (STAC collection items)
     doc: Set of environmental variables to use  (e.g. for temperature "chelsa-clim|bio1", precipitation "chelsa-clim|bio12"), on which to run the PCA (a minimum of 2 variables are needed). Environmental variables must be continuous values.
     default:
@@ -146,7 +146,7 @@ inputs:
     default: Country or region
 
   site_selection_BAS>Block_creation.yml@0|n_rows:
-    type: int
+    type: int?
     label: Number of rows
     doc: Number of rows for the environmental space grid (together with columns will define the final number environmental blocks)
     default: 10
@@ -239,11 +239,13 @@ steps:
             
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-            "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
+              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
             if [[ ! -d "$unpackedFolder" ]]; then
-              mkdir -p "$unpackedFolder"
-              tar -xf "$unpackedFolder.tar.gz" -C "$unpackedFolder" --use-compress-program=pigz
+              # remove the env to force using the conda-pack
+              mamba env remove -y -n "$condaEnvName"
+              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
+                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             fi
             echo "Done."
           }
@@ -294,7 +296,7 @@ steps:
     out: [envFolder]
 
   site_selection_BAS>Block_creation.yml@0:
-    run: ../../tools/Block_creation.cwl
+    run: ../../tools/site_selection_BAS/Block_creation.cwl
     in:
       country_polygon: data>load_polygons.yml@61/polygon
       n_rows: site_selection_BAS>Block_creation.yml@0|n_rows
@@ -313,7 +315,7 @@ steps:
 
 
   data>loadFromStac.yml@2:
-    run: ../../tools/loadFromStac.cwl
+    run: ../../tools/data/loadFromStac.cwl
     in:
       bbox_crs: pipeline@60
       stac_url: { default: https://stac.geobon.org/ }
@@ -338,7 +340,7 @@ steps:
 
 
   site_selection_BAS>BAS_algorithm.yml@26:
-    run: ../../tools/BAS_algorithm.cwl
+    run: ../../tools/site_selection_BAS/BAS_algorithm.cwl
     in:
       colors_vect: site_selection_BAS>Block_creation.yml@0/colors_vect
       country_polygon: data>load_polygons.yml@61/polygon
@@ -358,7 +360,7 @@ steps:
 
 
   data>load_polygons.yml@61:
-    run: ../../tools/load_polygons.cwl
+    run: ../../tools/data/load_polygons.cwl
     in:
       polygon_type: data>load_polygons.yml@61|polygon_type
       country_region_bbox: pipeline@60

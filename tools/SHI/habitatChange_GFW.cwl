@@ -29,6 +29,16 @@ requirements:
           if (!outputFiles || outputFiles.length === 0) return null;
           var value = JSON.parse(outputFiles[0].contents)[key]
           if (value === undefined) return null
+
+          if(inputs.runFolder != null) {
+            if(Array.isArray(value)) {
+              value = value.map(function (item) {
+                return item.replace(inputs.runFolder.path, runtime.outdir);
+              });
+            } else {
+              value = value.replace(inputs.runFolder.path, runtime.outdir);
+            }
+          }
           return value;
         }
   InplaceUpdateRequirement:
@@ -40,16 +50,19 @@ requirements:
       ${
         return [
           {
-            entry: inputs.envFolder,
-            entryname: "/conda-envs",
-            writable: inputs.envFolderWritable
-          },
-          {
             entry: { "class": "Directory", "basename": "conda-env-yml", "listing": [] },
             entryname: "/conda-env-yml",
             writable: true
           }
         ].concat(
+          inputs.envFolder
+            ? {
+                entry: inputs.envFolder,
+                entryname: "/conda-envs",
+                writable: inputs.envFolderWritable
+              }
+            : []
+        ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
             : []
@@ -69,7 +82,7 @@ requirements:
     dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:cwl-poc
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
-    #     $include: ../runners/cwl/conda-cwl-dockerfile
+    #     $include: ../runners/cwl/conda-cwl.dockerfile
 
   EnvVarRequirement:
     envDef:
@@ -108,13 +121,12 @@ arguments:
     cat $OUTPUT_LOCATION/input.json | tee -a $log
 
     source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "SHI__habitatChange_GFW" \
-      "
-        channels: [conda-forge, r]
-        dependencies: [r-rjson, r-dplyr, r-tidyr, r-purrr, r-terra, r-stars, r-sf, r-readr,
-          r-geodata, r-gdalcubes, r-rredlist, r-stringr, r-tmaptools, r-ggplot2, r-rstac,
-          r-lubridate, r-RCurl]
-        name: SHI__habitatChange_GFW
-      " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
+    "channels: [conda-forge, r]
+    dependencies: [r-rjson, r-dplyr, r-tidyr, r-purrr, r-terra, r-stars, r-sf, r-readr,
+      r-geodata, r-gdalcubes, r-rredlist, r-stringr, r-tmaptools, r-ggplot2, r-rstac,
+      r-lubridate, r-RCurl]
+    name: SHI__habitatChange_GFW
+    " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
 
     Rscript \
       $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \
@@ -123,6 +135,11 @@ arguments:
       2>&1 | tee -a $log
     scriptExitCode=\${PIPESTATUS[0]}
     echo "Script exited with code $scriptExitCode" | tee -a $log
+  
+    if [[ "$OUTPUT_LOCATION" != "$(runtime.outdir)" ]]; then
+      echo "Copying results from run folder to CWL output directory" | tee -a $log
+      cp -a "$OUTPUT_LOCATION"/. "$(runtime.outdir)"/
+    fi
 
     source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh SHI__habitatChange_GFW /conda-envs >> "$log" 2>&1
 
@@ -133,7 +150,7 @@ inputs:
   # Script inputs #
   #################
   spat_res:
-    type: float
+    type: float?
     label: output spatial resolution
     doc: Spatial resolution (in meters) for the output of the analysis.
     default: 1000
@@ -192,54 +209,54 @@ inputs:
             type: float[]?
 
   species:
-    type: string[]
+    type: string[]?
     label: species
     doc: Scientific name of the species. Multiple species names can be specified, separated with a comma.
     default:
     - Myrmecophaga tridactyla
 
   r_area_of_habitat:
-    type: File[]
+    type: File[]?
     label: area of habitat
     doc: Raster file with the area of habitat for each species.
     default:
     - /scripts/SHI/myrmecophaga_tridactyla.tif
 
   sf_bbox:
-    type: File[]
+    type: File[]?
     label: bounding box
     doc: Bounding box of the area of habitat for each species.
     default:
     - /scripts/SHI/Myrmecophaga tridactyla_range.gpkg
 
   min_forest:
-    type: int[]
+    type: int[]?
     label: min forest
     doc: Minimum tree cover percentage required for each species, based on suitable habitat of the species. Acts as a filter for the Global Forest Watch Data. If not available, use Map of Life Values (e.g. [https://mol.org/species/range/Myrmecophaga-tridactyla]). For multiple species, input in the same order as input in species and separate with a comma.
     default:
     - 0
 
   max_forest:
-    type: int[]
+    type: int[]?
     label: max forest
     doc: Maximum tree cover percentage required for each species, based on suitable habitat of the species. Acts as a filter for the Global Forest Watch Data. If not available, use Map of Life Values (e.g. [https://mol.org/species/range/Myrmecophaga-tridactyla]). For multiple species, input in the same order as input in species and separate with a comma.
     default:
     - 100
 
   t_0:
-    type: int
+    type: int?
     label: initial time
     doc: Year where the analysis should start. Starts in 2000, check the time interval available for the Global Forest Watch data at https://stac.geobon.org/collections/gfw-lossyear.
     default: 2000
 
   t_n:
-    type: int
+    type: int?
     label: final time
     doc: Year where the analysis should end (it should be later than Initial time). It should be inside the time interval for the Global Forest Watch data at https://stac.geobon.org/collections/gfw-lossyear.
     default: 2020
 
   time_step:
-    type: int
+    type: int?
     label: time step
     doc: Temporal resolution for analysis given in number of years. To get values for the end year, time step should fit evenly into the given analysis range.
     default: 10
@@ -251,11 +268,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   envFolderWriteable:
     type: boolean
@@ -301,7 +315,7 @@ outputs:
     label: SHS map (png)
     doc: Figure showing a map with changes in the habitat for the time range for each species (png).
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -319,7 +333,7 @@ outputs:
     label: Habitat by time step
     doc: Raster of habitat by time step.
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -337,7 +351,7 @@ outputs:
     label: SHS time series
     doc: Figure showing a time series of SHS values per time step for each species.
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -355,7 +369,7 @@ outputs:
     label: SHS table
     doc: A TSV (Tab Separated Values) file containing Area Score, Connectivity Score and SHS by time step for each species. Percentage of change, 100% being equal to the reference year.
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -373,7 +387,7 @@ outputs:
     label: SHS table (long format)
     doc: A TSV (Tab Separated Values) file in long format containing Area Score (AS), Connectivity Score (CS) and Species Habitat Score (SHS) by time step for each species. The SHS is the mean value between the AS and CS. Percentage of change, 100% being equal to the reference year.
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -391,7 +405,7 @@ outputs:
     label: SHS Map (raster)
     doc: Figure showing a map with changes in the habitat for the time range for each species (raster).
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -408,4 +422,4 @@ outputs:
   logs:
     type: File
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'logs.txt')"
+      glob: "logs.txt"

@@ -26,6 +26,16 @@ requirements:
           if (!outputFiles || outputFiles.length === 0) return null;
           var value = JSON.parse(outputFiles[0].contents)[key]
           if (value === undefined) return null
+
+          if(inputs.runFolder != null) {
+            if(Array.isArray(value)) {
+              value = value.map(function (item) {
+                return item.replace(inputs.runFolder.path, runtime.outdir);
+              });
+            } else {
+              value = value.replace(inputs.runFolder.path, runtime.outdir);
+            }
+          }
           return value;
         }
   InplaceUpdateRequirement:
@@ -37,16 +47,19 @@ requirements:
       ${
         return [
           {
-            entry: inputs.envFolder,
-            entryname: "/conda-envs",
-            writable: inputs.envFolderWritable
-          },
-          {
             entry: { "class": "Directory", "basename": "conda-env-yml", "listing": [] },
             entryname: "/conda-env-yml",
             writable: true
           }
         ].concat(
+          inputs.envFolder
+            ? {
+                entry: inputs.envFolder,
+                entryname: "/conda-envs",
+                writable: inputs.envFolderWritable
+              }
+            : []
+        ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
             : []
@@ -66,7 +79,7 @@ requirements:
     dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:cwl-poc
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
-    #     $include: ../runners/cwl/conda-cwl-dockerfile
+    #     $include: ../runners/cwl/conda-cwl.dockerfile
 
   EnvVarRequirement:
     envDef:
@@ -104,14 +117,13 @@ arguments:
     cat $OUTPUT_LOCATION/input.json | tee -a $log
 
     source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "SDM__runMaxent" \
-      "
-        channels: [conda-forge, r]
-        dependencies: [libgdal, r-abind, r-base, r-curl, r-dismo, r-downloader, r-dplyr, r-enmeval=2.0.3,
-          r-ecospat, r-essentials, r-geojsonsf, r-ggsci, r-jpeg, r-landscapemetrics, r-magrittr,
-          r-png, r-purrr, r-rcurl, r-rgbif, r-remotes, r-rjava, r-rjson, r-sf, r-stars, r-stringr,
-          r-terra, r-this.path, r-tidyselect, r-tidyverse, r-stringr]
-        name: SDM__runMaxent
-      " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
+    "channels: [conda-forge, r]
+    dependencies: [libgdal, r-abind, r-base, r-curl, r-dismo, r-downloader, r-dplyr, r-enmeval=2.0.3,
+      r-ecospat, r-essentials, r-geojsonsf, r-ggsci, r-jpeg, r-landscapemetrics, r-magrittr,
+      r-png, r-purrr, r-rcurl, r-rgbif, r-remotes, r-rjava, r-rjson, r-sf, r-stars, r-stringr,
+      r-terra, r-this.path, r-tidyselect, r-tidyverse, r-stringr]
+    name: SDM__runMaxent
+    " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
 
     Rscript \
       $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \
@@ -120,6 +132,11 @@ arguments:
       2>&1 | tee -a $log
     scriptExitCode=\${PIPESTATUS[0]}
     echo "Script exited with code $scriptExitCode" | tee -a $log
+  
+    if [[ "$OUTPUT_LOCATION" != "$(runtime.outdir)" ]]; then
+      echo "Copying results from run folder to CWL output directory" | tee -a $log
+      cp -a "$OUTPUT_LOCATION"/. "$(runtime.outdir)"/
+    fi
 
     source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh SDM__runMaxent /conda-envs >> "$log" 2>&1
 
@@ -130,13 +147,13 @@ inputs:
   # Script inputs #
   #################
   presence_background:
-    type: File
+    type: File?
     label: presence background
     doc: presence
     default: /scripts/SDM/runModel_presence_background.tsv
 
   predictors:
-    type: File[]
+    type: File[]?
     label: predictors
     doc: layer names (predictors) as a list, or path to a list
     default:
@@ -149,7 +166,7 @@ inputs:
     - /output/SDM/loadPredictors_R/e09acd85debd23c991652771b1d771b2/bio91981-01-01.tif
 
   fc:
-    type: string[]
+    type: string[]?
     label: feature classes
     doc: Vector of strings, feature classes for MaxEnt algorithm. Accepted values are combinations of L (linear), Q (quadratic), P (product), H (hinge) or T (threshold).
     default:
@@ -158,7 +175,7 @@ inputs:
     - LQHP
 
   rm:
-    type: float[]
+    type: float[]?
     label: regularization multiplier
     doc: Vector of numbers, regularization multipliers for MaxEnt algorithm.
     default:
@@ -196,19 +213,8 @@ inputs:
     doc: Object containing CRS.
     type:
       type: record
-      name: bboxCRS
+      name: CRS
       fields:
-      - name: country
-        type:
-          name: countryDefinition
-          type: record
-          fields:
-          - name: englishName
-            type: string?
-          - name: ISO3
-            type: string?
-          - name: bboxWGS84
-            type: float[]?
       - name: CRS
         type:
           name: CRSDefinition
@@ -228,24 +234,9 @@ inputs:
             type: string?
           - name: wktDef
             type: string?
-      - name: bbox
-        type: float[]
-      - name: region
-        type:
-          name: regionDefinition
-          type: record
-          fields:
-          - name: countryEnglishName
-            type: string?
-          - name: regionID
-            type: string?
-          - name: regionName
-            type: string?
-          - name: bboxWGS84
-            type: float[]?
 
   n_folds:
-    type: int
+    type: int?
     label: number of folds
     doc: Integer, number of random k-folds for randomkfold technique.
     default: 5
@@ -268,11 +259,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   envFolderWriteable:
     type: boolean
@@ -318,7 +306,7 @@ outputs:
     label: predictions
     doc: model predictions while trained on the whole dataset
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -332,7 +320,7 @@ outputs:
     label: runs predictions
     doc: model predictions among the several runs (if boostrapping or kfolds performed)
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -349,4 +337,4 @@ outputs:
   logs:
     type: File
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'logs.txt')"
+      glob: "logs.txt"

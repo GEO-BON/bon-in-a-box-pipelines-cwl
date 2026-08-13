@@ -103,22 +103,22 @@ inputs:
     default: first
 
   data>loadFromStac.yml@1|t0:
-    type: string
+    type: string?
     label: Start date (optional)
     doc: Start date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
 
   data>loadFromStac.yml@1|t1:
-    type: string
+    type: string?
     label: End date (optional)
     doc: End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
 
   data>loadFromStac.yml@1|temporal_res:
-    type: string
+    type: string?
     label: Temporal resolution (optional)
     doc: Temporal resolution to use when querying STAC items by date, in the format ("P", time interval, and time unit, e.g. "P1Y" is yearly, "P1M" is monthly, and "P1D" is daily). Leave blank if not querying by date. If the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated with the aggregation method chosen below.
 
   pipeline@19:
-    type: float
+    type: float?
     label: Spatial resolution (optional)
     doc: >
       Integer, spatial resolution of the rasters in the same units as the coordinate reference system (meters for projected reference systems and degrees for reference systems in lat long). 
@@ -251,11 +251,13 @@ steps:
             
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-            "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
+              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
             if [[ ! -d "$unpackedFolder" ]]; then
-              mkdir -p "$unpackedFolder"
-              tar -xf "$unpackedFolder.tar.gz" -C "$unpackedFolder" --use-compress-program=pigz
+              # remove the env to force using the conda-pack
+              mamba env remove -y -n "$condaEnvName"
+              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
+                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             fi
             echo "Done."
           }
@@ -301,7 +303,7 @@ steps:
     out: [envFolder]
 
   bilbi_indicators>bilbi_weighted_mean.yml@0:
-    run: ../../tools/bilbi_weighted_mean.cwl
+    run: ../../tools/bilbi_indicators/bilbi_weighted_mean.cwl
     in:
       bilbi_indicator: data>loadFromStac.yml@1/rasters
       bilbi_denominator: data>loadFromStac.yml@2/rasters
@@ -319,7 +321,7 @@ steps:
 
 
   data>loadFromStac.yml@1:
-    run: ../../tools/loadFromStac.cwl
+    run: ../../tools/data/loadFromStac.cwl
     in:
       bbox_crs: pipeline@23
       stac_url: { default: https://stac.geobon.org/ }
@@ -344,7 +346,7 @@ steps:
 
 
   data>loadFromStac.yml@2:
-    run: ../../tools/loadFromStac.cwl
+    run: ../../tools/data/loadFromStac.cwl
     in:
       bbox_crs: pipeline@23
       stac_url: { default: https://stac.geobon.org/ }
@@ -369,7 +371,7 @@ steps:
 
 
   data>load_polygons.yml@24:
-    run: ../../tools/load_polygons.cwl
+    run: ../../tools/data/load_polygons.cwl
     in:
       polygon_type: data>load_polygons.yml@24|polygon_type
       country_region_bbox: pipeline@23

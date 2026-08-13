@@ -14,6 +14,6 @@ envFolder:  # default value of type 'Directory'.
 
 condaPackURL: 
     https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
-GFS_IndicatorsTool>get_pop_poly.yml@5|species_obs: /userdata/obs_data.tsv  # default value of type 'File'.
-GFS_IndicatorsTool>get_pop_poly.yml@5|pop_distance: 50  # default value of type 'float'.
-GFS_IndicatorsTool>get_pop_poly.yml@5|buffer_size: 10  # default value of type 'float'.
+GFS_IndicatorsTool>get_pop_poly.yml@5|species_obs: /userdata/obs_data.tsv  # default value of type 'File'. (optional)
+GFS_IndicatorsTool>get_pop_poly.yml@5|pop_distance: 50  # default value of type 'float'. (optional)
+GFS_IndicatorsTool>get_pop_poly.yml@5|buffer_size: 10  # default value of type 'float'. (optional)

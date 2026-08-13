@@ -24,6 +24,16 @@ requirements:
           if (!outputFiles || outputFiles.length === 0) return null;
           var value = JSON.parse(outputFiles[0].contents)[key]
           if (value === undefined) return null
+
+          if(inputs.runFolder != null) {
+            if(Array.isArray(value)) {
+              value = value.map(function (item) {
+                return item.replace(inputs.runFolder.path, runtime.outdir);
+              });
+            } else {
+              value = value.replace(inputs.runFolder.path, runtime.outdir);
+            }
+          }
           return value;
         }
   InplaceUpdateRequirement:
@@ -35,16 +45,19 @@ requirements:
       ${
         return [
           {
-            entry: inputs.envFolder,
-            entryname: "/conda-envs",
-            writable: inputs.envFolderWritable
-          },
-          {
             entry: { "class": "Directory", "basename": "conda-env-yml", "listing": [] },
             entryname: "/conda-env-yml",
             writable: true
           }
         ].concat(
+          inputs.envFolder
+            ? {
+                entry: inputs.envFolder,
+                entryname: "/conda-envs",
+                writable: inputs.envFolderWritable
+              }
+            : []
+        ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
             : []
@@ -64,7 +77,7 @@ requirements:
     dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:cwl-poc
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
-    #     $include: ../runners/cwl/conda-cwl-dockerfile
+    #     $include: ../runners/cwl/conda-cwl.dockerfile
 
   EnvVarRequirement:
     envDef:
@@ -100,11 +113,10 @@ arguments:
     cat $OUTPUT_LOCATION/input.json | tee -a $log
 
     source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "data__getOBISObservations" \
-      "
-        channels: [conda-forge, r]
-        dependencies: [r-robis, r-sf, r-dplyr, r-rjson]
-        name: data__getOBISObservations
-      " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
+    "channels: [conda-forge, r]
+    dependencies: [r-robis, r-sf, r-dplyr, r-rjson]
+    name: data__getOBISObservations
+    " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
 
     Rscript \
       $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \
@@ -113,6 +125,11 @@ arguments:
       2>&1 | tee -a $log
     scriptExitCode=\${PIPESTATUS[0]}
     echo "Script exited with code $scriptExitCode" | tee -a $log
+  
+    if [[ "$OUTPUT_LOCATION" != "$(runtime.outdir)" ]]; then
+      echo "Copying results from run folder to CWL output directory" | tee -a $log
+      cp -a "$OUTPUT_LOCATION"/. "$(runtime.outdir)"/
+    fi
 
     source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh data__getOBISObservations /conda-envs >> "$log" 2>&1
 
@@ -123,7 +140,7 @@ inputs:
   # Script inputs #
   #################
   species_name:
-    type: string[]
+    type: string[]?
     label: Species name
     doc: Scientific name(s) of species
     default:
@@ -184,27 +201,27 @@ inputs:
             type: float[]?
 
   study_area:
-    type: File
+    type: File?
     label: Polygon of study area
     doc: Polygon of study area for which you want to pull OBIS points
 
   start_date:
-    type: string
+    type: string?
     label: Start date
     doc: Start date for the occurences in YYYY-MM-DD format (leave blank for all dates)
 
   end_date:
-    type: string
+    type: string?
     label: End date
     doc: End date for the occurences in YYYY-MM-DD format (leave blank for present date)
 
   min_depth:
-    type: int
+    type: int?
     label: Minimum depth
     doc: Mininum depth in meters for occurences (leave blank for no minimum depth)
 
   max_depth:
-    type: int
+    type: int?
     label: Maximum depth
     doc: Maximum depth in meters for occurences (leave blank for no maximum depth)
 
@@ -215,11 +232,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   envFolderWriteable:
     type: boolean
@@ -265,7 +279,7 @@ outputs:
     label: OBIS Occurrences
     doc: CSV of OBIS occurrences
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'output.json')"
+      glob: "output.json"
       loadContents: true
       outputEval: |
         ${
@@ -278,4 +292,4 @@ outputs:
   logs:
     type: File
     outputBinding:
-      glob: "$((inputs.runFolder ? inputs.runFolder.basename + '/' : '') + 'logs.txt')"
+      glob: "logs.txt"

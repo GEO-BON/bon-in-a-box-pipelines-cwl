@@ -28,13 +28,13 @@ inputs:
   # Script inputs #
   #################
   pipeline@101:
-    type: File
+    type: File?
     label: Binary map of habitat presence/absence
     doc: Tif file describing presence (1) or absence (0) of suitable habitat. Multiple layers can be used to describe habitat availability at different time points.
     default: /userdata/tcyy.tif
 
   pipeline@102:
-    type: string[]
+    type: string[]?
     label: Time points of habitat map
     doc: List of time points corresponding to habitat map layers.
     default:
@@ -64,13 +64,13 @@ inputs:
     - y2023
 
   pipeline@100:
-    type: File
+    type: File?
     label: Polygons of populations
     doc: Path to geojson file storing polygons of populations.
     default: /userdata/population_polygons.geojson
 
   GFS_IndicatorsTool>get_Indicators.yml@127|ne_nc:
-    type: float[]
+    type: float[]?
     label: Ne:Nc ratio estimate
     doc: Estimated Ne:Nc ratio for the studied species. Multiple values can be provided, separated by a comma.
     default:
@@ -78,13 +78,13 @@ inputs:
     - 0.2
 
   GFS_IndicatorsTool>get_Indicators.yml@127|runtitle:
-    type: string
+    type: string?
     label: Title of the run
     doc: Set a name for the pipeline run.
     default: Quercus sartorii, Mexico, Habitat decline by tree cover loss, 2000-2023
 
   GFS_IndicatorsTool>get_Indicators.yml@127|pop_density:
-    type: float[]
+    type: float[]?
     label: Population density
     doc: Estimated density of the population [number of individuals per km2]. Multiple values can be provided, separated by a comma.
     default:
@@ -180,17 +180,17 @@ steps:
             
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-            "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
+              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
             if [[ ! -d "$unpackedFolder" ]]; then
-              mkdir -p "$unpackedFolder"
-              tar -xf "$unpackedFolder.tar.gz" -C "$unpackedFolder" --use-compress-program=pigz
+              # remove the env to force using the conda-pack
+              mamba env remove -y -n "$condaEnvName"
+              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
+                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
             fi
             echo "Done."
           }
           export -f exportEnv
-          
-          bash -c 'exportEnv "rbase" ""'
           
           bash -c 'exportEnv "GFS_IndicatorsTool__get_Indicators" "channels: [conda-forge, r]
           dependencies: [r-devtools, r-rjson, r-terra, r-sf, r-rnaturalearth, r-teachingdemos,
@@ -220,7 +220,7 @@ steps:
     out: [envFolder]
 
   GFS_IndicatorsTool>pop_area_by_habitat.yml@99:
-    run: ../../../../tools/pop_area_by_habitat.cwl
+    run: ../../../../tools/GFS_IndicatorsTool/pop_area_by_habitat.cwl
     in:
       population_polygons: pipeline@100
       habitat_map: pipeline@101
@@ -238,7 +238,7 @@ steps:
 
 
   GFS_IndicatorsTool>get_Indicators.yml@127:
-    run: ../../../../tools/get_Indicators.cwl
+    run: ../../../../tools/GFS_IndicatorsTool/get_Indicators.cwl
     in:
       population_polygons: pipeline@100
       habitat_map: pipeline@101

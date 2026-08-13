@@ -4,7 +4,7 @@ scripts_root:  # type 'Directory' (optional)
 runFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-pipeline@46: 2  # default value of type 'int'.
+pipeline@46: 2  # default value of type 'int'. (optional)
 pipeline@149:  # "file:///home/jean-michel/code/cwl-temp/export/workflows/SDM/SDM_ewlgcp.cwl#pipeline@149/bboxCRS" record type.
     region:  # "file:///home/jean-michel/code/cwl-temp/export/workflows/SDM/SDM_ewlgcp.cwl#pipeline@149/bboxCRS/region/regionDefinition" record type.
         bboxWGS84:  # array of type 'float' (optional)
@@ -28,8 +28,8 @@ pipeline@149:  # "file:///home/jean-michel/code/cwl-temp/export/workflows/SDM/SD
           - 0.1
         ISO3: a_string  # type 'string' (optional)
         englishName: a_string  # type 'string' (optional)
-pipeline@128: 1000  # default value of type 'float'.
-pipeline@121:  # array of type 'string'
+pipeline@128: 1000  # default value of type 'float'. (optional)
+pipeline@121:  # array of type 'string' (optional)
   - Acer saccharum
 
 environment:  # type 'File' (optional)
@@ -39,20 +39,20 @@ envFolder:  # default value of type 'Directory'.
     class: Directory
     path: file:///home/jean-michel/code/cwl-temp/export/workflows/SDM/envs
 
-data>loadFromStac.yml@140|study_area:  # type 'File'
+data>loadFromStac.yml@140|study_area:  # type 'File' (optional)
     class: File
     path: a/file/path
-data>loadFromStac.yml@140|stac_url: https://stac.geobon.org/  # default value of type 'string'.
-data>loadFromStac.yml@140|collections_items:  # array of type 'string'
+data>loadFromStac.yml@140|stac_url: https://stac.geobon.org/  # default value of type 'string'. (optional)
+data>loadFromStac.yml@140|collections_items:  # array of type 'string' (optional)
   - chelsa-clim|bio5
   - earthenv_landcover|class_1
   - earthenv_landcover|class_7
   - earthenv_landcover|class_3
 
-data>getGBIFObservations>getGBIFObservations.yml@139|min_year: 2010  # default value of type 'int'.
-data>getGBIFObservations>getGBIFObservations.yml@139|max_year: 2024  # default value of type 'int'.
+data>getGBIFObservations>getGBIFObservations.yml@139|min_year: 2010  # default value of type 'int'. (optional)
+data>getGBIFObservations>getGBIFObservations.yml@139|max_year: 2024  # default value of type 'int'. (optional)
 data>GBIFHeatmapFromSTAC.yml@145|taxa: plants  # enum; valid values: "file:///home/jean-michel/code/cwl-temp/export/workflows/SDM/SDM_ewlgcp.cwl#data>GBIFHeatmapFromSTAC.yml@145|taxa/reptiles", "file:///home/jean-michel/code/cwl-temp/export/workflows/SDM/SDM_ewlgcp.cwl#data>GBIFHeatmapFromSTAC.yml@145|taxa/plants", "file:///home/jean-michel/code/cwl-temp/export/workflows/SDM/SDM_ewlgcp.cwl#data>GBIFHeatmapFromSTAC.yml@145|taxa/mammals", "file:///home/jean-michel/code/cwl-temp/export/workflows/SDM/SDM_ewlgcp.cwl#data>GBIFHeatmapFromSTAC.yml@145|taxa/birds", "file:///home/jean-michel/code/cwl-temp/export/workflows/SDM/SDM_ewlgcp.cwl#data>GBIFHeatmapFromSTAC.yml@145|taxa/arthropods", "file:///home/jean-michel/code/cwl-temp/export/workflows/SDM/SDM_ewlgcp.cwl#data>GBIFHeatmapFromSTAC.yml@145|taxa/amphibians", "file:///home/jean-michel/code/cwl-temp/export/workflows/SDM/SDM_ewlgcp.cwl#data>GBIFHeatmapFromSTAC.yml@145|taxa/all"
 condaPackURL: 
     https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
-SDM>selectBackground.yml@40|n_background: 100000  # default value of type 'int'.
+SDM>selectBackground.yml@40|n_background: 100000  # default value of type 'int'. (optional)
 SDM>selectBackground.yml@40|method_background: weighted_raster  # enum; valid values: "file:///home/jean-michel/code/cwl-temp/export/workflows/SDM/SDM_ewlgcp.cwl#SDM>selectBackground.yml@40|method_background/random", "file:///home/jean-michel/code/cwl-temp/export/workflows/SDM/SDM_ewlgcp.cwl#SDM>selectBackground.yml@40|method_background/inclusion_buffer", "file:///home/jean-michel/code/cwl-temp/export/workflows/SDM/SDM_ewlgcp.cwl#SDM>selectBackground.yml@40|method_background/weighted_raster", "file:///home/jean-michel/code/cwl-temp/export/workflows/SDM/SDM_ewlgcp.cwl#SDM>selectBackground.yml@40|method_background/unweighted_raster"
