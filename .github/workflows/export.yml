@@ -32,12 +32,10 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Verify compiled CWL classes
+      - name: Test JVM class loading
         working-directory: pipeline-engine/script-server
         run: |
-          ./gradlew classes
-          echo "Compiled CWL classes:"
-          find build/classes/kotlin/main/org/geobon/cwl -type f -print
+          java -cp build/classes/kotlin/main org.geobon.cwl.CWLExportMain
 
       - name: Run exportCWL
         working-directory: pipeline-engine/script-server
@@ -47,4 +45,4 @@ jobs:
           SCRIPT_STUBS_LOCATION: ${{ github.workspace }}/pipeline-engine/script-stubs
           USERDATA_LOCATION: ${{ github.workspace }}/pipeline-engine/pipeline-repo/userdata
           SCRIPT_LOCATION: ${{ github.workspace }}/pipeline-engine/pipeline-repo/scripts
-        run: ./gradlew exportCWL --args="${{ github.workspace }}"
+        run: ./gradlew exportCWL --args="${{ github.workspace }}" --info
