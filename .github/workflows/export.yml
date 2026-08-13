@@ -31,7 +31,6 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Run exportCWL
-        working-directory: pipeline-engine
         env:
           OUTPUT_LOCATION: ${{ github.workspace }}/pipeline-engine/pipeline-repo/output
           PIPELINES_LOCATION: ${{ github.workspace }}/pipeline-engine/pipeline-repo/pipelines
