@@ -17,6 +17,14 @@ jobs:
           ref: 'cwl-pipelines'
           path: 'pipeline-engine'
 
+      - name: Show pipeline engine revision
+        working-directory: pipeline-engine
+        run: |
+          git status
+          git branch --show-current
+          git rev-parse HEAD
+          git log -1 --oneline
+
       - name: Wipe tools and workflows directories
         run: |
           rm -rf tools/*
@@ -30,16 +38,6 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
-
-      - name: Inspect exportCWL
-        working-directory: pipeline-engine/script-server
-        run: ./gradlew help --task exportCWL
-
-      - name: Show pipeline engine revision
-        working-directory: pipeline-engine
-        run: |
-          git branch --show-current
-          git log -1 --oneline
 
       - name: Run exportCWL
         working-directory: pipeline-engine/script-server
