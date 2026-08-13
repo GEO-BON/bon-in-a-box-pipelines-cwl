@@ -32,10 +32,15 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Test JVM class loading
+      - name: Debug Java environment
         working-directory: pipeline-engine/script-server
         run: |
-          java -cp build/classes/kotlin/main org.geobon.cwl.CWLExportMain
+          pwd
+          java -version
+          which java
+          echo "JAVA_HOME=$JAVA_HOME"
+          ls -la build/classes/kotlin/main/org/geobon/cwl/
+          java -cp "$(pwd)/build/classes/kotlin/main" org.geobon.cwl.CWLExportMain
 
       - name: Run exportCWL
         working-directory: pipeline-engine/script-server
