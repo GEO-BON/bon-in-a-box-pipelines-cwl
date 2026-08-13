@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: 'GEO-BON/bon-in-a-box-pipeline-engine'
-          ref: '1b72ffd3'
+          ref: '1b71b72ffd3a940c5d7fdd7999c9ff01a03afa09631'
           path: 'pipeline-engine'
 
       - name: Wipe tools and workflows directories
