@@ -31,15 +31,15 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Find CWL compiled classes
+      - name: Find compiled Kotlin classes
         working-directory: pipeline-engine/script-server
         run: |
-          find . -type f -name 'CWLExportMain*' -print
+          find . -type f -name '*.class' | head -100
 
-      - name: Show CWL source files
+      - name: Inspect build directory
         working-directory: pipeline-engine/script-server
         run: |
-          find . -type f -name '*CWLExport*' -print
+          find build -maxdepth 5 -type f -print
 
       - name: Run exportCWL
         working-directory: pipeline-engine/script-server
