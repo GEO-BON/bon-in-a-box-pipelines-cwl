@@ -31,14 +31,15 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Compile project
+      - name: Inspect exportCWL
         working-directory: pipeline-engine/script-server
-        run: ./gradlew classes
+        run: ./gradlew help --task exportCWL
 
-      - name: Find compiled CWL classes
-        working-directory: pipeline-engine/script-server
+      - name: Show pipeline engine revision
+        working-directory: pipeline-engine
         run: |
-          find build -type f -name 'CWLExportMain*' -print
+          git branch --show-current
+          git log -1 --oneline
 
       - name: Run exportCWL
         working-directory: pipeline-engine/script-server
