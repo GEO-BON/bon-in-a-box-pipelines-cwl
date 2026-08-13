@@ -17,14 +17,6 @@ jobs:
           ref: '1b72ffd3'
           path: 'pipeline-engine'
 
-      - name: Show pipeline engine revision
-        working-directory: pipeline-engine
-        run: |
-          git status
-          git branch --show-current
-          git rev-parse HEAD
-          git log -1 --oneline
-
       - name: Wipe tools and workflows directories
         run: |
           rm -rf tools/*
