@@ -38,4 +38,4 @@ jobs:
           SCRIPT_STUBS_LOCATION: ${{ github.workspace }}/pipeline-engine/script-stubs
           USERDATA_LOCATION: ${{ github.workspace }}/pipeline-engine/pipeline-repo/userdata
           SCRIPT_LOCATION: ${{ github.workspace }}/pipeline-engine/pipeline-repo/scripts
-        run: ./gradlew exportCWL --args="${{ github.workspace }}/pipeline-engine/script-server/build/exportCWL"
+        run: ./gradle exportCWL --args="${{ github.workspace }}/pipeline-engine/script-server"
