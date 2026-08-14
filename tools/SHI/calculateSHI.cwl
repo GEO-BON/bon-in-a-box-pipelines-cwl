@@ -9,18 +9,24 @@ class: CommandLineTool
 
 label: Calculate SHI
 doc:
-  - "Description:
-    This script produces 1) the Species Habitat Index time series, by averaging the Species Habitat Scores; 2) the Steward’s Species Habitat Index, by averaging the Species Habitat Scores weighted by the proportion between the area of habitat for the study area and the total range map of the species."
-  - "Authors:
+  - |
+    Description:
+    This script produces 1) the Species Habitat Index time series, by averaging the Species Habitat Scores; 2) the Steward’s Species Habitat Index, by averaging the Species Habitat Scores weighted by the proportion between the area of habitat for the study area and the total range map of the species.
+  - |
+    Authors:
     Maria Isabel Arce-Plata (https://orcid.org/0000-0003-4024-9268)
-    Guillaume Larocque (https://orcid.org/0000-0002-5967-9156)"
+    Guillaume Larocque (https://orcid.org/0000-0002-5967-9156)
   - "External link: https://github.com/GEO-BON/biab-2.0/tree/main/scripts/SHI"
-  - "References:
-    Jetz et al., Species Habitat Index, accessed on 24/8/2022. null
+  - |
+    References:
+    Jetz et al., Species Habitat Index, accessed on 24/8/2022.
+    https://mol.org/indicators/habitat/background)
 
-    World Conservation Monitoring Centre (WCMC) & Convention on Biological Diversity (CBD). 2022. Indicator metadata sheet, accessed on 10/9/2023. null
+    World Conservation Monitoring Centre (WCMC) & Convention on Biological Diversity (CBD). 2022. Indicator metadata sheet, accessed on 10/9/2023.
+    https://cdn.mol.org/static/files/indicators/habitat/WCMC-species_habitat_index-15Feb2022.pdf
 
-    Jetz, W., McGowan, J., Rinnan, D. S., Possingham, H. P., Visconti, P., O’Donnell, B., & Londoño-Murcia, M. C. (2022). Include biodiversity representation indicators in area-based conservation targets. Nature Ecology & Evolution, 6(2), 123–126. null"
+    Jetz, W., McGowan, J., Rinnan, D. S., Possingham, H. P., Visconti, P., O’Donnell, B., & Londoño-Murcia, M. C. (2022). Include biodiversity representation indicators in area-based conservation targets. Nature Ecology & Evolution, 6(2), 123–126.
+    https://doi.org/10.1038/s41559-021-01620-y
 
 
 requirements:
@@ -35,9 +41,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -63,7 +71,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -105,8 +117,8 @@ arguments:
     cat > "$OUTPUT_LOCATION/input.json" <<'JSON'
     ${
       return JSON.stringify({
-        df_shs_tidy: inputs.df_shs_tidy,
-        df_aoh_areas: inputs.df_aoh_areas,
+        df_shs_tidy: (inputs.df_shs_tidy || []).map(function(file) { return file.path; }),
+        df_aoh_areas: inputs.df_aoh_areas ? inputs.df_aoh_areas.path : null,
       }, null, 2);
     }
     JSON
@@ -165,12 +177,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

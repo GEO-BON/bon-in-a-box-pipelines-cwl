@@ -9,13 +9,17 @@ class: CommandLineTool
 
 label: Zonal statistics
 doc:
-  - "Description:
+  - |
+    Description:
     This script calculates zonal statistics for one or more raster layers over a bounding box or polygon of interest using the R pacckage exactextractr.
-    Zonal statistics will be calculated separately for each layer."
-  - "Authors:
-    Jory Griffith (jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)"
-  - "References:
-    Daniel Baston (2023) null"
+    Zonal statistics will be calculated separately for each layer.
+  - |
+    Authors:
+    Jory Griffith (jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)
+  - |
+    References:
+    Daniel Baston (2023)
+    https://doi.org/10.32614/CRAN.package.exactextractr
 
 
 requirements:
@@ -30,9 +34,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -58,7 +64,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -100,9 +110,9 @@ arguments:
     cat > "$OUTPUT_LOCATION/input.json" <<'JSON'
     ${
       return JSON.stringify({
-        rasters: inputs.rasters,
+        rasters: (inputs.rasters || []).map(function(file) { return file.path; }),
         bbox_crs: inputs.bbox_crs,
-        study_area_polygon: inputs.study_area_polygon,
+        study_area_polygon: inputs.study_area_polygon ? inputs.study_area_polygon.path : null,
         summary_statistic: inputs.summary_statistic,
       }, null, 2);
     }
@@ -229,12 +239,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

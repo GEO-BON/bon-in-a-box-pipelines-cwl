@@ -8,11 +8,13 @@ class: Workflow
 
 label: Species Habitat Score
 doc:
-  - "Description:
-    This pipeline measures the Species Habitat Score (SHS), for the species used as inputs. It uses the range maps, the elevation ranges and the habitat categories available from The International Union for Conservation of Nature (IUCN). Changes in the habitat are measured using the Global Forest Watch layers and soon other land cover layers will be added. For the specific case of Quebec it has range maps available from the Ministère de l’Environnement. The outputs are a table with the changes in the area of the habitat by year requested and a graph with a timeseries of these values. Rasters of the habitat available for each year can also be requested."
-  - "Authors:
+  - |
+    Description:
+    This pipeline measures the Species Habitat Score (SHS), for the species used as inputs. It uses the range maps, the elevation ranges and the habitat categories available from The International Union for Conservation of Nature (IUCN). Changes in the habitat are measured using the Global Forest Watch layers and soon other land cover layers will be added. For the specific case of Quebec it has range maps available from the Ministère de l’Environnement. The outputs are a table with the changes in the area of the habitat by year requested and a graph with a timeseries of these values. Rasters of the habitat available for each year can also be requested.
+  - |
+    Authors:
     Maria Isabel Arce-Plata (Pipeline development, https://orcid.org/0000-0003-4024-9268)
-    Guillaume Larocque (Pipeline development, guillaume.larocque@mcgill.ca, https://orcid.org/0000-0002-5967-9156)"
+    Guillaume Larocque (Pipeline development, guillaume.larocque@mcgill.ca, https://orcid.org/0000-0002-5967-9156)
   - "External link: https://github.com/GEO-BON/biab-2.0/tree/main/scripts/SHI"
 
 
@@ -228,11 +230,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   runFolder:
     type: Directory?
@@ -264,6 +263,7 @@ inputs:
 steps:
   # This step prepares the environments for all the following steps
   prepareEnvironments:
+    when: $(inputs.envFolderWrite != null)
     run:
       class: CommandLineTool
       requirements:
@@ -302,51 +302,47 @@ steps:
           echo "Exporting all environments"
           mkdir -p "$OUTPUT_LOCATION" "$CONDA_PKGS_DIRS" /conda-env-yml/envs
           
-          function exportEnv {
+          function getPackedEnv {
             condaEnvName=$1
             condaEnvYml=$2
-            unpackedFolder=$(inputs.envFolderWrite.path)/$condaEnvName
+            # We use a dedicated env folder to avoid copying the whole env folder between steps in a k8 context
+            dedicatedEnvFolder=$(inputs.envFolderWrite.path)/$condaEnvName
+            mkdir -p "$dedicatedEnvFolder"
             
             echo "Exporting $condaEnvName..."
-            source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
-            source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
-            if [[ ! -d "$unpackedFolder" ]]; then
-              # remove the env to force using the conda-pack
-              mamba env remove -y -n "$condaEnvName"
-              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
-            fi
+            source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh "$OUTPUT_LOCATION" "$condaEnvName" \
+              "$condaEnvYml" "$dedicatedEnvFolder" "$(inputs.condaPackURL)" --noActivate
+            source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh "$condaEnvName" "$dedicatedEnvFolder"
             echo "Done."
           }
-          export -f exportEnv
+          export -f getPackedEnv
           
-          bash -c 'exportEnv "data__getRangeMap" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "data__getRangeMap" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-dplyr, r-tidyr, r-purrr, r-sf, r-stringr]
           name: data__getRangeMap
           "'
           
-          bash -c 'exportEnv "SHI__habitatChange_GFW" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "SHI__habitatChange_GFW" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-dplyr, r-tidyr, r-purrr, r-terra, r-stars, r-sf, r-readr,
             r-geodata, r-gdalcubes, r-rredlist, r-stringr, r-tmaptools, r-ggplot2, r-rstac,
             r-lubridate, r-RCurl]
           name: SHI__habitatChange_GFW
           "'
           
-          bash -c 'exportEnv "data__getAreaOfHabitat" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "data__getAreaOfHabitat" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-rstac, r-dplyr, r-tidyr, r-purrr, r-terra, r-stars, r-sf,
             r-readr, r-geodata, r-gdalcubes, r-rredlist=1.0.0, r-stringr, r-httr2, r-geojsonsf,
             r-sp, r-lwgeom]
           name: data__getAreaOfHabitat
           "'
           
-          bash -c 'exportEnv "data__loadFromStac" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "data__loadFromStac" "channels: [conda-forge, r]
           dependencies: [libgdal, r-lubridate, proj, r-proj, r-gdalcubes=0.7.4, r-rstac, r-dplyr,
             r-rcurl, r-rjson, r-sf, r-stars, r-terra]
           name: data__loadFromStac
           "'
           
-          bash -c 'exportEnv "data__getCountryPolygon" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "data__getCountryPolygon" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-jsonlite, r-sf, r-remotes, r-dplyr, r-countrycode, r-httr2,
             r-jsonlite]
           name: data__getCountryPolygon
@@ -354,7 +350,7 @@ steps:
           
       inputs:
         envFolderWrite:
-          type: Directory
+          type: Directory?
         runFolderWrite:
           type: Directory?
         condaPackURL:
@@ -378,8 +374,10 @@ steps:
     in:
       species: pipeline@76
       expert_source: pipeline@77
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getRangeMap' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -403,8 +401,10 @@ steps:
       t_0: SHI>habitatChange_GFW.yml@67|t_0
       t_n: SHI>habitatChange_GFW.yml@67|t_n
       time_step: SHI>habitatChange_GFW.yml@67|time_step
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SHI__habitatChange_GFW' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -430,8 +430,10 @@ steps:
       elevation_filter: data>getAreaOfHabitat.yml@80|elevation_filter
       elev_buffer: data>getAreaOfHabitat.yml@80|elev_buffer
       rasters: data>loadFromStac.yml@84/rasters
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getAreaOfHabitat' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -455,8 +457,10 @@ steps:
       resampling: data>loadFromStac.yml@84|resampling
       aggregation: data>loadFromStac.yml@84|aggregation
       study_area: pipeline@90
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -471,8 +475,10 @@ steps:
     run: ../../tools/data/getCountryPolygon.cwl
     in:
       bbox_crs: pipeline@93
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getCountryPolygon' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder

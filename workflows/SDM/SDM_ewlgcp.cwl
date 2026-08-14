@@ -8,12 +8,14 @@ class: Workflow
 
 label: Species distribution modeling with ewlgcpSDM
 doc:
-  - "Description:
-    This pipeline generates predictions from a species distribution model  using a point process approach and the effort-weighted Log-Gaussian  Cox Process (ewlgcp) implemented in the R package [ewlgcpSDM](https://github.com/BiodiversiteQuebec/ewlgcpSDM)."
-  - "Authors:
+  - |
+    Description:
+    This pipeline generates predictions from a species distribution model  using a point process approach and the effort-weighted Log-Gaussian  Cox Process (ewlgcp) implemented in the R package [ewlgcpSDM](https://github.com/BiodiversiteQuebec/ewlgcpSDM).
+  - |
+    Authors:
     François Rousseu (Pipeline development, https://orcid.org/0000-0002-2400-2479)
     Guillaume Blanchet (Pipeline development, https://orcid.org/0000-0001-5149-2488)
-    Dominique Gravel (Pipeline development, https://orcid.org/0000-0002-4498-7076)"
+    Dominique Gravel (Pipeline development, https://orcid.org/0000-0002-4498-7076)
   - "External link: https://github.com/GEO-BON/biab-2.0/blob/main/scripts/SDM/runewlgcp.R"
 
 
@@ -177,11 +179,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   runFolder:
     type: Directory?
@@ -213,6 +212,7 @@ inputs:
 steps:
   # This step prepares the environments for all the following steps
   prepareEnvironments:
+    when: $(inputs.envFolderWrite != null)
     run:
       class: CommandLineTool
       requirements:
@@ -251,58 +251,54 @@ steps:
           echo "Exporting all environments"
           mkdir -p "$OUTPUT_LOCATION" "$CONDA_PKGS_DIRS" /conda-env-yml/envs
           
-          function exportEnv {
+          function getPackedEnv {
             condaEnvName=$1
             condaEnvYml=$2
-            unpackedFolder=$(inputs.envFolderWrite.path)/$condaEnvName
+            # We use a dedicated env folder to avoid copying the whole env folder between steps in a k8 context
+            dedicatedEnvFolder=$(inputs.envFolderWrite.path)/$condaEnvName
+            mkdir -p "$dedicatedEnvFolder"
             
             echo "Exporting $condaEnvName..."
-            source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
-            source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
-            if [[ ! -d "$unpackedFolder" ]]; then
-              # remove the env to force using the conda-pack
-              mamba env remove -y -n "$condaEnvName"
-              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
-            fi
+            source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh "$OUTPUT_LOCATION" "$condaEnvName" \
+              "$condaEnvYml" "$dedicatedEnvFolder" "$(inputs.condaPackURL)" --noActivate
+            source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh "$condaEnvName" "$dedicatedEnvFolder"
             echo "Done."
           }
-          export -f exportEnv
+          export -f getPackedEnv
           
-          bash -c 'exportEnv "filtering__cleanCoordinates" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "filtering__cleanCoordinates" "channels: [conda-forge, r]
           dependencies: [r-terra, r-rjson, r-raster, r-dplyr, r-CoordinateCleaner, r-gdalcubes]
           name: filtering__cleanCoordinates
           "'
           
-          bash -c 'exportEnv "SDM__selectBackground" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "SDM__selectBackground" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-terra, r-dplyr, r-raster, r-CoordinateCleaner, r-stars,
             r-rstac, r-gdalcubes]
           name: SDM__selectBackground
           "'
           
-          bash -c 'exportEnv "SDM__setupDataSdm" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "SDM__setupDataSdm" "channels: [conda-forge, r]
           dependencies: [r-gdalcubes, r-terra, r-rjson, r-raster, r-dplyr, r-ENMeval, r-devtools]
           name: SDM__setupDataSdm
           "'
           
-          bash -c 'exportEnv "SDM__removeCollinearity" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "SDM__removeCollinearity" "channels: [conda-forge, r]
           dependencies: [r-terra, r-rjson, r-dplyr, r-gdalcubes]
           name: SDM__removeCollinearity
           "'
           
-          bash -c 'exportEnv "data__getGBIFObservations__getGBIFObservations" "channels: [conda-forge]
+          bash -c 'getPackedEnv "data__getGBIFObservations__getGBIFObservations" "channels: [conda-forge]
           dependencies: [pygbif, pandas, pyproj]
           name: data__getGBIFObservations__getGBIFObservations
           "'
           
-          bash -c 'exportEnv "data__loadFromStac" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "data__loadFromStac" "channels: [conda-forge, r]
           dependencies: [libgdal, r-lubridate, proj, r-proj, r-gdalcubes=0.7.4, r-rstac, r-dplyr,
             r-rcurl, r-rjson, r-sf, r-stars, r-terra]
           name: data__loadFromStac
           "'
           
-          bash -c 'exportEnv "SDM__runewlgcp" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "SDM__runewlgcp" "channels: [conda-forge, r]
           dependencies: [r-terra, r-rjson, r-raster, r-dplyr, r-gdalcubes, r-ENMeval, r-devtools,
             r-sf, r-FNN, r-stars]
           name: SDM__runewlgcp
@@ -310,7 +306,7 @@ steps:
           
       inputs:
         envFolderWrite:
-          type: Directory
+          type: Directory?
         runFolderWrite:
           type: Directory?
         condaPackURL:
@@ -336,8 +332,10 @@ steps:
       predictors: SDM>removeCollinearity.yml@97/rasters_selected
       tests: { default: [equal, zeros, duplicates, same_pixel, capitals, centroids, gbif, institutions] }
       env_threshold: { default: 0.8 }
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/filtering__cleanCoordinates' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -357,8 +355,10 @@ steps:
       n_background: SDM>selectBackground.yml@40|n_background
       predictors: SDM>removeCollinearity.yml@97/rasters_selected
       raster: data>GBIFHeatmapFromSTAC.yml@145/rasters
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__selectBackground' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -379,8 +379,10 @@ steps:
       runs_n: pipeline@46
       boot_proportion: { default: 0.7 }
       cv_partitions: { default: 5 }
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__setupDataSdm' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -400,8 +402,10 @@ steps:
       nb_sample: { default: 5000 }
       cutoff_cor: { default: 0.75 }
       cutoff_vif: { default: 8 }
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__removeCollinearity' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -419,9 +423,6 @@ steps:
       bbox_crs: pipeline@149
       method: { default: bbox }
       width_buffer: { default: 0 }
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
-        default: false
       runFolder:
           source: runFolder
           valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__studyExtent/104' } : null)" 
@@ -438,8 +439,10 @@ steps:
       bbox_crs: pipeline@149
       min_year: data>getGBIFObservations>getGBIFObservations.yml@139|min_year
       max_year: data>getGBIFObservations>getGBIFObservations.yml@139|max_year
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getGBIFObservations__getGBIFObservations' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -463,8 +466,10 @@ steps:
       resampling: { default: average }
       aggregation: { default: first }
       study_area: data>loadFromStac.yml@140|study_area
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -481,9 +486,6 @@ steps:
       taxa: data>GBIFHeatmapFromSTAC.yml@145|taxa
       bbox_crs: pipeline@149
       spatial_res: pipeline@128
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
-        default: false
       runFolder:
           source: runFolder
           valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__GBIFHeatmapFromSTAC/145' } : null)" 
@@ -502,8 +504,10 @@ steps:
       crs: pipeline@149
       n_folds: pipeline@46
       spatial_res: pipeline@128
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__runewlgcp' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder

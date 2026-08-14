@@ -9,10 +9,12 @@ class: CommandLineTool
 
 label: Remove Collinearity
 doc:
-  - "Description:
-    Remove collinearity between a series of predictor rasters with the exact same extent CRS and resolution"
-  - "Authors:
-    Sarah Valentin (https://orcid.org/0000-0002-9028-681X)"
+  - |
+    Description:
+    Remove collinearity between a series of predictor rasters with the exact same extent CRS and resolution
+  - |
+    Authors:
+    Sarah Valentin (https://orcid.org/0000-0002-9028-681X)
 
 
 requirements:
@@ -27,9 +29,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -55,7 +59,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -97,7 +105,7 @@ arguments:
     cat > "$OUTPUT_LOCATION/input.json" <<'JSON'
     ${
       return JSON.stringify({
-        rasters: inputs.rasters,
+        rasters: (inputs.rasters || []).map(function(file) { return file.path; }),
         method: inputs.method,
         method_cor_vif: inputs.method_cor_vif,
         nb_sample: inputs.nb_sample,
@@ -140,7 +148,7 @@ inputs:
   rasters:
     type: File[]?
     label: rasters
-    doc: array of input raster paths
+    doc: Array of input raster paths. Environmental predictor rasters to screen for collinearity. Choose rasters that describe candidate environmental variables for the model
     default: []
 
   method:
@@ -153,7 +161,7 @@ inputs:
         - spearman
         - kendall
     label: method
-    doc: Option, method used to compute collinearity between variables
+    doc: Method used to compute collinearity between variables. Use `vif.cor` to remove variables using pairwise correlation followed by variance inflation factor checks, or `vif.step` to remove variables iteratively using only VIF. If your variables are skewed or have outliers you should favour the Spearman or Kendall methods. See the [`usdm` VIF documentation](https://babaknaimi.r-universe.dev/usdm/doc/manual.html) and this overview of [Pearson, Spearman, and Kendall correlations](https://library.virginia.edu/data/articles/correlation-pearson-spearman-and-kendalls-tau).
     default: vif.cor
 
   method_cor_vif:
@@ -164,7 +172,7 @@ inputs:
         - spearman
         - kendall
     label: correlation coefficient for vif.cor method
-    doc: Option, method to calculate the coefficient of collinearity, only used if method == vif.cor
+    doc: Option, method to calculate the coefficient of collinearity, only used if method == vif.cor.
     default: pearson
 
   nb_sample:
@@ -195,12 +203,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:
@@ -237,7 +245,7 @@ outputs:
   rasters_selected:
     type: File[]
     label: rasters_selected
-    doc: array of output raster paths
+    doc: Array of output raster paths. Subset of input raster paths retained after removing highly collinear predictors. These rasters represent the environmental variables selected for downstream modeling.
     outputBinding:
       glob: "output.json"
       loadContents: true

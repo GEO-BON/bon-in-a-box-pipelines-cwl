@@ -1,8 +1,0 @@
-[1;30mINFO[0m /home/jean-michel/.local/bin/cwl-runner 3.2.20260413085819
-[1;30mINFO[0m Resolved '/home/jean-michel/code/cwl-temp/export/workflows/BILBI_pipelines/parc_pipeline.cwl' to 'file:///home/jean-michel/code/cwl-temp/export/workflows/BILBI_pipelines/parc_pipeline.cwl'
-[1;30mERROR[0m [31mTool definition failed validation:
-file:///home/jean-michel/code/cwl-temp/export/workflows/BILBI_pipelines/parc_pipeline.cwl:11:3:   while parsing a
-                                                                                                  block collection
-file:///home/jean-michel/code/cwl-temp/export/workflows/BILBI_pipelines/parc_pipeline.cwl:15:168:   expected <block
-                                                                                                    end>, but found
-                                                                                                    '<scalar>'[0m

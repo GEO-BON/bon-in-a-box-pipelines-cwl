@@ -9,13 +9,17 @@ class: CommandLineTool
 
 label: MaxEnt
 doc:
-  - "Description:
-    This script runs MaxEnt algorithm based on ENMeval package."
-  - "Authors:
-    Sarah Valentin (https://orcid.org/0000-0002-9028-681X)"
+  - |
+    Description:
+    This script runs MaxEnt algorithm based on ENMeval package.
+  - |
+    Authors:
+    Sarah Valentin (https://orcid.org/0000-0002-9028-681X)
   - "External link: https://github.com/jamiemkass/ENMeval"
-  - "References:
-    ENMeval 2.0 Redesigned for customizable and reproducible modeling of species’ niches and distributions null"
+  - |
+    References:
+    ENMeval 2.0 Redesigned for customizable and reproducible modeling of species’ niches and distributions
+    https://doi.org/10.1111/2041-210X.13628
 
 
 requirements:
@@ -30,9 +34,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -58,7 +64,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -100,8 +110,8 @@ arguments:
     cat > "$OUTPUT_LOCATION/input.json" <<'JSON'
     ${
       return JSON.stringify({
-        presence_background: inputs.presence_background,
-        predictors: inputs.predictors,
+        presence_background: inputs.presence_background ? inputs.presence_background.path : null,
+        predictors: (inputs.predictors || []).map(function(file) { return file.path; }),
         fc: inputs.fc,
         rm: inputs.rm,
         partition_type: inputs.partition_type,
@@ -262,12 +272,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

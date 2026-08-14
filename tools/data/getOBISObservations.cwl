@@ -9,11 +9,13 @@ class: CommandLineTool
 
 label: OBIS Observations
 doc:
-  - "Description:
-    Load OBIS data using the robis package."
+  - |
+    Description:
+    Load OBIS data using the robis package.
   - "Lifecycle tag: Core."
-  - "Authors:
-    Jory Griffith (jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)"
+  - |
+    Authors:
+    Jory Griffith (jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)
 
 
 requirements:
@@ -28,9 +30,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -56,7 +60,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -100,7 +108,7 @@ arguments:
       return JSON.stringify({
         species_name: inputs.species_name,
         bbox: inputs.bbox,
-        study_area: inputs.study_area,
+        study_area: inputs.study_area ? inputs.study_area.path : null,
         start_date: inputs.start_date,
         end_date: inputs.end_date,
         min_depth: inputs.min_depth,
@@ -235,12 +243,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

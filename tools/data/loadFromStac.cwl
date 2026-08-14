@@ -9,11 +9,13 @@ class: CommandLineTool
 
 label: Load from STAC
 doc:
-  - "Description:
-    Extract individual unprocessed items from various collections on the GEO BON STAC catalog."
+  - |
+    Description:
+    Extract individual unprocessed items from various collections on the GEO BON STAC catalog.
   - "Lifecycle tag: Core."
-  - "Authors:
-    Guillaume Larocque (https://orcid.org/0000-0002-5967-9156)"
+  - |
+    Authors:
+    Guillaume Larocque (https://orcid.org/0000-0002-5967-9156)
 
 
 requirements:
@@ -28,9 +30,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -56,7 +60,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -107,7 +115,7 @@ arguments:
         spatial_res: inputs.spatial_res,
         resampling: inputs.resampling,
         aggregation: inputs.aggregation,
-        study_area: inputs.study_area,
+        study_area: inputs.study_area ? inputs.study_area.path : null,
       }, null, 2);
     }
     JSON
@@ -257,12 +265,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

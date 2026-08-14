@@ -8,22 +8,28 @@ class: Workflow
 
 label: Species Habitat Index
 doc:
-  - "Description:
-    This pipeline takes the outputs from the Species Habitat Score (SHS) pipeline and measures the Species Habitat Index for the species used as inputs, following the methodology proposed for Jetz et al. 2022 (https://cdn.mol.org/static/files/indicators/habitat/WCMC-species_habitat_index-15Feb2022.pdf). The index has two componentes an Area Score and a Connectivity score that are measured for the habitat of the required species (Species Habitat Score),  the Species Habitat Index is the average between those scores for the study area  Index. It can also have weight values assigned according to the proportion of the area of the habitat of the species that is located in the study area."
-  - "Authors:
+  - |
+    Description:
+    This pipeline takes the outputs from the Species Habitat Score (SHS) pipeline and measures the Species Habitat Index for the species used as inputs, following the methodology proposed for Jetz et al. 2022 (https://cdn.mol.org/static/files/indicators/habitat/WCMC-species_habitat_index-15Feb2022.pdf). The index has two componentes an Area Score and a Connectivity score that are measured for the habitat of the required species (Species Habitat Score),  the Species Habitat Index is the average between those scores for the study area  Index. It can also have weight values assigned according to the proportion of the area of the habitat of the species that is located in the study area.
+  - |
+    Authors:
     Maria Isabel Arce-Plata (Pipeline development, https://orcid.org/0000-0003-4024-9268)
     Guillaume Larocque (Pipeline development, guillaume.larocque@mcgill.ca, https://orcid.org/0000-0002-5967-9156)
     Jaime Burbano-Girón (Pipeline development, https://orcid.org/0000-0001-6570-439X)
     Maria Camila Díaz (Pipeline development)
     Timothée Poisot (Pipeline development, https://orcid.org/0000-0002-0735-5184)
-    Laetitia Tremblay (Maintenance, https://www.linkedin.com/in/laetitia-tremblay-b0619b273/)"
+    Laetitia Tremblay (Maintenance, https://www.linkedin.com/in/laetitia-tremblay-b0619b273/)
   - "External link: https://github.com/GEO-BON/biab-2.0/tree/main/scripts/SHI"
-  - "References:
-    Brooks, T. M., Pimm, S. L., Akçakaya, H. R., Buchanan, G. M., Butchart, S. H. M., Foden, W., Hilton-Taylor, C., Hoffmann, M., Jenkins, C. N., Joppa, L., Li, B. V., Menon, V., Ocampo-Peñuela, N., & Rondinini, C. (2019). Measuring Terrestrial Area of Habitat (AOH) and Its Utility for the IUCN Red List. Trends in Ecology & Evolution, 34(11), 977–986. https://doi.org/10.1016/j.tree.2019.06.009 [https://www.sciencedirect.com/science/article/pii/S0169534719301892?via%3Dihub] null
+  - |
+    References:
+    Brooks, T. M., Pimm, S. L., Akçakaya, H. R., Buchanan, G. M., Butchart, S. H. M., Foden, W., Hilton-Taylor, C., Hoffmann, M., Jenkins, C. N., Joppa, L., Li, B. V., Menon, V., Ocampo-Peñuela, N., & Rondinini, C. (2019). Measuring Terrestrial Area of Habitat (AOH) and Its Utility for the IUCN Red List. Trends in Ecology & Evolution, 34(11), 977–986. https://doi.org/10.1016/j.tree.2019.06.009 [https://www.sciencedirect.com/science/article/pii/S0169534719301892?via%3Dihub]
+    null
 
-    Jetz et al., Species Habitat Index [accessed on 24/8/2022](https://mol.org/indicators/habitat/background) null
+    Jetz et al., Species Habitat Index [accessed on 24/8/2022](https://mol.org/indicators/habitat/background)
+    null
 
-    Jetz, W., McGowan, J., Rinnan, D. S., Possingham, H. P., Visconti, P., O’Donnell, B., & Londoño-Murcia, M. C. (2022). Include biodiversity representation indicators in area-based conservation targets. Nature Ecology & Evolution, 6(2), 123–126. https://doi.org/10.1038/s41559-021-01620-y [https://www.nature.com/articles/s41559-021-01620-y] null"
+    Jetz, W., McGowan, J., Rinnan, D. S., Possingham, H. P., Visconti, P., O’Donnell, B., & Londoño-Murcia, M. C. (2022). Include biodiversity representation indicators in area-based conservation targets. Nature Ecology & Evolution, 6(2), 123–126. https://doi.org/10.1038/s41559-021-01620-y [https://www.nature.com/articles/s41559-021-01620-y]
+    null
 
 
 requirements:
@@ -240,11 +246,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   runFolder:
     type: Directory?
@@ -276,6 +279,7 @@ inputs:
 steps:
   # This step prepares the environments for all the following steps
   prepareEnvironments:
+    when: $(inputs.envFolderWrite != null)
     run:
       class: CommandLineTool
       requirements:
@@ -314,56 +318,52 @@ steps:
           echo "Exporting all environments"
           mkdir -p "$OUTPUT_LOCATION" "$CONDA_PKGS_DIRS" /conda-env-yml/envs
           
-          function exportEnv {
+          function getPackedEnv {
             condaEnvName=$1
             condaEnvYml=$2
-            unpackedFolder=$(inputs.envFolderWrite.path)/$condaEnvName
+            # We use a dedicated env folder to avoid copying the whole env folder between steps in a k8 context
+            dedicatedEnvFolder=$(inputs.envFolderWrite.path)/$condaEnvName
+            mkdir -p "$dedicatedEnvFolder"
             
             echo "Exporting $condaEnvName..."
-            source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
-            source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
-            if [[ ! -d "$unpackedFolder" ]]; then
-              # remove the env to force using the conda-pack
-              mamba env remove -y -n "$condaEnvName"
-              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
-            fi
+            source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh "$OUTPUT_LOCATION" "$condaEnvName" \
+              "$condaEnvYml" "$dedicatedEnvFolder" "$(inputs.condaPackURL)" --noActivate
+            source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh "$condaEnvName" "$dedicatedEnvFolder"
             echo "Done."
           }
-          export -f exportEnv
+          export -f getPackedEnv
           
-          bash -c 'exportEnv "data__getRangeMap" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "data__getRangeMap" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-dplyr, r-tidyr, r-purrr, r-sf, r-stringr]
           name: data__getRangeMap
           "'
           
-          bash -c 'exportEnv "SHI__calculateSHI" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "SHI__calculateSHI" "channels: [conda-forge, r]
           dependencies: [r-dplyr, r-purrr, r-readr, r-ggplot2, r-rjson]
           name: SHI__calculateSHI
           "'
           
-          bash -c 'exportEnv "data__getAreaOfHabitat" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "data__getAreaOfHabitat" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-rstac, r-dplyr, r-tidyr, r-purrr, r-terra, r-stars, r-sf,
             r-readr, r-geodata, r-gdalcubes, r-rredlist=1.0.0, r-stringr, r-httr2, r-geojsonsf,
             r-sp, r-lwgeom]
           name: data__getAreaOfHabitat
           "'
           
-          bash -c 'exportEnv "SHI__habitatChange_GFW" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "SHI__habitatChange_GFW" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-dplyr, r-tidyr, r-purrr, r-terra, r-stars, r-sf, r-readr,
             r-geodata, r-gdalcubes, r-rredlist, r-stringr, r-tmaptools, r-ggplot2, r-rstac,
             r-lubridate, r-RCurl]
           name: SHI__habitatChange_GFW
           "'
           
-          bash -c 'exportEnv "data__loadFromStac" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "data__loadFromStac" "channels: [conda-forge, r]
           dependencies: [libgdal, r-lubridate, proj, r-proj, r-gdalcubes=0.7.4, r-rstac, r-dplyr,
             r-rcurl, r-rjson, r-sf, r-stars, r-terra]
           name: data__loadFromStac
           "'
           
-          bash -c 'exportEnv "data__getCountryPolygon" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "data__getCountryPolygon" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-jsonlite, r-sf, r-remotes, r-dplyr, r-countrycode, r-httr2,
             r-jsonlite]
           name: data__getCountryPolygon
@@ -371,7 +371,7 @@ steps:
           
       inputs:
         envFolderWrite:
-          type: Directory
+          type: Directory?
         runFolderWrite:
           type: Directory?
         condaPackURL:
@@ -395,8 +395,10 @@ steps:
     in:
       species: pipeline@76
       expert_source: pipeline@77
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getRangeMap' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -412,8 +414,10 @@ steps:
     in:
       df_shs_tidy: SHI>habitatChange_GFW.yml@96/df_shs_tidy
       df_aoh_areas: data>getAreaOfHabitat.yml@80/df_aoh_areas
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SHI__calculateSHI' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -439,8 +443,10 @@ steps:
       elevation_filter: data>getAreaOfHabitat.yml@80|elevation_filter
       elev_buffer: data>getAreaOfHabitat.yml@80|elev_buffer
       rasters: data>loadFromStac.yml@107/rasters
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getAreaOfHabitat' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -464,8 +470,10 @@ steps:
       t_0: SHI>habitatChange_GFW.yml@96|t_0
       t_n: SHI>habitatChange_GFW.yml@96|t_n
       time_step: SHI>habitatChange_GFW.yml@96|time_step
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SHI__habitatChange_GFW' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -489,8 +497,10 @@ steps:
       resampling: data>loadFromStac.yml@107|resampling
       aggregation: data>loadFromStac.yml@107|aggregation
       study_area: pipeline@112
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -505,8 +515,10 @@ steps:
     run: ../../tools/data/getCountryPolygon.cwl
     in:
       bbox_crs: pipeline@118
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getCountryPolygon' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder

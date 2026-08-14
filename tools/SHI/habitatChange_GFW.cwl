@@ -9,16 +9,21 @@ class: CommandLineTool
 
 label: Measure habitat change
 doc:
-  - "Description:
-    This script loads the area of habitat of the species and the Global Forest Watch (GFW) layers to measure changes on the habitat of the species. It uses the layers the 2000 forest layer as a reference and removes the pixels from the loss layer of GFW data."
-  - "Authors:
+  - |
+    Description:
+    This script loads the area of habitat of the species and the Global Forest Watch (GFW) layers to measure changes on the habitat of the species. It uses the layers the 2000 forest layer as a reference and removes the pixels from the loss layer of GFW data.
+  - |
+    Authors:
     Maria Isabel Arce-Plata (https://orcid.org/0000-0003-4024-9268)
-    Guillaume Larocque (https://orcid.org/0000-0002-5967-9156)"
+    Guillaume Larocque (https://orcid.org/0000-0002-5967-9156)
   - "External link: https://github.com/GEO-BON/biab-2.0/tree/main/scripts/SHI"
-  - "References:
-    Jetz et al., Species Habitat Index [accessed on 24/8/2022](https://mol.org/indicators/habitat/background) null
+  - |
+    References:
+    Jetz et al., Species Habitat Index [accessed on 24/8/2022](https://mol.org/indicators/habitat/background)
+    null
 
-    Jetz, W., McGowan, J., Rinnan, D. S., Possingham, H. P., Visconti, P., O’Donnell, B., & Londoño-Murcia, M. C. (2022). Include biodiversity representation indicators in area-based conservation targets. Nature Ecology & Evolution, 6(2), 123–126. [https://doi.org/10.1038/s41559-021-01620-y](https://www.nature.com/articles/s41559-021-01620-y) null"
+    Jetz, W., McGowan, J., Rinnan, D. S., Possingham, H. P., Visconti, P., O’Donnell, B., & Londoño-Murcia, M. C. (2022). Include biodiversity representation indicators in area-based conservation targets. Nature Ecology & Evolution, 6(2), 123–126. [https://doi.org/10.1038/s41559-021-01620-y](https://www.nature.com/articles/s41559-021-01620-y)
+    null
 
 
 requirements:
@@ -33,9 +38,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -61,7 +68,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -106,8 +117,8 @@ arguments:
         spat_res: inputs.spat_res,
         crs: inputs.crs,
         species: inputs.species,
-        r_area_of_habitat: inputs.r_area_of_habitat,
-        sf_bbox: inputs.sf_bbox,
+        r_area_of_habitat: (inputs.r_area_of_habitat || []).map(function(file) { return file.path; }),
+        sf_bbox: (inputs.sf_bbox || []).map(function(file) { return file.path; }),
         min_forest: inputs.min_forest,
         max_forest: inputs.max_forest,
         t_0: inputs.t_0,
@@ -271,12 +282,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

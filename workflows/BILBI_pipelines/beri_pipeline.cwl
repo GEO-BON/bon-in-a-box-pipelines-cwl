@@ -8,18 +8,22 @@ class: Workflow
 
 label: Bioclimatic Ecosystem Resilience Index (BERI)
 doc:
-  - "Description:
+  - |
+    Description:
     ## Introduction
     CSIRO Bioclimatic Ecosystem Resilience Index (BERI v2) is a global 30 arc-second product for the years 2000, 2005, 2010, 2015 and 2020. BERI measures the capacity of natural ecosystems to retain species diversity in the face of climate change, as a function of ecosystem area, connectivity and integrity. The indicator assesses the extent to which any given spatial configuration of natural habitat across a landscape will promote or hinder climate-induced shifts in biological distributions. It does this by analyzing the functional connectivity of each grid-cell of natural habitat to areas of habitat in the surrounding landscape which are projected to support a similar assemblage of species under climate change to that currently associated with the cell of interest. The indicator can then be aggregated and reported by any desired spatial unit – e.g. an ecosystem type, a country, or the entire planet.
     This pipeline calculates a weighted geometric mean of the BERI indicator over a region of interest.  The code to calculate the weighted mean was adapted from the "Calculating weighted geometric means of  CSIRO BILBI indicator" script on the  [CSIRO data access portal](https://doi.org/10.25919/4vvz-4j96).
     ## Uses
     The BERI can be used to monitor and report past-to-present trends in the capacity of ecosystems to retain species diversity in the face of ongoing climate change by repeatedly recalculating the indicator using best-available mapping of ecosystem condition or integrity observed at multiple points in time, e.g. for different years. It can also serve as a leading indicator for assessing the contribution that proposed or implemented area-based actions are expected to make to enhancing the present capacity of ecosystems to retain species diversity, thereby providing a foundation for strategic prioritisation of such actions by countries.
     ## Pipeline limitations
-    - BERI is a modeled layer, therefore there are greater uncertainties in areas with less data.  Interpret the results with caution."
-  - "Authors:
-    Jory Griffith (jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)"
-  - "References:
-    Harwood et al. 2022 null"
+    - BERI is a modeled layer, therefore there are greater uncertainties in areas with less data.  Interpret the results with caution.
+  - |
+    Authors:
+    Jory Griffith (jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)
+  - |
+    References:
+    Harwood et al. 2022
+    null
 
 
 requirements:
@@ -169,11 +173,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   runFolder:
     type: Directory?
@@ -205,6 +206,7 @@ inputs:
 steps:
   # This step prepares the environments for all the following steps
   prepareEnvironments:
+    when: $(inputs.envFolderWrite != null)
     run:
       class: CommandLineTool
       requirements:
@@ -243,37 +245,33 @@ steps:
           echo "Exporting all environments"
           mkdir -p "$OUTPUT_LOCATION" "$CONDA_PKGS_DIRS" /conda-env-yml/envs
           
-          function exportEnv {
+          function getPackedEnv {
             condaEnvName=$1
             condaEnvYml=$2
-            unpackedFolder=$(inputs.envFolderWrite.path)/$condaEnvName
+            # We use a dedicated env folder to avoid copying the whole env folder between steps in a k8 context
+            dedicatedEnvFolder=$(inputs.envFolderWrite.path)/$condaEnvName
+            mkdir -p "$dedicatedEnvFolder"
             
             echo "Exporting $condaEnvName..."
-            source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
-            source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
-            if [[ ! -d "$unpackedFolder" ]]; then
-              # remove the env to force using the conda-pack
-              mamba env remove -y -n "$condaEnvName"
-              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
-            fi
+            source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh "$OUTPUT_LOCATION" "$condaEnvName" \
+              "$condaEnvYml" "$dedicatedEnvFolder" "$(inputs.condaPackURL)" --noActivate
+            source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh "$condaEnvName" "$dedicatedEnvFolder"
             echo "Done."
           }
-          export -f exportEnv
+          export -f getPackedEnv
           
-          bash -c 'exportEnv "bilbi_indicators__bilbi_weighted_mean" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "bilbi_indicators__bilbi_weighted_mean" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-terra, r-tidyverse]
           name: bilbi_indicators__bilbi_weighted_mean
           "'
           
-          bash -c 'exportEnv "data__loadFromStac" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "data__loadFromStac" "channels: [conda-forge, r]
           dependencies: [libgdal, r-lubridate, proj, r-proj, r-gdalcubes=0.7.4, r-rstac, r-dplyr,
             r-rcurl, r-rjson, r-sf, r-stars, r-terra]
           name: data__loadFromStac
           "'
           
-          bash -c 'exportEnv "data__load_polygons" "channels: [conda-forge]
+          bash -c 'getPackedEnv "data__load_polygons" "channels: [conda-forge]
           dependencies: [r-rjson, r-dbplyr=2.5.2, r-dplyr=1.2.1, r-duckdb=1.4.4, r-fs=2.1.0,
             r-arrow=24.0.0, r-nanoarrow=0.8.0, r-geoarrow=0.4.2, r-sf=1.1-0, r-stringi=1.8.7,
             r-stringr=1.6.0, r-tidyr=1.3.2, r-uuid=1.2_2, r-remotes=2.5.0]
@@ -282,7 +280,7 @@ steps:
           
       inputs:
         envFolderWrite:
-          type: Directory
+          type: Directory?
         runFolderWrite:
           type: Directory?
         condaPackURL:
@@ -307,8 +305,10 @@ steps:
       bilbi_indicator: data>loadFromStac.yml@1/rasters
       bilbi_denominator: data>loadFromStac.yml@2/rasters
       study_area: data>load_polygons.yml@25/polygon
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/bilbi_indicators__bilbi_weighted_mean' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -332,8 +332,10 @@ steps:
       resampling: pipeline@18
       aggregation: pipeline@20
       study_area: data>load_polygons.yml@25/polygon
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -357,8 +359,10 @@ steps:
       resampling: pipeline@18
       aggregation: pipeline@20
       study_area: data>load_polygons.yml@25/polygon
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -375,8 +379,10 @@ steps:
       polygon_type: data>load_polygons.yml@25|polygon_type
       country_region_bbox: pipeline@24
       buffer: { default: 0.0 }
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder

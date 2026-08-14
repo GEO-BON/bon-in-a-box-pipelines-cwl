@@ -8,12 +8,16 @@ class: Workflow
 
 label: Percentage of raster classes
 doc:
-  - "Description:
-    Calculate percentage of classes over a bounding box or polygon of interest in categorical rasters."
-  - "Authors:
-    Jory Griffith (Pipeline development, jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)"
-  - "References:
-    Bastion 2023 null"
+  - |
+    Description:
+    Calculate percentage of classes over a bounding box or polygon of interest in categorical rasters.
+  - |
+    Authors:
+    Jory Griffith (Pipeline development, jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)
+  - |
+    References:
+    Bastion 2023
+    null
 
 
 requirements:
@@ -166,11 +170,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   runFolder:
     type: Directory?
@@ -202,6 +203,7 @@ inputs:
 steps:
   # This step prepares the environments for all the following steps
   prepareEnvironments:
+    when: $(inputs.envFolderWrite != null)
     run:
       class: CommandLineTool
       requirements:
@@ -240,37 +242,33 @@ steps:
           echo "Exporting all environments"
           mkdir -p "$OUTPUT_LOCATION" "$CONDA_PKGS_DIRS" /conda-env-yml/envs
           
-          function exportEnv {
+          function getPackedEnv {
             condaEnvName=$1
             condaEnvYml=$2
-            unpackedFolder=$(inputs.envFolderWrite.path)/$condaEnvName
+            # We use a dedicated env folder to avoid copying the whole env folder between steps in a k8 context
+            dedicatedEnvFolder=$(inputs.envFolderWrite.path)/$condaEnvName
+            mkdir -p "$dedicatedEnvFolder"
             
             echo "Exporting $condaEnvName..."
-            source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
-            source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
-            if [[ ! -d "$unpackedFolder" ]]; then
-              # remove the env to force using the conda-pack
-              mamba env remove -y -n "$condaEnvName"
-              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
-            fi
+            source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh "$OUTPUT_LOCATION" "$condaEnvName" \
+              "$condaEnvYml" "$dedicatedEnvFolder" "$(inputs.condaPackURL)" --noActivate
+            source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh "$condaEnvName" "$dedicatedEnvFolder"
             echo "Done."
           }
-          export -f exportEnv
+          export -f getPackedEnv
           
-          bash -c 'exportEnv "zonal_statistics__percentage_cover_classes" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "zonal_statistics__percentage_cover_classes" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-terra, r-dplyr, r-sf, r-exactextractr]
           name: zonal_statistics__percentage_cover_classes
           "'
           
-          bash -c 'exportEnv "data__loadFromStac" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "data__loadFromStac" "channels: [conda-forge, r]
           dependencies: [libgdal, r-lubridate, proj, r-proj, r-gdalcubes=0.7.4, r-rstac, r-dplyr,
             r-rcurl, r-rjson, r-sf, r-stars, r-terra]
           name: data__loadFromStac
           "'
           
-          bash -c 'exportEnv "data__load_polygons" "channels: [conda-forge]
+          bash -c 'getPackedEnv "data__load_polygons" "channels: [conda-forge]
           dependencies: [r-rjson, r-dbplyr=2.5.2, r-dplyr=1.2.1, r-duckdb=1.4.4, r-fs=2.1.0,
             r-arrow=24.0.0, r-nanoarrow=0.8.0, r-geoarrow=0.4.2, r-sf=1.1-0, r-stringi=1.8.7,
             r-stringr=1.6.0, r-tidyr=1.3.2, r-uuid=1.2_2, r-remotes=2.5.0]
@@ -279,7 +277,7 @@ steps:
           
       inputs:
         envFolderWrite:
-          type: Directory
+          type: Directory?
         runFolderWrite:
           type: Directory?
         condaPackURL:
@@ -303,8 +301,10 @@ steps:
     in:
       rasters: data>loadFromStac.yml@42/rasters
       study_area_polygon: data>load_polygons.yml@44/polygon
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/zonal_statistics__percentage_cover_classes' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -328,8 +328,10 @@ steps:
       resampling: data>loadFromStac.yml@42|resampling
       aggregation: data>loadFromStac.yml@42|aggregation
       study_area: data>load_polygons.yml@44/polygon
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -346,8 +348,10 @@ steps:
       polygon_type: { default: Country or region }
       country_region_bbox: pipeline@43
       buffer: { default: 0.0 }
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder

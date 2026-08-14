@@ -20,10 +20,10 @@ predictors:  # array of type 'File' (optional)
   - /output/SDM/loadPredictors_R/e09acd85debd23c991652771b1d771b2/bio81981-01-01.tif
   - /output/SDM/loadPredictors_R/e09acd85debd23c991652771b1d771b2/bio91981-01-01.tif
 
-partition_type: block  # enum; valid values: "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/runMaxent.cwl#partition_type/randomkfold", "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/runMaxent.cwl#partition_type/jackknife", "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/runMaxent.cwl#partition_type/block", "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/runMaxent.cwl#partition_type/checkerboard1", "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/runMaxent.cwl#partition_type/checkerboard2"
-orientation_block: lat_lon  # enum; valid values: "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/runMaxent.cwl#orientation_block/lat_lon", "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/runMaxent.cwl#orientation_block/lon_lat", "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/runMaxent.cwl#orientation_block/lon_lon", "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/runMaxent.cwl#orientation_block/lat_lat"
+partition_type: block  # enum; valid values: "file:///home/jmlord/code/cwl-test/export/tools/SDM/runMaxent.cwl#partition_type/randomkfold", "file:///home/jmlord/code/cwl-test/export/tools/SDM/runMaxent.cwl#partition_type/jackknife", "file:///home/jmlord/code/cwl-test/export/tools/SDM/runMaxent.cwl#partition_type/block", "file:///home/jmlord/code/cwl-test/export/tools/SDM/runMaxent.cwl#partition_type/checkerboard1", "file:///home/jmlord/code/cwl-test/export/tools/SDM/runMaxent.cwl#partition_type/checkerboard2"
+orientation_block: lat_lon  # enum; valid values: "file:///home/jmlord/code/cwl-test/export/tools/SDM/runMaxent.cwl#orientation_block/lat_lon", "file:///home/jmlord/code/cwl-test/export/tools/SDM/runMaxent.cwl#orientation_block/lon_lat", "file:///home/jmlord/code/cwl-test/export/tools/SDM/runMaxent.cwl#orientation_block/lon_lon", "file:///home/jmlord/code/cwl-test/export/tools/SDM/runMaxent.cwl#orientation_block/lat_lat"
 n_folds: 5  # default value of type 'int'. (optional)
-method_select_params: p10  # enum; valid values: "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/runMaxent.cwl#method_select_params/p10", "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/runMaxent.cwl#method_select_params/AIC", "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/runMaxent.cwl#method_select_params/AUC"
+method_select_params: p10  # enum; valid values: "file:///home/jmlord/code/cwl-test/export/tools/SDM/runMaxent.cwl#method_select_params/p10", "file:///home/jmlord/code/cwl-test/export/tools/SDM/runMaxent.cwl#method_select_params/AIC", "file:///home/jmlord/code/cwl-test/export/tools/SDM/runMaxent.cwl#method_select_params/AUC"
 fc:  # array of type 'string' (optional)
   - L
   - LQ
@@ -32,12 +32,12 @@ fc:  # array of type 'string' (optional)
 environment:  # type 'File' (optional)
     class: File
     path: a/file/path
-envFolderWriteable: true  # default value of type 'boolean'.
+envFolderWritable: true  # default value of type 'boolean'.
 envFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-crs:  # "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/runMaxent.cwl#crs/CRS" record type.
-    CRS:  # "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/runMaxent.cwl#crs/CRS/CRS/CRSDefinition" record type.
+crs:  # "file:///home/jmlord/code/cwl-test/export/tools/SDM/runMaxent.cwl#crs/CRS" record type.
+    CRS:  # "file:///home/jmlord/code/cwl-test/export/tools/SDM/runMaxent.cwl#crs/CRS/CRS/CRSDefinition" record type.
         wktDef: a_string  # type 'string' (optional)
         proj4Def: a_string  # type 'string' (optional)
         CRSBboxWGS84:  # array of type 'float' (optional)
@@ -46,5 +46,4 @@ crs:  # "file:///home/jean-michel/code/cwl-temp/export/tools/SDM/runMaxent.cwl#c
         authority: a_string  # type 'string' (optional)
         code: 0  # type 'int' (optional)
         unit: a_string  # type 'string' (optional)
-condaPackURL: 
-    https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
+condaPackURL: https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.

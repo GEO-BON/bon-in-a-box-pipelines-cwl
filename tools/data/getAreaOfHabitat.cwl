@@ -9,20 +9,27 @@ class: CommandLineTool
 
 label: Get area of habitat
 doc:
-  - "Description:
-    This script loads the data needed to calculate the area of habitat for a species to use it for the Species Habitat Index(SHI)"
-  - "Authors:
+  - |
+    Description:
+    This script loads the data needed to calculate the area of habitat for a species to use it for the Species Habitat Index(SHI)
+  - |
+    Authors:
     Maria Isabel Arce-Plata (https://orcid.org/0000-0003-4024-9268)
     Guillaume Larocque (https://orcid.org/0000-0002-5967-9156)
-    Laetitia Tremblay (https://www.linkedin.com/in/laetitia-tremblay-b0619b273/)"
-  - "References:
-    Brooks, T. M., Pimm, S. L., Akçakaya, H. R., Buchanan, G. M., Butchart, S. H. M., Foden, W., Hilton-Taylor, C., Hoffmann, M., Jenkins, C. N., Joppa, L., Li, B. V., Menon, V., Ocampo-Peñuela, N., & Rondinini, C. (2019). Measuring Terrestrial Area of Habitat (AOH) and Its Utility for the IUCN Red List. Trends in Ecology & Evolution, 34(11), 977–986. https://doi.org/10.1016/j.tree.2019.06.009 [https://www.sciencedirect.com/science/article/pii/S0169534719301892?via%3Dihub] null
+    Laetitia Tremblay (https://www.linkedin.com/in/laetitia-tremblay-b0619b273/)
+  - |
+    References:
+    Brooks, T. M., Pimm, S. L., Akçakaya, H. R., Buchanan, G. M., Butchart, S. H. M., Foden, W., Hilton-Taylor, C., Hoffmann, M., Jenkins, C. N., Joppa, L., Li, B. V., Menon, V., Ocampo-Peñuela, N., & Rondinini, C. (2019). Measuring Terrestrial Area of Habitat (AOH) and Its Utility for the IUCN Red List. Trends in Ecology & Evolution, 34(11), 977–986. https://doi.org/10.1016/j.tree.2019.06.009 [https://www.sciencedirect.com/science/article/pii/S0169534719301892?via%3Dihub]
+    null
 
-    Jetz et al., Species Habitat Index [accessed on 24/8/2022](https://mol.org/indicators/habitat/background) null
+    Jetz et al., Species Habitat Index [accessed on 24/8/2022](https://mol.org/indicators/habitat/background)
+    null
 
-    Jetz, W., McGowan, J., Rinnan, D. S., Possingham, H. P., Visconti, P., O’Donnell, B., & Londoño-Murcia, M. C. (2022). Include biodiversity representation indicators in area-based conservation targets. Nature Ecology & Evolution, 6(2), 123–126. https://doi.org/10.1038/s41559-021-01620-y [https://www.nature.com/articles/s41559-021-01620-y] null
+    Jetz, W., McGowan, J., Rinnan, D. S., Possingham, H. P., Visconti, P., O’Donnell, B., & Londoño-Murcia, M. C. (2022). Include biodiversity representation indicators in area-based conservation targets. Nature Ecology & Evolution, 6(2), 123–126. https://doi.org/10.1038/s41559-021-01620-y [https://www.nature.com/articles/s41559-021-01620-y]
+    null
 
-    Chacón-Pacheco J. J., Figel J., Rojano C., Racero-Casarrubia J., Humanez-López E. & Padilla H. 2017. Modelo de distribución de Myrmecophaga tridactyla ID MAM-1. Instituto Alexander von Humboldt.[Biomodelos](http://biomodelos.humboldt.org.co/es/species/visor?species_id=6188) null"
+    Chacón-Pacheco J. J., Figel J., Rojano C., Racero-Casarrubia J., Humanez-López E. & Padilla H. 2017. Modelo de distribución de Myrmecophaga tridactyla ID MAM-1. Instituto Alexander von Humboldt.[Biomodelos](http://biomodelos.humboldt.org.co/es/species/visor?species_id=6188)
+    null
 
 
 requirements:
@@ -37,9 +44,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -65,7 +74,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -109,16 +122,16 @@ arguments:
       return JSON.stringify({
         spat_res: inputs.spat_res,
         crs: inputs.crs,
-        study_area: inputs.study_area,
-        country_region_polygon: inputs.country_region_polygon,
+        study_area: inputs.study_area ? inputs.study_area.path : null,
+        country_region_polygon: inputs.country_region_polygon ? inputs.country_region_polygon.path : null,
         buff_size: inputs.buff_size,
         species: inputs.species,
         range_map_type: inputs.range_map_type,
-        sf_range_map: inputs.sf_range_map,
-        r_range_map: inputs.r_range_map,
+        sf_range_map: (inputs.sf_range_map || []).map(function(file) { return file.path; }),
+        r_range_map: (inputs.r_range_map || []).map(function(file) { return file.path; }),
         elevation_filter: inputs.elevation_filter,
         elev_buffer: inputs.elev_buffer,
-        rasters: inputs.rasters,
+        rasters: (inputs.rasters || []).map(function(file) { return file.path; }),
       }, null, 2);
     }
     JSON
@@ -292,12 +305,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

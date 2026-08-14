@@ -9,11 +9,13 @@ class: CommandLineTool
 
 label: Background Points
 doc:
-  - "Description:
-    This script creates a set of pseudo-absences/background points."
-  - "Authors:
+  - |
+    Description:
+    This script creates a set of pseudo-absences/background points.
+  - |
+    Authors:
     Sarah Valentin (https://orcid.org/0000-0002-9028-681X)
-    Dat Nguyen"
+    Dat Nguyen
 
 
 requirements:
@@ -28,9 +30,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -56,7 +60,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -98,12 +106,12 @@ arguments:
     cat > "$OUTPUT_LOCATION/input.json" <<'JSON'
     ${
       return JSON.stringify({
-        presence: inputs.presence,
-        extent: inputs.extent,
+        presence: inputs.presence ? inputs.presence.path : null,
+        extent: inputs.extent ? inputs.extent.path : null,
         method_background: inputs.method_background,
         n_background: inputs.n_background,
-        predictors: inputs.predictors,
-        raster: inputs.raster,
+        predictors: (inputs.predictors || []).map(function(file) { return file.path; }),
+        raster: inputs.raster ? inputs.raster.path : null,
       }, null, 2);
     }
     JSON
@@ -148,8 +156,8 @@ inputs:
   extent:
     type: File?
     label: extent
-    doc: shapefile, representing a study extent
-    default: /scripts/SDM/extentToBbox_extent.shp
+    doc: Geopackage, representing a study extent
+    default: /scripts/SDM/extentToBbox_extent.gpkg
 
   method_background:
     type:
@@ -161,7 +169,8 @@ inputs:
         - unweighted_raster
         - thickening
     label: method background
-    doc: method used to sample background points
+    doc: >
+      Generates background points using any of the five available methods. - `random`: background points are randomly sampled throughout the whole study extent. - `weighted_raster`: background points are sampled in proportion to the number of observations of a target group in an observation density raster. - `unweighted_raster`: background points are sampled only in cells where there are observations from a target group. - `inclusion_buffer`: background points are sampled within a buffer around observations. - `thickening`: background points are sampled in proportion to the local density of observations by sampling in a buffer around each observation.
     default: random
 
   n_background:
@@ -192,12 +201,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

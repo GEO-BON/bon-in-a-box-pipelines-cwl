@@ -9,12 +9,14 @@ class: CommandLineTool
 
 label: IUCN list of species of a country
 doc:
-  - "Description:
-    Obtains a list of species assessed by the IUCN Red List of Species for a specific country, including their most recent threat categorization."
-  - "Authors:
+  - |
+    Description:
+    Obtains a list of species assessed by the IUCN Red List of Species for a specific country, including their most recent threat categorization.
+  - |
+    Authors:
     Maria Camila diaz (maria.camila.diaz.corzo@usherbrooke.ca)
     Victor Julio Rincon (rincon-v@javeriana.edu.co)
-    Laetitia Tremblay (Maintenance, laetitia.tremblay@mcgill.ca, http://www.linkedin.com/in/laetitia-tremblay-b0619b273)"
+    Laetitia Tremblay (Maintenance, laetitia.tremblay@mcgill.ca, http://www.linkedin.com/in/laetitia-tremblay-b0619b273)
 
 
 requirements:
@@ -29,9 +31,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -57,7 +61,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -163,12 +171,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

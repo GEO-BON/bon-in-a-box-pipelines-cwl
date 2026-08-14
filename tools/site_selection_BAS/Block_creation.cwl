@@ -9,14 +9,19 @@ class: CommandLineTool
 
 label: Environmental Blocks
 doc:
-  - "Description:
-    Performs PCA variables and create a grid of environmental block in two dimensional space based code from biosurvey package"
-  - "Authors:
-    Francis van Oordt (https://orcid.org/0000-0002-8471-235X)"
-  - "References:
-    Survey-gap analysis in expeditionary research: where do we go from here? null
+  - |
+    Description:
+    Performs PCA variables and create a grid of environmental block in two dimensional space based code from biosurvey package
+  - |
+    Authors:
+    Francis van Oordt (https://orcid.org/0000-0002-8471-235X)
+  - |
+    References:
+    Survey-gap analysis in expeditionary research: where do we go from here?
+    https://doi.org/10.1111/j.1095-8312.2005.00520.x
 
-    Selection of sampling sites for biodiversity inventory: Effects of environmental and geographical considerations null"
+    Selection of sampling sites for biodiversity inventory: Effects of environmental and geographical considerations
+    https://doi.org/10.1111/2041-210X.13869
 
 
 requirements:
@@ -31,9 +36,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -59,7 +66,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -101,10 +112,10 @@ arguments:
     cat > "$OUTPUT_LOCATION/input.json" <<'JSON'
     ${
       return JSON.stringify({
-        country_polygon: inputs.country_polygon,
+        country_polygon: inputs.country_polygon ? inputs.country_polygon.path : null,
         n_rows: inputs.n_rows,
         n_cols: inputs.n_cols,
-        rasters: inputs.rasters,
+        rasters: (inputs.rasters || []).map(function(file) { return file.path; }),
       }, null, 2);
     }
     JSON
@@ -176,12 +187,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

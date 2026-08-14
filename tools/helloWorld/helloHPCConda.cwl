@@ -9,15 +9,17 @@ class: CommandLineTool
 
 label: HPC Python & Conda Example
 doc:
-  - "Description:
+  - |
+    Description:
     Python script that runs on a HPC, with a conda sub-environment. The conda sub-environment will be resolved on the automation node, and activated on the compute node.
     
     If no HPC is configured, it will run locally.
     
-    This script allows to test file sync, successful runs, runs that produce errors and runs that extends allocated time from SLURM."
+    This script allows to test file sync, successful runs, runs that produce errors and runs that extends allocated time from SLURM.
   - "Lifecycle tag: Example."
-  - "Authors:
-    Jean-Michel Lord (https://orcid.org/0009-0007-3826-1125)"
+  - |
+    Authors:
+    Jean-Michel Lord (https://orcid.org/0009-0007-3826-1125)
 
 
 requirements:
@@ -32,9 +34,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -60,7 +64,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -103,7 +111,7 @@ arguments:
     ${
       return JSON.stringify({
         seconds: inputs.seconds,
-        some_csv_file: inputs.some_csv_file,
+        some_csv_file: inputs.some_csv_file ? inputs.some_csv_file.path : null,
       }, null, 2);
     }
     JSON
@@ -165,12 +173,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

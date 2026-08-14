@@ -9,14 +9,16 @@ class: CommandLineTool
 
 label: Vegetation Index
 doc:
-  - "Description:
+  - |
+    Description:
     This script calculates and summarizes the NDVI for every pixel within a given region and for a selected
     time period using the red and near-infrared bands from the [Sentinel-2 data](https://dataspace.copernicus.eu/explore-data/data-collections/sentinel-data/sentinel-2),
      with a cloud mask. The data is pulled using the OpenEO Python client connected to the Copernicus Data Space Ecosystem backend. The resulting
-     raster will give you a meaningful and cloud-free vegetation index."
-  - "Authors:
+     raster will give you a meaningful and cloud-free vegetation index.
+  - |
+    Authors:
     Guillaume Larocque (guillaume.larocque@mcgill.ca, https://orcid.org/0000-0002-5967-9156)
-    Jory Griffith (jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)"
+    Jory Griffith (jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)
 
 
 requirements:
@@ -31,9 +33,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -59,7 +63,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -102,7 +110,7 @@ arguments:
     ${
       return JSON.stringify({
         bbox_crs: inputs.bbox_crs,
-        study_area_polygon: inputs.study_area_polygon,
+        study_area_polygon: inputs.study_area_polygon ? inputs.study_area_polygon.path : null,
         start_date: inputs.start_date,
         end_date: inputs.end_date,
         spatial_resolution: inputs.spatial_resolution,
@@ -239,12 +247,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

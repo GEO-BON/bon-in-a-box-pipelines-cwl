@@ -9,12 +9,14 @@ class: CommandLineTool
 
 label: Red List Index
 doc:
-  - "Description:
-    Estimates the Red List Index (RLI) for a group of species, reflecting trends in the overall extinction risk for that group."
-  - "Authors:
+  - |
+    Description:
+    Estimates the Red List Index (RLI) for a group of species, reflecting trends in the overall extinction risk for that group.
+  - |
+    Authors:
     Maria Camila diaz (maria.camila.diaz.corzo@usherbrooke.ca)
     Victor Julio Rincon (rincon-v@javeriana.edu.co)
-    Laetitia Tremblay (Maintenance, laetitia.tremblay@mcgill.ca, http://www.linkedin.com/in/laetitia-tremblay-b0619b273)"
+    Laetitia Tremblay (Maintenance, laetitia.tremblay@mcgill.ca, http://www.linkedin.com/in/laetitia-tremblay-b0619b273)
   - "External link: https://nrl.iucnredlist.org/assessment/red-list-index"
 
 
@@ -30,9 +32,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -58,7 +62,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -100,7 +108,7 @@ arguments:
     cat > "$OUTPUT_LOCATION/input.json" <<'JSON'
     ${
       return JSON.stringify({
-        history_assessment_data: inputs.history_assessment_data,
+        history_assessment_data: inputs.history_assessment_data ? inputs.history_assessment_data.path : null,
         country: inputs.country,
         taxonomic_group: inputs.taxonomic_group,
         species_use: inputs.species_use,
@@ -217,12 +225,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

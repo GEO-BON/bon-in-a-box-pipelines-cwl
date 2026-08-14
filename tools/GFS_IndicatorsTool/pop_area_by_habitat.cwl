@@ -9,11 +9,13 @@ class: CommandLineTool
 
 label: Get populations habitat area
 doc:
-  - "Description:
-    This Script loads the populations polygons, one or more binary maps describing the presence/absence of a habitat, and calculates the area of habitat per population."
-  - "Authors:
+  - |
+    Description:
+    This Script loads the populations polygons, one or more binary maps describing the presence/absence of a habitat, and calculates the area of habitat per population.
+  - |
+    Authors:
     Simon Pahls
-    Oliver Selmoni"
+    Oliver Selmoni
 
 
 requirements:
@@ -28,9 +30,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -56,7 +60,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -98,8 +106,8 @@ arguments:
     cat > "$OUTPUT_LOCATION/input.json" <<'JSON'
     ${
       return JSON.stringify({
-        population_polygons: inputs.population_polygons,
-        habitat_map: inputs.habitat_map,
+        population_polygons: inputs.population_polygons ? inputs.population_polygons.path : null,
+        habitat_map: inputs.habitat_map ? inputs.habitat_map.path : null,
         time_points: inputs.time_points,
       }, null, 2);
     }
@@ -184,12 +192,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

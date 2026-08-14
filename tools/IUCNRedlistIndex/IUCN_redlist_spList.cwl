@@ -9,12 +9,14 @@ class: CommandLineTool
 
 label: IUCN combine species lists
 doc:
-  - "Description:
-    This script returns the IUCN redlist species list for a country, filtered by taxonomic group, threat category, and species use, to be able to calculate the redlist index."
-  - "Authors:
+  - |
+    Description:
+    This script returns the IUCN redlist species list for a country, filtered by taxonomic group, threat category, and species use, to be able to calculate the redlist index.
+  - |
+    Authors:
     Maria Camila diaz (maria.camila.diaz.corzo@usherbrooke.ca)
     Victor Julio Rincon (rincon-v@javeriana.edu.co)
-    Laetitia Tremblay (laetitia.tremblay@mcgill.ca, http://www.linkedin.com/in/laetitia-tremblay-b0619b273)"
+    Laetitia Tremblay (laetitia.tremblay@mcgill.ca, http://www.linkedin.com/in/laetitia-tremblay-b0619b273)
 
 
 requirements:
@@ -29,9 +31,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -57,7 +61,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -99,10 +107,10 @@ arguments:
     cat > "$OUTPUT_LOCATION/input.json" <<'JSON'
     ${
       return JSON.stringify({
-        splist_taxon: inputs.splist_taxon,
-        splist_country: inputs.splist_country,
-        splist_use: inputs.splist_use,
-        splist_threat: inputs.splist_threat,
+        splist_taxon: inputs.splist_taxon ? inputs.splist_taxon.path : null,
+        splist_country: inputs.splist_country ? inputs.splist_country.path : null,
+        splist_use: inputs.splist_use ? inputs.splist_use.path : null,
+        splist_threat: inputs.splist_threat ? inputs.splist_threat.path : null,
         taxonomic_group: inputs.taxonomic_group,
         species_use: inputs.species_use,
         threat: inputs.threat,
@@ -185,12 +193,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

@@ -9,12 +9,14 @@ class: CommandLineTool
 
 label: Phenology difference
 doc:
-  - "Description:
+  - |
+    Description:
     Script to calculate the difference in the layers of the phenology raster layers from the start to end year to show the spatial
     distribution of changes in phenology. The start year is subtracted from the end year, so larger values indicate a larger difference in
-    the phenology layers."
-  - "Authors:
-    Jory Griffith (jory.griffith@gmail.com, https://orcid.org/0000-0001-6020-6690)"
+    the phenology layers.
+  - |
+    Authors:
+    Jory Griffith (jory.griffith@gmail.com, https://orcid.org/0000-0001-6020-6690)
 
 
 requirements:
@@ -29,9 +31,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -57,7 +61,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -99,10 +107,10 @@ arguments:
     cat > "$OUTPUT_LOCATION/input.json" <<'JSON'
     ${
       return JSON.stringify({
-        rasters: inputs.rasters,
+        rasters: (inputs.rasters || []).map(function(file) { return file.path; }),
         start_year: inputs.start_year,
         end_year: inputs.end_year,
-        timeseries: inputs.timeseries,
+        timeseries: inputs.timeseries ? inputs.timeseries.path : null,
       }, null, 2);
     }
     JSON
@@ -166,12 +174,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

@@ -9,21 +9,28 @@ class: CommandLineTool
 
 label: Get species range map
 doc:
-  - "Description:
-    This script downloads the range map of the species according to the expert source chosen."
+  - |
+    Description:
+    This script downloads the range map of the species according to the expert source chosen.
   - "Lifecycle tag: Core."
-  - "Authors:
+  - |
+    Authors:
     Maria Isabel Arce-Plata (https://orcid.org/0000-0003-4024-9268)
-    Guillaume Larocque (https://orcid.org/0000-0002-5967-9156)"
+    Guillaume Larocque (https://orcid.org/0000-0002-5967-9156)
   - "External link: https://github.com/GEO-BON/biab-2.0/tree/main/scripts/SHI"
-  - "References:
-    Mammal Diversity Database. (2020). Mammal Diversity Database (Version 1.2) [Data set]. Zenodo. null
+  - |
+    References:
+    Mammal Diversity Database. (2020). Mammal Diversity Database (Version 1.2) [Data set]. Zenodo.
+    http://doi.org/10.5281/zenodo.4139818
 
-    Map of Life. (2021). Mammal range maps harmonised to the Mammals Diversity Database [Data set]. Map of Life. null
+    Map of Life. (2021). Mammal range maps harmonised to the Mammals Diversity Database [Data set]. Map of Life.
+    https://doi.org/10.48600/MOL-48VZ-P413
 
-    IUCN. 2022. The IUCN Red List of Threatened Species. Version 2022-2. Accessed on May 2022. null
+    IUCN. 2022. The IUCN Red List of Threatened Species. Version 2022-2. Accessed on May 2022.
+    https://www.iucnredlist.org/resources/spatial-data-download
 
-    Ministère de l’Environnement, Lutte contre les changements climatiques, Faune et Parcs. Aires de répartition des mammifères terrestres, des reptiles, des amphibiens et des poissons d'eau douce . Acessed on May 2022. null"
+    Ministère de l’Environnement, Lutte contre les changements climatiques, Faune et Parcs. Aires de répartition des mammifères terrestres, des reptiles, des amphibiens et des poissons d'eau douce . Acessed on May 2022.
+    https://www.donneesquebec.ca/recherche/dataset/aires-de-repartition-faune
 
 
 requirements:
@@ -38,9 +45,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -66,7 +75,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -174,12 +187,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

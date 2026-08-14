@@ -9,16 +9,21 @@ class: CommandLineTool
 
 label: Get protected areas
 doc:
-  - "Description:
-    This script finds and saves a polygon of the country and state that is specified in the input and the polygon of protected areas in that region from the world database of protected areas (WDPA)."
-  - "Lifecycle tag: Deprecated. This script is deprecated and will be removed in a future release.
+  - |
+    Description:
+    This script finds and saves a polygon of the country and state that is specified in the input and the polygon of protected areas in that region from the world database of protected areas (WDPA).
+  - |
+    Lifecycle tag: Deprecated. This script is deprecated and will be removed in a future release.
 Please use the new Python script `getWDPA.py` instead.
-"
-  - "Authors:
-    Jory Griffith (jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)"
+
+  - |
+    Authors:
+    Jory Griffith (jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)
   - "External link: https://github.com/GEO-BON/biab-2.0/getProtectedAreasWDPA.R"
-  - "References:
-    UNEP-WCMC and IUCN (2024), Protected Planet. The World Database on Protected Areas (WDPA)[On-line], [October 2024], Cambridge, UK. UNEP-WCMC and IUCN. Available at. https://doi.org/10.34892/6fwd-af11 null"
+  - |
+    References:
+    UNEP-WCMC and IUCN (2024), Protected Planet. The World Database on Protected Areas (WDPA)[On-line], [October 2024], Cambridge, UK. UNEP-WCMC and IUCN. Available at. https://doi.org/10.34892/6fwd-af11
+    null
 
 
 requirements:
@@ -33,9 +38,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -61,7 +68,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -105,7 +116,7 @@ arguments:
       return JSON.stringify({
         country: inputs.country,
         region: inputs.region,
-        study_area_polygon: inputs.study_area_polygon,
+        study_area_polygon: inputs.study_area_polygon ? inputs.study_area_polygon.path : null,
         pa_input_type: inputs.pa_input_type,
         transboundary_distance: inputs.transboundary_distance,
         protected_area_file: inputs.protected_area_file,
@@ -201,12 +212,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

@@ -9,14 +9,18 @@ class: CommandLineTool
 
 label: Julia Example
 doc:
-  - "Description:
-    This sample script shows how it works in Julia."
+  - |
+    Description:
+    This sample script shows how it works in Julia.
   - "Lifecycle tag: Example."
-  - "Authors:
-    Jean-Michel Lord (https://orcid.org/0009-0007-3826-1125)"
+  - |
+    Authors:
+    Jean-Michel Lord (https://orcid.org/0009-0007-3826-1125)
   - "External link: https://github.com/GEO-BON/biab-2.0"
-  - "References:
-    John Doe, The ins and outs of copy-pasting, CopyScience, Volume 71, Issue 5, May 2021, Pages 448–451 null"
+  - |
+    References:
+    John Doe, The ins and outs of copy-pasting, CopyScience, Volume 71, Issue 5, May 2021, Pages 448–451
+    https://doi.org/10.1093/copysci/biab041
 
 
 requirements:
@@ -31,9 +35,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -59,7 +65,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -229,12 +239,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

@@ -9,16 +9,22 @@ class: CommandLineTool
 
 label: Weighted means for CSIRO layers
 doc:
-  - "Description:
-    This script calculates the weighted arithmetic mean for the CSIRO BILBI layers PARC, BHI, and BERI to calculate summary statistics over an area of interest. It was adapted from the 'BILBI_regional_summary_function_DAP_version.R' script at [https://doi.org/10.25919/edwj-4b67](https://doi.org/10.25919/edwj-4b67)."
-  - "Authors:
-    Jory Griffith (jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)"
-  - "References:
-    Harwood, Tom; Ware, Chris; Hoskins, Andrew; Ferrier, Simon; Bush, Alex; Golebiewski, Maciej; Ota, Noboru; Perry, Justin; & Williams, Kristen (2022): PARC: Protected Area Representativeness Index: 30s global time series. v2. CSIRO. Data Collection. null
+  - |
+    Description:
+    This script calculates the weighted arithmetic mean for the CSIRO BILBI layers PARC, BHI, and BERI to calculate summary statistics over an area of interest. It was adapted from the 'BILBI_regional_summary_function_DAP_version.R' script at [https://doi.org/10.25919/edwj-4b67](https://doi.org/10.25919/edwj-4b67).
+  - |
+    Authors:
+    Jory Griffith (jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)
+  - |
+    References:
+    Harwood, Tom; Ware, Chris; Hoskins, Andrew; Ferrier, Simon; Bush, Alex; Golebiewski, Maciej; Ota, Noboru; Perry, Justin; & Williams, Kristen (2022): PARC: Protected Area Representativeness Index: 30s global time series. v2. CSIRO. Data Collection.
+    https://doi.org/10.25919/edwj-4b67
 
-    Harwood, Tom; Ware, Chris; Hoskins, Andrew; Ferrier, Simon; Bush, Alex; Golebiewski, Maciej; Hill, Samantha; Ota, Noboru; Perry, Justin; Purvis, Andy; & Williams, Kristen (2022): BHI v2: Biodiversity Habitat Index: 30s global time series. v1. CSIRO. Data Collection. null
+    Harwood, Tom; Ware, Chris; Hoskins, Andrew; Ferrier, Simon; Bush, Alex; Golebiewski, Maciej; Hill, Samantha; Ota, Noboru; Perry, Justin; Purvis, Andy; & Williams, Kristen (2022): BHI v2: Biodiversity Habitat Index: 30s global time series. v1. CSIRO. Data Collection.
+    https://doi.org/10.25919/tt2t-h452
 
-    Harwood, Tom; Ware, Chris; Hoskins, Andrew; Ferrier, Simon; Bush, Alex; Golebiewski, Maciej; Hill, Samantha; Ota, Noboru; Perry, Justin; Purvis, Andy; & Williams, Kristen (2022): BERI v2: Bioclimatic Ecosystem Resilience Index: 30s global time series. v2. CSIRO. Data Collection. null"
+    Harwood, Tom; Ware, Chris; Hoskins, Andrew; Ferrier, Simon; Bush, Alex; Golebiewski, Maciej; Hill, Samantha; Ota, Noboru; Perry, Justin; Purvis, Andy; & Williams, Kristen (2022): BERI v2: Bioclimatic Ecosystem Resilience Index: 30s global time series. v2. CSIRO. Data Collection.
+    https://doi.org/10.25919/4vvz-4j96
 
 
 requirements:
@@ -33,9 +39,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -61,7 +69,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -103,9 +115,9 @@ arguments:
     cat > "$OUTPUT_LOCATION/input.json" <<'JSON'
     ${
       return JSON.stringify({
-        bilbi_indicator: inputs.bilbi_indicator,
-        bilbi_denominator: inputs.bilbi_denominator,
-        study_area: inputs.study_area,
+        bilbi_indicator: (inputs.bilbi_indicator || []).map(function(file) { return file.path; }),
+        bilbi_denominator: (inputs.bilbi_denominator || []).map(function(file) { return file.path; }),
+        study_area: inputs.study_area ? inputs.study_area.path : null,
       }, null, 2);
     }
     JSON
@@ -167,12 +179,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

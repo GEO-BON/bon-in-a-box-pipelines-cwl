@@ -8,13 +8,17 @@ class: Workflow
 
 label: Calculate genetic diversity indicators
 doc:
-  - "Description:
-    Component of the Genes from Space tool. Given poylgons of population distribution (geojson format) and a raster stack describing habitat availability over time (geotiff format), the pipeline returns genetic diversity loss indicators (Ne500 and Populations Maintained indicator), displayed through an interactive interface. "
-  - "Authors:
-    Oliver Selmoni (oliver.selmoni@gmail.com)"
+  - |
+    Description:
+    Component of the Genes from Space tool. Given poylgons of population distribution (geojson format) and a raster stack describing habitat availability over time (geotiff format), the pipeline returns genetic diversity loss indicators (Ne500 and Populations Maintained indicator), displayed through an interactive interface. 
+  - |
+    Authors:
+    Oliver Selmoni (oliver.selmoni@gmail.com)
   - "External link: https://teams.issibern.ch/genesfromspace/"
-  - "References:
-    Schuman et al., EcoEvoRxiv. null"
+  - |
+    References:
+    Schuman et al., EcoEvoRxiv.
+    null
 
 
 requirements:
@@ -99,11 +103,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   runFolder:
     type: Directory?
@@ -135,6 +136,7 @@ inputs:
 steps:
   # This step prepares the environments for all the following steps
   prepareEnvironments:
+    when: $(inputs.envFolderWrite != null)
     run:
       class: CommandLineTool
       requirements:
@@ -173,26 +175,22 @@ steps:
           echo "Exporting all environments"
           mkdir -p "$OUTPUT_LOCATION" "$CONDA_PKGS_DIRS" /conda-env-yml/envs
           
-          function exportEnv {
+          function getPackedEnv {
             condaEnvName=$1
             condaEnvYml=$2
-            unpackedFolder=$(inputs.envFolderWrite.path)/$condaEnvName
+            # We use a dedicated env folder to avoid copying the whole env folder between steps in a k8 context
+            dedicatedEnvFolder=$(inputs.envFolderWrite.path)/$condaEnvName
+            mkdir -p "$dedicatedEnvFolder"
             
             echo "Exporting $condaEnvName..."
-            source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
-            source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
-            if [[ ! -d "$unpackedFolder" ]]; then
-              # remove the env to force using the conda-pack
-              mamba env remove -y -n "$condaEnvName"
-              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
-            fi
+            source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh "$OUTPUT_LOCATION" "$condaEnvName" \
+              "$condaEnvYml" "$dedicatedEnvFolder" "$(inputs.condaPackURL)" --noActivate
+            source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh "$condaEnvName" "$dedicatedEnvFolder"
             echo "Done."
           }
-          export -f exportEnv
+          export -f getPackedEnv
           
-          bash -c 'exportEnv "GFS_IndicatorsTool__get_Indicators" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "GFS_IndicatorsTool__get_Indicators" "channels: [conda-forge, r]
           dependencies: [r-devtools, r-rjson, r-terra, r-sf, r-rnaturalearth, r-teachingdemos,
             r-dplyr, r-plotly, r-geojsonsf, r-colorspace, r-lwgeom]
           name: GFS_IndicatorsTool__get_Indicators
@@ -200,7 +198,7 @@ steps:
           
       inputs:
         envFolderWrite:
-          type: Directory
+          type: Directory?
         runFolderWrite:
           type: Directory?
         condaPackURL:
@@ -225,9 +223,6 @@ steps:
       population_polygons: pipeline@100
       habitat_map: pipeline@101
       time_points: pipeline@102
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
-        default: false
       runFolder:
           source: runFolder
           valueFrom: "$(self ? { class: 'Directory', location: self.location + '/GFS_IndicatorsTool__pop_area_by_habitat/99' } : null)" 
@@ -246,8 +241,10 @@ steps:
       ne_nc: GFS_IndicatorsTool>get_Indicators.yml@127|ne_nc
       pop_density: GFS_IndicatorsTool>get_Indicators.yml@127|pop_density
       runtitle: GFS_IndicatorsTool>get_Indicators.yml@127|runtitle
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/GFS_IndicatorsTool__get_Indicators' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder

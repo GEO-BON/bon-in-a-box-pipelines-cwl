@@ -9,11 +9,13 @@ class: CommandLineTool
 
 label: Binary Layer
 doc:
-  - "Description:
-    This script creates a binary layer from another layer using a threshold value (e.g.land cover class proportion above 0.8)."
+  - |
+    Description:
+    This script creates a binary layer from another layer using a threshold value (e.g.land cover class proportion above 0.8).
   - "Lifecycle tag: Core."
-  - "Authors:
-    Juan Zuloaga"
+  - |
+    Authors:
+    Juan Zuloaga
 
 
 requirements:
@@ -28,9 +30,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -56,7 +60,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -98,7 +106,7 @@ arguments:
     cat > "$OUTPUT_LOCATION/input.json" <<'JSON'
     ${
       return JSON.stringify({
-        lc_classes: inputs.lc_classes,
+        lc_classes: (inputs.lc_classes || []).map(function(file) { return file.path; }),
         select_class: inputs.select_class,
         threshold_prop: inputs.threshold_prop,
       }, null, 2);
@@ -168,12 +176,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

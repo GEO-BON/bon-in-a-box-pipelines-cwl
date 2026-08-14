@@ -9,11 +9,13 @@ class: CommandLineTool
 
 label: BRT
 doc:
-  - "Description:
-    This script creates a Species Distribution Model (SDM) and uncertainty map based on using Boosted Regression Trees (BRTs) using the package SpeciesDistributionToolkit.jl and EvoTrees.jl"
+  - |
+    Description:
+    This script creates a Species Distribution Model (SDM) and uncertainty map based on using Boosted Regression Trees (BRTs) using the package SpeciesDistributionToolkit.jl and EvoTrees.jl
   - "Lifecycle tag: In review."
-  - "Authors:
-    Michael D. Catchen (https://orcid.org/0000-0002-6506-6487)"
+  - |
+    Authors:
+    Michael D. Catchen (https://orcid.org/0000-0002-6506-6487)
 
 
 requirements:
@@ -28,9 +30,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -56,7 +60,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -98,10 +106,10 @@ arguments:
     cat > "$OUTPUT_LOCATION/input.json" <<'JSON'
     ${
       return JSON.stringify({
-        occurrence: inputs.occurrence,
-        predictors: inputs.predictors,
+        occurrence: inputs.occurrence ? inputs.occurrence.path : null,
+        predictors: (inputs.predictors || []).map(function(file) { return file.path; }),
         bbox_crs: inputs.bbox_crs,
-        water_mask: inputs.water_mask,
+        water_mask: (inputs.water_mask || []).map(function(file) { return file.path; }),
         max_candidate_pseudoabsences: inputs.max_candidate_pseudoabsences,
         pseudoabsence_buffer: inputs.pseudoabsence_buffer,
         pa_proportion: inputs.pa_proportion,
@@ -235,12 +243,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

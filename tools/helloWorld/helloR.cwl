@@ -9,17 +9,22 @@ class: CommandLineTool
 
 label: R Example
 doc:
-  - "Description:
-    This sample script shows how it works. Remember that you can use **MarkDown** to style descriptions and add [links](http://boninabox.geobon.org)."
+  - |
+    Description:
+    This sample script shows how it works. Remember that you can use **MarkDown** to style descriptions and add [links](http://boninabox.geobon.org).
   - "Lifecycle tag: Example."
-  - "Authors:
+  - |
+    Authors:
     Jean-Michel Lord (jean-michel.lord@mcgill.ca, https://orcid.org/0009-0007-3826-1125)
-    Guillaume Larocque"
+    Guillaume Larocque
   - "External link: https://github.com/GEO-BON/biab-2.0"
-  - "References:
-    John Doe, The ins and outs of copy-pasting, CopyScience, Volume 71, Issue 5, May 2021, Pages 448–451 null
+  - |
+    References:
+    John Doe, The ins and outs of copy-pasting, CopyScience, Volume 71, Issue 5, May 2021, Pages 448–451
+    https://doi.org/10.1093/copysci/biab041
 
-    Nick Copy, Rupert Paste, Replicating text in a documentation context, Textopasto, 405, (123456), (2022). null"
+    Nick Copy, Rupert Paste, Replicating text in a documentation context, Textopasto, 405, (123456), (2022).
+    https://doi.org/10.1016/j.tpasto.2021.115424
 
 
 requirements:
@@ -34,9 +39,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -62,7 +69,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -104,13 +115,13 @@ arguments:
     cat > "$OUTPUT_LOCATION/input.json" <<'JSON'
     ${
       return JSON.stringify({
-        raster: inputs.raster,
+        raster: inputs.raster ? inputs.raster.path : null,
         intensity: inputs.intensity,
         species: inputs.species,
         a_boolean: inputs.a_boolean,
         options_example: inputs.options_example,
         multi_options_example: inputs.multi_options_example,
-        freeflow_text: inputs.freeflow_text,
+        freeflow_text: inputs.freeflow_text ? inputs.freeflow_text.path : null,
         country: inputs.country,
         country_region: inputs.country_region,
         country_region_crs: inputs.country_region_crs,
@@ -411,12 +422,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

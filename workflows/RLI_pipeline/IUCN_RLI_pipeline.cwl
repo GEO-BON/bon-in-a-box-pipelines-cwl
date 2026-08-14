@@ -8,7 +8,8 @@ class: Workflow
 
 label: Red List Index (RLI) pipeline
 doc:
-  - "Description:
+  - |
+    Description:
     ## Introduction
     The Red List Index (RLI) shows trends in overall extinction risk for species, and is used to track progress towards reducing extinctions and biodiversity loss. Many species that move categories in the Red List do so because of revised taxonomy or improved knowledge. Therefore, looking at raw trends in Red List status can be misleading.  RLI models these trends to show overall changes the status of species groups that are  based only on genuine improvement or deterioriation.
     RLI has been widely integrated into various policy frameworks. Initially used to assess  progress towards the Convention on Biological Diversity’s 2010 target (Rodrigues, 2006),  it has since been employed in regional, thematic, and global assessments by bodies such as  the Intergovernmental Science-Policy Platform on Biodiversity and Ecosystem Services (IPBES),  the Global Environment Outlook, and others (Global Biodiversity Outlook, 2010).
@@ -66,12 +67,13 @@ doc:
       - LC or LR/lc: Least concern 
       - DD: Data deficient
     
-    (IUCN, 2025)"
-  - "Authors:
+    (IUCN, 2025)
+  - |
+    Authors:
     Victor Julio Rincon (Pipeline development, rincon-v@javeriana.edu.co)
     Maria Camila Diaz (Pipeline development, maria.camila.diaz.corzo@usherbrooke.ca)
     Laetitia Tremblay (Pipeline development, laetitia.tremblay@mcgill.ca, https://www.linkedin.com/in/laetitia-tremblay-b0619b273/)
-    Jory Griffith (Pipeline development, jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)"
+    Jory Griffith (Pipeline development, jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)
 
 
 requirements:
@@ -223,11 +225,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   runFolder:
     type: Directory?
@@ -259,6 +258,7 @@ inputs:
 steps:
   # This step prepares the environments for all the following steps
   prepareEnvironments:
+    when: $(inputs.envFolderWrite != null)
     run:
       class: CommandLineTool
       requirements:
@@ -297,37 +297,33 @@ steps:
           echo "Exporting all environments"
           mkdir -p "$OUTPUT_LOCATION" "$CONDA_PKGS_DIRS" /conda-env-yml/envs
           
-          function exportEnv {
+          function getPackedEnv {
             condaEnvName=$1
             condaEnvYml=$2
-            unpackedFolder=$(inputs.envFolderWrite.path)/$condaEnvName
+            # We use a dedicated env folder to avoid copying the whole env folder between steps in a k8 context
+            dedicatedEnvFolder=$(inputs.envFolderWrite.path)/$condaEnvName
+            mkdir -p "$dedicatedEnvFolder"
             
             echo "Exporting $condaEnvName..."
-            source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
-            source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
-            if [[ ! -d "$unpackedFolder" ]]; then
-              # remove the env to force using the conda-pack
-              mamba env remove -y -n "$condaEnvName"
-              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
-            fi
+            source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh "$OUTPUT_LOCATION" "$condaEnvName" \
+              "$condaEnvYml" "$dedicatedEnvFolder" "$(inputs.condaPackURL)" --noActivate
+            source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh "$condaEnvName" "$dedicatedEnvFolder"
             echo "Done."
           }
-          export -f exportEnv
+          export -f getPackedEnv
           
-          bash -c 'exportEnv "IUCNRedlistIndex__IUCN_redlist_historyAssesment" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "IUCNRedlistIndex__IUCN_redlist_historyAssesment" "channels: [conda-forge, r]
           dependencies: [r-magrittr, r-data.table, r-dplyr, r-plyr, r-ggplot2, r-tibble, r-pbapply,
             r-rredlist, r-plyr, r-reshape2, r-rjson]
           name: IUCNRedlistIndex__IUCN_redlist_historyAssesment
           "'
           
-          bash -c 'exportEnv "IUCNRedlistIndex__IUCN_redlist_spList" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "IUCNRedlistIndex__IUCN_redlist_spList" "channels: [conda-forge, r]
           dependencies: [r-magrittr, r-dplyr, r-rredlist, r-this.path, r-rjson]
           name: IUCNRedlistIndex__IUCN_redlist_spList
           "'
           
-          bash -c 'exportEnv "IUCNRedlistIndex__RedListIndex" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "IUCNRedlistIndex__RedListIndex" "channels: [conda-forge, r]
           dependencies: [r-magrittr, r-data.table, r-reshape2, r-dplyr, r-plyr, r-ggplot2, r-tibble,
             r-pbapply, r-rredlist, r-plyr, r-gdistance, r-BAT, r-ape, r-geometry, r-magic, r-hypervolume,
             r-ks, r-mclust, r-mvtnorm, r-pracma, r-fastcluster, r-pdist, r-palmerpenguins, r-caret,
@@ -339,29 +335,29 @@ steps:
           name: IUCNRedlistIndex__RedListIndex
           "'
           
-          bash -c 'exportEnv "IUCNRedlistIndex__IUCN_redlist_spUse" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "IUCNRedlistIndex__IUCN_redlist_spUse" "channels: [conda-forge, r]
           dependencies: [r-magrittr, r-dplyr, r-rredlist, r-this.path, r-rjson]
           name: IUCNRedlistIndex__IUCN_redlist_spUse
           "'
           
-          bash -c 'exportEnv "IUCNRedlistIndex__IUCN_redlist_spGroup" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "IUCNRedlistIndex__IUCN_redlist_spGroup" "channels: [conda-forge, r]
           dependencies: [r-magrittr, r-dplyr, r-rredlist, r-this.path, r-rjson]
           name: IUCNRedlistIndex__IUCN_redlist_spGroup
           "'
           
-          bash -c 'exportEnv "IUCNRedlistIndex__IUCN_redlist_spThreats" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "IUCNRedlistIndex__IUCN_redlist_spThreats" "channels: [conda-forge, r]
           dependencies: [r-magrittr, r-dplyr, r-rredlist, r-this.path, r-rjson]
           name: IUCNRedlistIndex__IUCN_redlist_spThreats
           "'
           
-          bash -c 'exportEnv "IUCNRedlistIndex__IUCN_redlist_spCountry" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "IUCNRedlistIndex__IUCN_redlist_spCountry" "channels: [conda-forge, r]
           dependencies: [r-magrittr, r-dplyr, r-rredlist, r-this.path, r-rjson]
           name: IUCNRedlistIndex__IUCN_redlist_spCountry
           "'
           
       inputs:
         envFolderWrite:
-          type: Directory
+          type: Directory?
         runFolderWrite:
           type: Directory?
         condaPackURL:
@@ -385,8 +381,10 @@ steps:
     in:
       species_data: IUCNRedlistIndex>IUCN_redlist_spList.yml@58/iucn_splist
       sp_col: { default: scientific_name }
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_historyAssesment' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -407,8 +405,10 @@ steps:
       taxonomic_group: IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82/taxonomic_group
       species_use: IUCNRedlistIndex>IUCN_redlist_spUse.yml@77/species_use
       threat: IUCNRedlistIndex>IUCN_redlist_spThreats.yml@92/threat_category
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spList' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -430,8 +430,10 @@ steps:
       sp_col: { default: scientific_name }
       time_col: { default: assess_year }
       threat_category_code_column: { default: code }
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__RedListIndex' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -446,8 +448,10 @@ steps:
     run: ../../tools/IUCNRedlistIndex/IUCN_redlist_spUse.cwl
     in:
       species_use: IUCNRedlistIndex>IUCN_redlist_spUse.yml@77|species_use
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spUse' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -462,8 +466,10 @@ steps:
     run: ../../tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl
     in:
       taxonomic_group: IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82|taxonomic_group
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spGroup' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -478,8 +484,10 @@ steps:
     run: ../../tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl
     in:
       threat_category_input: IUCNRedlistIndex>IUCN_redlist_spThreats.yml@92|threat_category_input
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spThreats' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -494,8 +502,10 @@ steps:
     run: ../../tools/IUCNRedlistIndex/IUCN_redlist_spCountry.cwl
     in:
       country: pipeline@95
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spCountry' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder

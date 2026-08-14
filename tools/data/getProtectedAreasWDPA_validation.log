@@ -1,0 +1,7 @@
+[1;30mINFO[0m /usr/bin/cwl-runner 3.1.20240112164112
+[1;30mINFO[0m Resolved '/home/jmlord/code/cwl-test/export/tools/data/getProtectedAreasWDPA.cwl' to 'file:///home/jmlord/code/cwl-test/export/tools/data/getProtectedAreasWDPA.cwl'
+[1;30mERROR[0m [31mTool definition failed validation:
+file:///home/jmlord/code/cwl-test/export/tools/data/getProtectedAreasWDPA.cwl:17:1:  while scanning a
+                                                                                     simple key
+file:///home/jmlord/code/cwl-test/export/tools/data/getProtectedAreasWDPA.cwl:20:12:   could not find
+                                                                                       expected ':'[0m

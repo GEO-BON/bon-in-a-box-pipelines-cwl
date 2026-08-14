@@ -9,12 +9,16 @@ class: CommandLineTool
 
 label: BAS selection
 doc:
-  - "Description:
-    Performs point selection based on BAS algorithm, and unequal inclusion probabilities"
-  - "Authors:
-    Francis van Oordt (https://orcid.org/0000-0002-8471-235X)"
-  - "References:
-    spbal: Spatially Balanced Sampling Algorithms null"
+  - |
+    Description:
+    Performs point selection based on BAS algorithm, and unequal inclusion probabilities
+  - |
+    Authors:
+    Francis van Oordt (https://orcid.org/0000-0002-8471-235X)
+  - |
+    References:
+    spbal: Spatially Balanced Sampling Algorithms
+    https://doi.org/10.32614/CRAN.package.spbal
 
 
 requirements:
@@ -29,9 +33,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -57,7 +63,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -100,8 +110,8 @@ arguments:
     ${
       return JSON.stringify({
         colors_vect: inputs.colors_vect,
-        country_polygon: inputs.country_polygon,
-        rast_blocks: inputs.rast_blocks,
+        country_polygon: inputs.country_polygon ? inputs.country_polygon.path : null,
+        rast_blocks: (inputs.rast_blocks || []).map(function(file) { return file.path; }),
         ndesign: inputs.ndesign,
         options_bas: inputs.options_bas,
       }, null, 2);
@@ -181,12 +191,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

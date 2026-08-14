@@ -8,13 +8,12 @@ scriptPath: data/getRangeMap.R  # default value of type 'string'.
 runFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-expert_source: IUCN  # enum; valid values: "file:///home/jean-michel/code/cwl-temp/export/tools/data/getRangeMap.cwl#expert_source/MOL", "file:///home/jean-michel/code/cwl-temp/export/tools/data/getRangeMap.cwl#expert_source/IUCN", "file:///home/jean-michel/code/cwl-temp/export/tools/data/getRangeMap.cwl#expert_source/QC"
+expert_source: IUCN  # enum; valid values: "file:///home/jmlord/code/cwl-test/export/tools/data/getRangeMap.cwl#expert_source/MOL", "file:///home/jmlord/code/cwl-test/export/tools/data/getRangeMap.cwl#expert_source/IUCN", "file:///home/jmlord/code/cwl-test/export/tools/data/getRangeMap.cwl#expert_source/QC"
 environment:  # type 'File' (optional)
     class: File
     path: a/file/path
-envFolderWriteable: true  # default value of type 'boolean'.
+envFolderWritable: true  # default value of type 'boolean'.
 envFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-condaPackURL: 
-    https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
+condaPackURL: https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.

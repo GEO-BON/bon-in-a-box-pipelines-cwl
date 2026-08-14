@@ -9,13 +9,17 @@ class: CommandLineTool
 
 label: SDM with ewlgcpSDM
 doc:
-  - "Description:
-    This script runs an effort-weighted Log Gaussian Cox Process based on the ewlgcpSDM R package."
-  - "Authors:
-    François Rousseu (https://orcid.org/0000-0002-2400-2479)"
+  - |
+    Description:
+    This script runs an effort-weighted Log Gaussian Cox Process based on the ewlgcpSDM R package.
+  - |
+    Authors:
+    François Rousseu (https://orcid.org/0000-0002-2400-2479)
   - "External link: https://github.com/BiodiversiteQuebec/ewlgcpSDM"
-  - "References:
-    in prep null"
+  - |
+    References:
+    in prep
+    null
 
 
 requirements:
@@ -30,9 +34,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -58,7 +64,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -100,8 +110,8 @@ arguments:
     cat > "$OUTPUT_LOCATION/input.json" <<'JSON'
     ${
       return JSON.stringify({
-        presence_background: inputs.presence_background,
-        predictors: inputs.predictors,
+        presence_background: inputs.presence_background ? inputs.presence_background.path : null,
+        predictors: (inputs.predictors || []).map(function(file) { return file.path; }),
         orientation_block: inputs.orientation_block,
         crs: inputs.crs,
         n_folds: inputs.n_folds,
@@ -247,12 +257,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

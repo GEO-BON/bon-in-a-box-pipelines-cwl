@@ -9,16 +9,21 @@ class: CommandLineTool
 
 label: Clean Coordinates
 doc:
-  - "Description:
-    This script enables to apply several cleaning filters to the observations. The tests equal, zeros, duplicates, same_pixel, capitals, centroids, seas, urban, gbif and institutions are wrappers around CoordinateCleaner functions. Test same_pixel remove points inside the same pixel, based on a provided raster or from a STAC catalogue. Test env allows removing environmental outliers using the the Reverse Jackknife procedure as described by Chapman (2005) and adapted from the package biogeo."
+  - |
+    Description:
+    This script enables to apply several cleaning filters to the observations. The tests equal, zeros, duplicates, same_pixel, capitals, centroids, seas, urban, gbif and institutions are wrappers around CoordinateCleaner functions. Test same_pixel remove points inside the same pixel, based on a provided raster or from a STAC catalogue. Test env allows removing environmental outliers using the the Reverse Jackknife procedure as described by Chapman (2005) and adapted from the package biogeo.
   - "Lifecycle tag: Core."
-  - "Authors:
-    Sarah Valentin (https://orcid.org/0000-0002-9028-681X)"
+  - |
+    Authors:
+    Sarah Valentin (https://orcid.org/0000-0002-9028-681X)
   - "External link: https://github.com/ropensci/CoordinateCleaner"
-  - "References:
-    Chapman, A.D. (2005) Principles and Methods of Data Cleaning - Primary Species and Species- Occurrence Data, version 1.0. Report for the Global Biodiversity Information Facility, Copenhagen. null
+  - |
+    References:
+    Chapman, A.D. (2005) Principles and Methods of Data Cleaning - Primary Species and Species- Occurrence Data, version 1.0. Report for the Global Biodiversity Information Facility, Copenhagen.
+    null
 
-    Zizka A, Silvestro D, Andermann T, Azevedo J, Duarte Ritter C, Edler D, Farooq H, Herdean A, Ariza M, Scharn R, Svanteson S, Wengtrom N, Zizka V & Antonelli A (2019) CoordinateCleaner, standardized cleaning of occurrence records from biological collection databases. Methods in Ecology and Evolution, 10(5):744-751 null"
+    Zizka A, Silvestro D, Andermann T, Azevedo J, Duarte Ritter C, Edler D, Farooq H, Herdean A, Ariza M, Scharn R, Svanteson S, Wengtrom N, Zizka V & Antonelli A (2019) CoordinateCleaner, standardized cleaning of occurrence records from biological collection databases. Methods in Ecology and Evolution, 10(5):744-751
+    https://doi.org/10.1111/2041-210X.13152
 
 
 requirements:
@@ -33,9 +38,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -61,7 +68,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -103,8 +114,8 @@ arguments:
     cat > "$OUTPUT_LOCATION/input.json" <<'JSON'
     ${
       return JSON.stringify({
-        presence: inputs.presence,
-        predictors: inputs.predictors,
+        presence: inputs.presence ? inputs.presence.path : null,
+        predictors: (inputs.predictors || []).map(function(file) { return file.path; }),
         tests: inputs.tests,
         env_threshold: inputs.env_threshold,
       }, null, 2);
@@ -144,13 +155,13 @@ inputs:
   presence:
     type: File?
     label: presence
-    doc: Dataframe, presence data.
+    doc: Tab-separated occurrence records to be cleaned, typically the output of a GBIF download step. Each row should represent one observation with at minimum latitude, longitude, and species columns.
     default: /scripts/filtering/cleanCoordinates_presence.tsv
 
   predictors:
     type: File[]?
     label: predictors
-    doc: Raster, predictors.
+    doc: Stack of environmental predictor rasters in GeoTIFF format. Used for the 'env' cleaning test to identify environmental outliers.
     default:
     - /output/SDM/loadPredictors_R/e09acd85debd23c991652771b1d771b2/bio141981-01-01.tif
     - /output/SDM/loadPredictors_R/e09acd85debd23c991652771b1d771b2/bio151981-01-01.tif
@@ -193,12 +204,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:
@@ -235,7 +246,7 @@ outputs:
   n_presence:
     type: int
     label: n presence
-    doc: Integer, initial number of presences points.
+    doc: Number of occurrence records entering the cleaning pipeline. Compare with `n_clean` to assess how many records were removed and whether the cleaning settings are appropriate for your dataset.
     outputBinding:
       glob: "output.json"
       loadContents: true
@@ -249,7 +260,7 @@ outputs:
   n_clean:
     type: int
     label: n clean presence
-    doc: Integer, final number of presences points after cleaning.
+    doc: Number of occurrence records remaining after all selected cleaning tests have been applied. A large drop relative to `n_presence` may indicate overly aggressive settings or systematic issues in the input data. Very low counts (<20) may produce unreliable SDM results.
     outputBinding:
       glob: "output.json"
       loadContents: true
@@ -263,7 +274,7 @@ outputs:
   clean_presence:
     type: File
     label: clean presences
-    doc: Dataframe, table with clean presence points.
+    doc: Tab-separated table of occurrence records that passed all selected cleaning tests. This is the recommended input for downstream species distribution modeling steps.
     outputBinding:
       glob: "output.json"
       loadContents: true

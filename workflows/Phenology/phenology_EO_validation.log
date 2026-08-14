@@ -1,43 +1,40 @@
-[1;30mINFO[0m /home/jean-michel/.local/bin/cwl-runner 3.2.20260413085819
-[1;30mINFO[0m Resolved '/home/jean-michel/code/cwl-temp/export/workflows/Phenology/phenology_EO.cwl' to 'file:///home/jean-michel/code/cwl-temp/export/workflows/Phenology/phenology_EO.cwl'
-[1;30mWARNING[0m [33m../../cwl-temp/export/workflows/Phenology/phenology_EO.cwl:196:7: Warning: Field 'path' contains
-                                                                  undefined reference to
-                                                                  'file:///home/jean-michel/code/cwl-temp/export/workflows/Phenology/envs'[0m
+[1;30mINFO[0m /usr/bin/cwl-runner 3.1.20240112164112
+[1;30mINFO[0m Resolved '/home/jmlord/code/cwl-test/export/workflows/Phenology/phenology_EO.cwl' to 'file:///home/jmlord/code/cwl-test/export/workflows/Phenology/phenology_EO.cwl'
 [1;30mERROR[0m [31mTool definition failed validation:
-../../cwl-temp/export/workflows/Phenology/phenology_EO.cwl:1:1:   Object
-                                                                 '../../cwl-temp/export/workflows/Phenology/phenology_EO.cwl'
+../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:1:1:   Object
+                                                                 '../../cwl-test/export/workflows/Phenology/phenology_EO.cwl'
                                                                  is not valid because
                                                                    tried 'Workflow' but
-../../cwl-temp/export/workflows/Phenology/phenology_EO.cwl:35:1:     the 'inputs' field is not
+../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:37:1:     the 'inputs' field is not
                                                                      valid because
-../../cwl-temp/export/workflows/Phenology/phenology_EO.cwl:69:3:       item is invalid because
-../../cwl-temp/export/workflows/Phenology/phenology_EO.cwl:70:5:         the 'type' field is not
+../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:71:3:       item is invalid because
+../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:72:5:         the 'type' field is not
                                                                          valid because
                                                                            - tried
                                                                            InputRecordSchema but
-../../cwl-temp/export/workflows/Phenology/phenology_EO.cwl:71:7:             * the 'type' field is
+../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:73:7:             * the 'type' field is
                                                                              not valid because
                                                                                value is a
                                                                                CommentedMap but expected a string
-../../cwl-temp/export/workflows/Phenology/phenology_EO.cwl:72:7:             * invalid field
+../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:74:7:             * invalid field
                                                                              'symbols', expected one of:
                                                                              'fields', 'type', 'label', 'doc',
                                                                              'name'
-../../cwl-temp/export/workflows/Phenology/phenology_EO.cwl:70:5:           - tried InputEnumSchema
+../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:72:5:           - tried InputEnumSchema
                                                                            but
-../../cwl-temp/export/workflows/Phenology/phenology_EO.cwl:71:7:             the 'type' field is
+../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:73:7:             the 'type' field is
                                                                              not valid because
                                                                                value is a
                                                                                CommentedMap but expected a string
-../../cwl-temp/export/workflows/Phenology/phenology_EO.cwl:70:5:           - tried InputArraySchema
+../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:72:5:           - tried InputArraySchema
                                                                            but
                                                                              * missing required
                                                                              field 'items'
-../../cwl-temp/export/workflows/Phenology/phenology_EO.cwl:71:7:             * the 'type' field is
+../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:73:7:             * the 'type' field is
                                                                              not valid because
                                                                                value is a
                                                                                CommentedMap but expected a string
-../../cwl-temp/export/workflows/Phenology/phenology_EO.cwl:72:7:             * invalid field
+../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:74:7:             * invalid field
                                                                              'symbols', expected one of:
                                                                              'items', 'type', 'label', 'doc',
                                                                              'name'[0m

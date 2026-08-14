@@ -9,11 +9,13 @@ class: CommandLineTool
 
 label: GBIF Observations from Download API
 doc:
-  - "Description:
-    Load complete GBIF data from GBIF download API"
+  - |
+    Description:
+    Load complete GBIF data from GBIF download API
   - "Lifecycle tag: Core."
-  - "Authors:
-    Guillaume Larocque (https://orcid.org/0000-0002-5967-9156)"
+  - |
+    Authors:
+    Guillaume Larocque (https://orcid.org/0000-0002-5967-9156)
 
 
 requirements:
@@ -28,9 +30,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -56,7 +60,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -146,7 +154,7 @@ inputs:
 
   bbox_crs:
     label: Bounding box and CRS
-    doc: Select a bounding box and CRS
+    doc: Select a bounding box and CRS. This defines the geographic extent of the analysis as a bounding box, along with its coordinate reference system (CRS). A larger extent increases computation time.
     type:
       type: record
       name: crsBBox
@@ -174,16 +182,16 @@ inputs:
         type: float[]
 
   min_year:
-    type: int?
-    label: minimum year
-    doc: Min year observations wanted
-    default: 2010
+    type: string?
+    label: Minimum year or start date
+    doc: Earliest year for GBIF records. Accepts YYYY or YYYY-MM-DD; if a full date is supplied, only the year is used.
+    default: '2010'
 
   max_year:
-    type: int?
-    label: maximum year
-    doc: Max year observations wanted
-    default: 2024
+    type: string?
+    label: Maximum year or end date
+    doc: Latest year for GBIF records. Accepts YYYY or YYYY-MM-DD; if a full date is supplied, only the year is used.
+    default: '2024'
 
 
 
@@ -195,12 +203,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:
@@ -237,7 +245,7 @@ outputs:
   observations_file:
     type: File
     label: Observations
-    doc: Output file with observations
+    doc: Tab-separated file containing all GBIF occurrence records retrieved for the specified taxa, bounding box, and time range. Each row represents one observation. Used as input to subsequent modeling steps.
     outputBinding:
       glob: "output.json"
       loadContents: true
@@ -251,7 +259,7 @@ outputs:
   total_records:
     type: int
     label: Total number of occurrences
-    doc: Total number of GBIF occurrences in csv file
+    doc: Count of occurrence records returned by the GBIF query. Use this to gauge data availability before running the model — very low counts (e.g. <20) may produce unreliable results.
     outputBinding:
       glob: "output.json"
       loadContents: true
@@ -265,7 +273,7 @@ outputs:
   gbif_doi:
     type: string
     label: DOI of GBIF download
-    doc: DOI of GBIF download. Used for citing downloaded data.
+    doc: A permanent DOI assigned to this specific GBIF data download. Must be cited in any publication using these data — see [GBIF's citation guidelines](https://www.gbif.org/citation-guidelines).
     outputBinding:
       glob: "output.json"
       loadContents: true

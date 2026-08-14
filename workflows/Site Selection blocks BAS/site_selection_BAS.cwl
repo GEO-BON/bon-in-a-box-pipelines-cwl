@@ -8,7 +8,8 @@ class: Workflow
 
 label: Environmental Sampling Site Selection
 doc:
-  - "Description:
+  - |
+    Description:
     ## Introduction
     Biodiversity monitoring often requires researchers to draw samples of different population due to limitation of budget, time, and accesibility. Many methods exist to produce samples from a continous surface, but balanced sampling has proven to be one of the most efficient in capturing patterns in different populations. Often, researchers aim to prioritize sampling based on  different parameters, one being environmental characteristics of their study region (as a proxy of biomes or ecological regions). Tools that allow for quick and robust sampling frameworks provide researchers with strong sampling designs to address multiple ecological questions. 
     
@@ -29,15 +30,20 @@ doc:
     ## Before you start
     * Define a projected CRS for your study area 
     * Select environmental variables that may be of ecological importance for your study 
-    * Define how many environmental blocks you expect to produce (too many may be noisy, to little may be underrepresenting the environmental diversity). "
-  - "Authors:
-    Francis van Oordt (francis.vanoordtlahoz@mail.mcgill.ca, https://orcid.org/0000-0002-8471-235X)"
-  - "References:
-    spbal: Spatially Balanced Sampling Algorithms null
+    * Define how many environmental blocks you expect to produce (too many may be noisy, to little may be underrepresenting the environmental diversity). 
+  - |
+    Authors:
+    Francis van Oordt (francis.vanoordtlahoz@mail.mcgill.ca, https://orcid.org/0000-0002-8471-235X)
+  - |
+    References:
+    spbal: Spatially Balanced Sampling Algorithms
+    null
 
-    Survey-gap analysis in expeditionary research: where do we go from here? null
+    Survey-gap analysis in expeditionary research: where do we go from here?
+    null
 
-    Selection of sampling sites for biodiversity inventory: Effects of environmental and geographical considerations null"
+    Selection of sampling sites for biodiversity inventory: Effects of environmental and geographical considerations
+    null
 
 
 requirements:
@@ -158,11 +164,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   runFolder:
     type: Directory?
@@ -194,6 +197,7 @@ inputs:
 steps:
   # This step prepares the environments for all the following steps
   prepareEnvironments:
+    when: $(inputs.envFolderWrite != null)
     run:
       class: CommandLineTool
       requirements:
@@ -232,42 +236,38 @@ steps:
           echo "Exporting all environments"
           mkdir -p "$OUTPUT_LOCATION" "$CONDA_PKGS_DIRS" /conda-env-yml/envs
           
-          function exportEnv {
+          function getPackedEnv {
             condaEnvName=$1
             condaEnvYml=$2
-            unpackedFolder=$(inputs.envFolderWrite.path)/$condaEnvName
+            # We use a dedicated env folder to avoid copying the whole env folder between steps in a k8 context
+            dedicatedEnvFolder=$(inputs.envFolderWrite.path)/$condaEnvName
+            mkdir -p "$dedicatedEnvFolder"
             
             echo "Exporting $condaEnvName..."
-            source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
-            source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
-            if [[ ! -d "$unpackedFolder" ]]; then
-              # remove the env to force using the conda-pack
-              mamba env remove -y -n "$condaEnvName"
-              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
-            fi
+            source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh "$OUTPUT_LOCATION" "$condaEnvName" \
+              "$condaEnvYml" "$dedicatedEnvFolder" "$(inputs.condaPackURL)" --noActivate
+            source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh "$condaEnvName" "$dedicatedEnvFolder"
             echo "Done."
           }
-          export -f exportEnv
+          export -f getPackedEnv
           
-          bash -c 'exportEnv "site_selection_BAS__Block_creation" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "site_selection_BAS__Block_creation" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-terra, r-ggplot2, r-tidyterra, r-cowplot, r-factoextra]
           name: site_selection_BAS__Block_creation
           "'
           
-          bash -c 'exportEnv "data__loadFromStac" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "data__loadFromStac" "channels: [conda-forge, r]
           dependencies: [libgdal, r-lubridate, proj, r-proj, r-gdalcubes=0.7.4, r-rstac, r-dplyr,
             r-rcurl, r-rjson, r-sf, r-stars, r-terra]
           name: data__loadFromStac
           "'
           
-          bash -c 'exportEnv "site_selection_BAS__BAS_algorithm" "channels: [conda-forge, r]
+          bash -c 'getPackedEnv "site_selection_BAS__BAS_algorithm" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-terra, r-ggplot2, r-tidyterra, r-cowplot, r-sf, r-remotes]
           name: site_selection_BAS__BAS_algorithm
           "'
           
-          bash -c 'exportEnv "data__load_polygons" "channels: [conda-forge]
+          bash -c 'getPackedEnv "data__load_polygons" "channels: [conda-forge]
           dependencies: [r-rjson, r-dbplyr=2.5.2, r-dplyr=1.2.1, r-duckdb=1.4.4, r-fs=2.1.0,
             r-arrow=24.0.0, r-nanoarrow=0.8.0, r-geoarrow=0.4.2, r-sf=1.1-0, r-stringi=1.8.7,
             r-stringr=1.6.0, r-tidyr=1.3.2, r-uuid=1.2_2, r-remotes=2.5.0]
@@ -276,7 +276,7 @@ steps:
           
       inputs:
         envFolderWrite:
-          type: Directory
+          type: Directory?
         runFolderWrite:
           type: Directory?
         condaPackURL:
@@ -302,8 +302,10 @@ steps:
       n_rows: site_selection_BAS>Block_creation.yml@0|n_rows
       n_cols: site_selection_BAS>Block_creation.yml@0|n_cols
       rasters: data>loadFromStac.yml@2/rasters
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/site_selection_BAS__Block_creation' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -327,8 +329,10 @@ steps:
       resampling: { default: near }
       aggregation: { default: first }
       study_area: data>load_polygons.yml@61/polygon
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -347,8 +351,10 @@ steps:
       rast_blocks: site_selection_BAS>Block_creation.yml@0/rast_blocks
       ndesign: site_selection_BAS>BAS_algorithm.yml@26|ndesign
       options_bas: site_selection_BAS>BAS_algorithm.yml@26|options_bas
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/site_selection_BAS__BAS_algorithm' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder
@@ -365,8 +371,10 @@ steps:
       polygon_type: data>load_polygons.yml@61|polygon_type
       country_region_bbox: pipeline@60
       buffer: { default: 0.0 }
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons' } : null)"
+      envFolderWritable:
         default: false
       runFolder:
           source: runFolder

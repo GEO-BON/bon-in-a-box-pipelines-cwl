@@ -8,15 +8,20 @@ class: Workflow
 
 label: Get GFW forest cover change 2000-2023
 doc:
-  - "Description:
-    Component of the Genes from Space tool. Given an area of interest, the tool creates a raster stack describing forest habitat presence for the years of interest (maximum range: from 2000 to 2023). Forest habitat presence made available by the Global Forest Watch (https://www.globalforestwatch.org/)"
-  - "Authors:
-    Oliver Selmoni (oliver.selmoni@gmail.com)"
+  - |
+    Description:
+    Component of the Genes from Space tool. Given an area of interest, the tool creates a raster stack describing forest habitat presence for the years of interest (maximum range: from 2000 to 2023). Forest habitat presence made available by the Global Forest Watch (https://www.globalforestwatch.org/)
+  - |
+    Authors:
+    Oliver Selmoni (oliver.selmoni@gmail.com)
   - "External link: https://teams.issibern.ch/genesfromspace/"
-  - "References:
-    Schuman et al., EcoEvoRxiv. null
+  - |
+    References:
+    Schuman et al., EcoEvoRxiv.
+    null
 
-    Hansen et al., Science (2013) null"
+    Hansen et al., Science (2013)
+    null
 
 
 requirements:
@@ -59,11 +64,8 @@ inputs:
   ###################
 
   envFolder:
-    type: Directory
+    type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
-    default:
-      class: Directory
-      path: ./envs
 
   runFolder:
     type: Directory?
@@ -95,6 +97,7 @@ inputs:
 steps:
   # This step prepares the environments for all the following steps
   prepareEnvironments:
+    when: $(inputs.envFolderWrite != null)
     run:
       class: CommandLineTool
       requirements:
@@ -133,30 +136,26 @@ steps:
           echo "Exporting all environments"
           mkdir -p "$OUTPUT_LOCATION" "$CONDA_PKGS_DIRS" /conda-env-yml/envs
           
-          function exportEnv {
+          function getPackedEnv {
             condaEnvName=$1
             condaEnvYml=$2
-            unpackedFolder=$(inputs.envFolderWrite.path)/$condaEnvName
+            # We use a dedicated env folder to avoid copying the whole env folder between steps in a k8 context
+            dedicatedEnvFolder=$(inputs.envFolderWrite.path)/$condaEnvName
+            mkdir -p "$dedicatedEnvFolder"
             
             echo "Exporting $condaEnvName..."
-            source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-              "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
-            source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh $condaEnvName $(inputs.envFolderWrite.path)
-            if [[ ! -d "$unpackedFolder" ]]; then
-              # remove the env to force using the conda-pack
-              mamba env remove -y -n "$condaEnvName"
-              source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "$condaEnvName" \
-                "$condaEnvYml" $(inputs.envFolderWrite.path) $(inputs.condaPackURL)
-            fi
+            source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh "$OUTPUT_LOCATION" "$condaEnvName" \
+              "$condaEnvYml" "$dedicatedEnvFolder" "$(inputs.condaPackURL)" --noActivate
+            source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh "$condaEnvName" "$dedicatedEnvFolder"
             echo "Done."
           }
-          export -f exportEnv
+          export -f getPackedEnv
           
 
           
       inputs:
         envFolderWrite:
-          type: Directory
+          type: Directory?
         runFolderWrite:
           type: Directory?
         condaPackURL:
@@ -181,9 +180,6 @@ steps:
       population_polygons: GFS_IndicatorsTool>get_TCY.yml@23|population_polygons
       res: GFS_IndicatorsTool>get_TCY.yml@23|res
       yoi: GFS_IndicatorsTool>get_TCY.yml@23|yoi
-      envFolder: prepareEnvironments/envFolder
-      envFolderWriteable:
-        default: false
       runFolder:
           source: runFolder
           valueFrom: "$(self ? { class: 'Directory', location: self.location + '/GFS_IndicatorsTool__get_TCY/23' } : null)" 

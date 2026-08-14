@@ -9,17 +9,19 @@ class: CommandLineTool
 
 label: Clean protected areas from WDPA API
 doc:
-  - "Description:
+  - |
+    Description:
     This script cleans geometry issues in WDPA data and allows the user to filter based on the following criteria:
     - protected area legal status types (designated, inscribed, established)
     - inclusion of UNESCO Biosphere reserves
     - inclusion of marine protected areas
     - inclusion of areas with other effective area-based conservation measures (OECMs)
     - inclusion of protected areas represented as points
-    - study area of interest"
+    - study area of interest
   - "Lifecycle tag: Core."
-  - "Authors:
-    Jory Griffith (jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)"
+  - |
+    Authors:
+    Jory Griffith (jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)
 
 
 requirements:
@@ -34,9 +36,11 @@ requirements:
           if(inputs.runFolder != null) {
             if(Array.isArray(value)) {
               value = value.map(function (item) {
-                return item.replace(inputs.runFolder.path, runtime.outdir);
+                if(typeof item.replace === "function")
+                  return item.replace(inputs.runFolder.path, runtime.outdir);
+                else return item
               });
-            } else {
+            } else if(typeof value.replace === "function") {
               value = value.replace(inputs.runFolder.path, runtime.outdir);
             }
           }
@@ -62,7 +66,11 @@ requirements:
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
               }
-            : []
+            : { // fallback
+                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
+                entryname: "/conda-envs",
+                writable: true
+              }
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -104,8 +112,8 @@ arguments:
     cat > "$OUTPUT_LOCATION/input.json" <<'JSON'
     ${
       return JSON.stringify({
-        study_area_polygon: inputs.study_area_polygon,
-        protected_area_file: inputs.protected_area_file,
+        study_area_polygon: inputs.study_area_polygon ? inputs.study_area_polygon.path : null,
+        protected_area_file: inputs.protected_area_file ? inputs.protected_area_file.path : null,
         crs: inputs.crs,
         status_type: inputs.status_type,
         include_unesco: inputs.include_unesco,
@@ -287,12 +295,12 @@ inputs:
     type: Directory?
     doc: Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.
 
-  envFolderWriteable:
+  envFolderWritable:
     type: boolean
     doc:
       Whether the envFolder should be writable. If false, the folder will be mounted read-only.
       In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run.
-      envFolderWriteable must be false when running in a workflow, but can be true when ran as an individual tool.
+      envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.
     default: true
 
   runFolder:

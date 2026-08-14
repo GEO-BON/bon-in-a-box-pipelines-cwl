@@ -1,0 +1,24 @@
+scripts_root:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+runFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+pipeline@21:  # array of type 'float' (optional)
+  - '-99'
+  - '22'
+  - '-92'
+  - '29'
+
+pipeline@15: 2000  # default value of type 'int'. (optional)
+pipeline@14: 1980  # default value of type 'int'. (optional)
+pipeline@12: Quercus sartorii  # default value of type 'string'. (optional)
+environment:  # type 'File' (optional)
+    class: File
+    path: a/file/path
+envFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+condaPackURL: https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
+GFS_IndicatorsTool>get_pop_poly.yml@5|pop_distance: 50  # default value of type 'float'. (optional)
+GFS_IndicatorsTool>get_pop_poly.yml@5|buffer_size: 10  # default value of type 'float'. (optional)
