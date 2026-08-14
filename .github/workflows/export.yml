@@ -44,4 +44,4 @@ jobs:
           SCRIPT_STUBS_LOCATION: ${{ github.workspace }}/pipeline-engine/script-stubs
           USERDATA_LOCATION: ${{ github.workspace }}/pipeline-engine/pipeline-repo/userdata
           SCRIPT_LOCATION: ${{ github.workspace }}/pipeline-engine/pipeline-repo/scripts
-        run: ./gradlew exportCWL --args="${{ github.workspace }}" --info
+        run: ./gradlew exportCWL --args="${{ github.workspace }}" --info --no-build-cache
