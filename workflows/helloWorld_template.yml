@@ -4,8 +4,8 @@ scripts_root:  # type 'Directory' (optional)
 runFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-helloWorld>helloPython.yml@0|study_area_bbox:  # "file:///home/jmlord/code/cwl-test/export/workflows/helloWorld.cwl#helloWorld>helloPython.yml@0|study_area_bbox/bboxCRS" record type.
-    region:  # "file:///home/jmlord/code/cwl-test/export/workflows/helloWorld.cwl#helloWorld>helloPython.yml@0|study_area_bbox/bboxCRS/region/regionDefinition" record type.
+helloWorld>helloPython.yml@0|study_area_bbox:  # "file:///Users/laetitiatremblay/dev/output/workflows/helloWorld.cwl#helloWorld>helloPython.yml@0|study_area_bbox/bboxCRS" record type.
+    region:  # "file:///Users/laetitiatremblay/dev/output/workflows/helloWorld.cwl#helloWorld>helloPython.yml@0|study_area_bbox/bboxCRS/region/regionDefinition" record type.
         bboxWGS84:  # array of type 'float' (optional)
           - 0.1
         regionName: a_string  # type 'string' (optional)
@@ -13,7 +13,7 @@ helloWorld>helloPython.yml@0|study_area_bbox:  # "file:///home/jmlord/code/cwl-t
         countryEnglishName: a_string  # type 'string' (optional)
     bbox:  # array of type 'float'
       - 0.1
-    CRS:  # "file:///home/jmlord/code/cwl-test/export/workflows/helloWorld.cwl#helloWorld>helloPython.yml@0|study_area_bbox/bboxCRS/CRS/CRSDefinition" record type.
+    CRS:  # "file:///Users/laetitiatremblay/dev/output/workflows/helloWorld.cwl#helloWorld>helloPython.yml@0|study_area_bbox/bboxCRS/CRS/CRSDefinition" record type.
         wktDef: a_string  # type 'string' (optional)
         proj4Def: a_string  # type 'string' (optional)
         CRSBboxWGS84:  # array of type 'float' (optional)
@@ -22,7 +22,7 @@ helloWorld>helloPython.yml@0|study_area_bbox:  # "file:///home/jmlord/code/cwl-t
         authority: a_string  # type 'string' (optional)
         code: 0  # type 'int' (optional)
         unit: a_string  # type 'string' (optional)
-    country:  # "file:///home/jmlord/code/cwl-test/export/workflows/helloWorld.cwl#helloWorld>helloPython.yml@0|study_area_bbox/bboxCRS/country/countryDefinition" record type.
+    country:  # "file:///Users/laetitiatremblay/dev/output/workflows/helloWorld.cwl#helloWorld>helloPython.yml@0|study_area_bbox/bboxCRS/country/countryDefinition" record type.
         bboxWGS84:  # array of type 'float' (optional)
           - 0.1
         ISO3: a_string  # type 'string' (optional)
@@ -34,4 +34,5 @@ environment:  # type 'File' (optional)
 envFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-condaPackURL: https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
+condaPackURL: 
+    https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.

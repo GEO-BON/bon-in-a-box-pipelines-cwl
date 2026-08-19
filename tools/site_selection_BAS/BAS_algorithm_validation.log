@@ -1,17 +1,17 @@
-[1;30mINFO[0m /usr/bin/cwl-runner 3.1.20240112164112
-[1;30mINFO[0m Resolved '/home/jmlord/code/cwl-test/export/tools/site_selection_BAS/BAS_algorithm.cwl' to 'file:///home/jmlord/code/cwl-test/export/tools/site_selection_BAS/BAS_algorithm.cwl'
+[1;30mINFO[0m /Users/laetitiatremblay/.local/bin/cwl-runner 3.2.20260720092025
+[1;30mINFO[0m Resolved '/Users/laetitiatremblay/dev/output/tools/site_selection_BAS/BAS_algorithm.cwl' to 'file:///Users/laetitiatremblay/dev/output/tools/site_selection_BAS/BAS_algorithm.cwl'
 [1;30mERROR[0m [31mTool definition failed validation:
-../../cwl-test/export/tools/site_selection_BAS/BAS_algorithm.cwl:147:1: checking field 'inputs'
-../../cwl-test/export/tools/site_selection_BAS/BAS_algorithm.cwl:151:3:   checking object
-                                                                          '../../cwl-test/export/tools/site_selection_BAS/BAS_algorithm.cwl#colors_vect'
-                                                                            Field 'type' references
-                                                                            unknown identifier 'csv',
-                                                                            tried
-                                                                            file:///home/jmlord/code/cwl-test/export/tools/site_selection_BAS/BAS_algorithm.cwl#csv
-../../cwl-test/export/tools/site_selection_BAS/BAS_algorithm.cwl:232:1: checking field 'outputs'
-../../cwl-test/export/tools/site_selection_BAS/BAS_algorithm.cwl:247:3:   checking object
-                                                                          '../../cwl-test/export/tools/site_selection_BAS/BAS_algorithm.cwl#pts_df'
-../../cwl-test/export/tools/site_selection_BAS/BAS_algorithm.cwl:248:5:     Field 'type' references
-                                                                            unknown identifier 'csv',
-                                                                            tried
-                                                                            file:///home/jmlord/code/cwl-test/export/tools/site_selection_BAS/BAS_algorithm.cwl#csv[0m
+../../../../dev/output/tools/site_selection_BAS/BAS_algorithm.cwl:147:1: checking field 'inputs'
+../../../../dev/output/tools/site_selection_BAS/BAS_algorithm.cwl:151:3:   checking object
+                                                                           '../../../../dev/output/tools/site_selection_BAS/BAS_algorithm.cwl#colors_vect'
+                                                                             Field 'type'
+                                                                             references unknown
+                                                                             identifier 'csv', tried
+                                                                             file:///Users/laetitiatremblay/dev/output/tools/site_selection_BAS/BAS_algorithm.cwl#csv
+../../../../dev/output/tools/site_selection_BAS/BAS_algorithm.cwl:232:1: checking field 'outputs'
+../../../../dev/output/tools/site_selection_BAS/BAS_algorithm.cwl:247:3:   checking object
+                                                                           '../../../../dev/output/tools/site_selection_BAS/BAS_algorithm.cwl#pts_df'
+../../../../dev/output/tools/site_selection_BAS/BAS_algorithm.cwl:248:5:     Field 'type'
+                                                                             references unknown
+                                                                             identifier 'csv', tried
+                                                                             file:///Users/laetitiatremblay/dev/output/tools/site_selection_BAS/BAS_algorithm.cwl#csv[0m

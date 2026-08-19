@@ -1,43 +1,43 @@
-[1;30mINFO[0m /usr/bin/cwl-runner 3.1.20240112164112
-[1;30mINFO[0m Resolved '/home/jmlord/code/cwl-test/export/tools/zonal_statistics/zonal_stats.cwl' to 'file:///home/jmlord/code/cwl-test/export/tools/zonal_statistics/zonal_stats.cwl'
+[1;30mINFO[0m /Users/laetitiatremblay/.local/bin/cwl-runner 3.2.20260720092025
+[1;30mINFO[0m Resolved '/Users/laetitiatremblay/dev/output/tools/zonal_statistics/zonal_stats.cwl' to 'file:///Users/laetitiatremblay/dev/output/tools/zonal_statistics/zonal_stats.cwl'
 [1;30mERROR[0m [31mTool definition failed validation:
-../../cwl-test/export/tools/zonal_statistics/zonal_stats.cwl:2:1:     Object
-                                                                    '../../cwl-test/export/tools/zonal_statistics/zonal_stats.cwl'
-                                                                    is not valid because
-                                                                      tried 'CommandLineTool' but
-../../cwl-test/export/tools/zonal_statistics/zonal_stats.cwl:147:1:     the 'inputs' field is not
-                                                                        valid because
-../../cwl-test/export/tools/zonal_statistics/zonal_stats.cwl:214:3:       item is invalid because
-../../cwl-test/export/tools/zonal_statistics/zonal_stats.cwl:215:5:         the 'type' field is not
-                                                                            valid because
-                                                                              - tried
-                                                                              CommandInputRecordSchema but
-../../cwl-test/export/tools/zonal_statistics/zonal_stats.cwl:216:7:             * the 'type' field
-                                                                                is not valid because
-                                                                                  value is a
-                                                                                  CommentedMap but expected a
-                                                                                  string
-../../cwl-test/export/tools/zonal_statistics/zonal_stats.cwl:217:7:             * invalid field
-                                                                                'symbols', expected one of:
-                                                                                'fields', 'type', 'label',
-                                                                                'doc', 'name', 'inputBinding'
-../../cwl-test/export/tools/zonal_statistics/zonal_stats.cwl:215:5:           - tried
-                                                                              CommandInputEnumSchema but
-../../cwl-test/export/tools/zonal_statistics/zonal_stats.cwl:216:7:             the 'type' field is
-                                                                                not valid because
-                                                                                  value is a
-                                                                                  CommentedMap but expected a
-                                                                                  string
-../../cwl-test/export/tools/zonal_statistics/zonal_stats.cwl:215:5:           - tried
-                                                                              CommandInputArraySchema but
-                                                                                * missing required
-                                                                                field 'items'
-../../cwl-test/export/tools/zonal_statistics/zonal_stats.cwl:216:7:             * the 'type' field
-                                                                                is not valid because
-                                                                                  value is a
-                                                                                  CommentedMap but expected a
-                                                                                  string
-../../cwl-test/export/tools/zonal_statistics/zonal_stats.cwl:217:7:             * invalid field
-                                                                                'symbols', expected one of:
-                                                                                'items', 'type', 'label',
-                                                                                'doc', 'name', 'inputBinding'[0m
+../../../../dev/output/tools/zonal_statistics/zonal_stats.cwl:2:1:     Object
+                                                                     '../../../../dev/output/tools/zonal_statistics/zonal_stats.cwl'
+                                                                     is not valid because
+                                                                       tried 'CommandLineTool' but
+../../../../dev/output/tools/zonal_statistics/zonal_stats.cwl:147:1:     the 'inputs' field is not
+                                                                         valid because
+../../../../dev/output/tools/zonal_statistics/zonal_stats.cwl:214:3:       item is invalid because
+../../../../dev/output/tools/zonal_statistics/zonal_stats.cwl:215:5:         the 'type' field is
+                                                                             not valid because
+                                                                               - tried
+                                                                               CommandInputRecordSchema but
+../../../../dev/output/tools/zonal_statistics/zonal_stats.cwl:216:7:             * the 'type' field
+                                                                                 is not valid because
+                                                                                   value is a
+                                                                                   CommentedMap but expected a
+                                                                                   string
+../../../../dev/output/tools/zonal_statistics/zonal_stats.cwl:217:7:             * invalid field
+                                                                                 'symbols', expected one of:
+                                                                                 'fields', 'type', 'label',
+                                                                                 'doc', 'name', 'inputBinding'
+../../../../dev/output/tools/zonal_statistics/zonal_stats.cwl:215:5:           - tried
+                                                                               CommandInputEnumSchema but
+../../../../dev/output/tools/zonal_statistics/zonal_stats.cwl:216:7:             the 'type' field
+                                                                                 is not valid because
+                                                                                   value is a
+                                                                                   CommentedMap but expected a
+                                                                                   string
+../../../../dev/output/tools/zonal_statistics/zonal_stats.cwl:215:5:           - tried
+                                                                               CommandInputArraySchema but
+                                                                                 * missing required
+                                                                                 field 'items'
+../../../../dev/output/tools/zonal_statistics/zonal_stats.cwl:216:7:             * the 'type' field
+                                                                                 is not valid because
+                                                                                   value is a
+                                                                                   CommentedMap but expected a
+                                                                                   string
+../../../../dev/output/tools/zonal_statistics/zonal_stats.cwl:217:7:             * invalid field
+                                                                                 'symbols', expected one of:
+                                                                                 'items', 'type', 'label',
+                                                                                 'doc', 'name', 'inputBinding'[0m

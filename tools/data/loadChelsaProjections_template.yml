@@ -1,5 +1,5 @@
 variable: bio1  # default value of type 'string'. (optional)
-time_span: 2041-2070  # enum; valid values: "file:///home/jmlord/code/cwl-test/export/tools/data/loadChelsaProjections.cwl#time_span/2011-2040", "file:///home/jmlord/code/cwl-test/export/tools/data/loadChelsaProjections.cwl#time_span/2041-2070", "file:///home/jmlord/code/cwl-test/export/tools/data/loadChelsaProjections.cwl#time_span/2071-2100"
+time_span: 2041-2070  # enum; valid values: "file:///Users/laetitiatremblay/dev/output/tools/data/loadChelsaProjections.cwl#time_span/2011-2040", "file:///Users/laetitiatremblay/dev/output/tools/data/loadChelsaProjections.cwl#time_span/2041-2070", "file:///Users/laetitiatremblay/dev/output/tools/data/loadChelsaProjections.cwl#time_span/2071-2100"
 spatial_res: 0.008  # default value of type 'float'. (optional)
 scripts_root:  # type 'Directory' (optional)
     class: Directory
@@ -8,7 +8,7 @@ scriptPath: data/loadChelsaProjections.R  # default value of type 'string'.
 runFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-rcp: ssp126  # enum; valid values: "file:///home/jmlord/code/cwl-test/export/tools/data/loadChelsaProjections.cwl#rcp/ssp126", "file:///home/jmlord/code/cwl-test/export/tools/data/loadChelsaProjections.cwl#rcp/ssp370", "file:///home/jmlord/code/cwl-test/export/tools/data/loadChelsaProjections.cwl#rcp/ssp585"
+rcp: ssp126  # enum; valid values: "file:///Users/laetitiatremblay/dev/output/tools/data/loadChelsaProjections.cwl#rcp/ssp126", "file:///Users/laetitiatremblay/dev/output/tools/data/loadChelsaProjections.cwl#rcp/ssp370", "file:///Users/laetitiatremblay/dev/output/tools/data/loadChelsaProjections.cwl#rcp/ssp585"
 environment:  # type 'File' (optional)
     class: File
     path: a/file/path
@@ -16,9 +16,10 @@ envFolderWritable: true  # default value of type 'boolean'.
 envFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-condaPackURL: https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
-bbox_crs:  # "file:///home/jmlord/code/cwl-test/export/tools/data/loadChelsaProjections.cwl#bbox_crs/bboxCRS" record type.
-    region:  # "file:///home/jmlord/code/cwl-test/export/tools/data/loadChelsaProjections.cwl#bbox_crs/bboxCRS/region/regionDefinition" record type.
+condaPackURL: 
+    https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
+bbox_crs:  # "file:///Users/laetitiatremblay/dev/output/tools/data/loadChelsaProjections.cwl#bbox_crs/bboxCRS" record type.
+    region:  # "file:///Users/laetitiatremblay/dev/output/tools/data/loadChelsaProjections.cwl#bbox_crs/bboxCRS/region/regionDefinition" record type.
         bboxWGS84:  # array of type 'float' (optional)
           - 0.1
         regionName: a_string  # type 'string' (optional)
@@ -26,7 +27,7 @@ bbox_crs:  # "file:///home/jmlord/code/cwl-test/export/tools/data/loadChelsaProj
         countryEnglishName: a_string  # type 'string' (optional)
     bbox:  # array of type 'float'
       - 0.1
-    CRS:  # "file:///home/jmlord/code/cwl-test/export/tools/data/loadChelsaProjections.cwl#bbox_crs/bboxCRS/CRS/CRSDefinition" record type.
+    CRS:  # "file:///Users/laetitiatremblay/dev/output/tools/data/loadChelsaProjections.cwl#bbox_crs/bboxCRS/CRS/CRSDefinition" record type.
         wktDef: a_string  # type 'string' (optional)
         proj4Def: a_string  # type 'string' (optional)
         CRSBboxWGS84:  # array of type 'float' (optional)
@@ -35,9 +36,9 @@ bbox_crs:  # "file:///home/jmlord/code/cwl-test/export/tools/data/loadChelsaProj
         authority: a_string  # type 'string' (optional)
         code: 0  # type 'int' (optional)
         unit: a_string  # type 'string' (optional)
-    country:  # "file:///home/jmlord/code/cwl-test/export/tools/data/loadChelsaProjections.cwl#bbox_crs/bboxCRS/country/countryDefinition" record type.
+    country:  # "file:///Users/laetitiatremblay/dev/output/tools/data/loadChelsaProjections.cwl#bbox_crs/bboxCRS/country/countryDefinition" record type.
         bboxWGS84:  # array of type 'float' (optional)
           - 0.1
         ISO3: a_string  # type 'string' (optional)
         englishName: a_string  # type 'string' (optional)
-aggregation: mean  # enum; valid values: "file:///home/jmlord/code/cwl-test/export/tools/data/loadChelsaProjections.cwl#aggregation/min", "file:///home/jmlord/code/cwl-test/export/tools/data/loadChelsaProjections.cwl#aggregation/max", "file:///home/jmlord/code/cwl-test/export/tools/data/loadChelsaProjections.cwl#aggregation/mean", "file:///home/jmlord/code/cwl-test/export/tools/data/loadChelsaProjections.cwl#aggregation/median", "file:///home/jmlord/code/cwl-test/export/tools/data/loadChelsaProjections.cwl#aggregation/first"
+aggregation: mean  # enum; valid values: "file:///Users/laetitiatremblay/dev/output/tools/data/loadChelsaProjections.cwl#aggregation/min", "file:///Users/laetitiatremblay/dev/output/tools/data/loadChelsaProjections.cwl#aggregation/max", "file:///Users/laetitiatremblay/dev/output/tools/data/loadChelsaProjections.cwl#aggregation/mean", "file:///Users/laetitiatremblay/dev/output/tools/data/loadChelsaProjections.cwl#aggregation/median", "file:///Users/laetitiatremblay/dev/output/tools/data/loadChelsaProjections.cwl#aggregation/first"

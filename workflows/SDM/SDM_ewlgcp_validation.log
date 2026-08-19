@@ -1,23 +1,22 @@
-[1;30mINFO[0m /usr/bin/cwl-runner 3.1.20240112164112
-[1;30mINFO[0m Resolved '/home/jmlord/code/cwl-test/export/workflows/SDM/SDM_ewlgcp.cwl' to 'file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_ewlgcp.cwl'
-../../cwl-test/export/tools/SDM/selectBackground.cwl:176:3: object id '../../cwl-test/export/tools/SDM/selectBackground.cwl#n_background' previously defined
-[1;30mWARNING[0m [33m../../cwl-test/export/tools/SDM/selectBackground.cwl:176:3: object id '../../cwl-test/export/tools/SDM/selectBackground.cwl#n_background' previously defined[0m
+[1;30mINFO[0m /Users/laetitiatremblay/.local/bin/cwl-runner 3.2.20260720092025
+[1;30mINFO[0m Resolved '/Users/laetitiatremblay/dev/output/workflows/SDM/SDM_ewlgcp.cwl' to 'file:///Users/laetitiatremblay/dev/output/workflows/SDM/SDM_ewlgcp.cwl'
+[1;30mWARNING[0m [33m../../../../dev/output/tools/SDM/selectBackground.cwl:176:3: object id '../../../../dev/output/tools/SDM/selectBackground.cwl#n_background' previously defined[0m
 [1;30mWARNING[0m [33mWorkflow checker warning:
-../../cwl-test/export/workflows/SDM/SDM_ewlgcp.cwl:64:5:  Source 'pipeline@121' of type ["null",
-                                                          {"type": "array", "items": "string"}] may
-                                                          be incompatible
-../../cwl-test/export/workflows/SDM/SDM_ewlgcp.cwl:571:5:   with sink
-                                                            'pipeline@121|default_output' of type
-                                                            {"type": "array", "items": "string"}[0m
+../../../../dev/output/workflows/SDM/SDM_ewlgcp.cwl:64:5:  Source 'pipeline@121' of type ["null",
+                                                           {"type": "array", "items": "string"}]
+                                                           may be incompatible
+../../../../dev/output/workflows/SDM/SDM_ewlgcp.cwl:571:5:   with sink
+                                                             'pipeline@121|default_output' of type
+                                                             {"type": "array", "items": "string"}[0m
 [1;30mERROR[0m [31mTool definition failed validation:
 
-../../cwl-test/export/workflows/SDM/SDM_ewlgcp.cwl:153:5: Source
-                                                          'data>getGBIFObservations>getGBIFObservations.yml@139|max_year'
-                                                          of type ["null", "int"] is incompatible
-../../cwl-test/export/workflows/SDM/SDM_ewlgcp.cwl:441:7:   with sink 'max_year' of type ["null",
-                                                            "string"]
-../../cwl-test/export/workflows/SDM/SDM_ewlgcp.cwl:94:5:   Source
-                                                          'data>getGBIFObservations>getGBIFObservations.yml@139|min_year'
-                                                          of type ["null", "int"] is incompatible
-../../cwl-test/export/workflows/SDM/SDM_ewlgcp.cwl:440:7:   with sink 'min_year' of type ["null",
-                                                            "string"][0m
+../../../../dev/output/workflows/SDM/SDM_ewlgcp.cwl:153:5: Source
+                                                           'data>getGBIFObservations>getGBIFObservations.yml@139|max_year'
+                                                           of type ["null", "int"] is incompatible
+../../../../dev/output/workflows/SDM/SDM_ewlgcp.cwl:441:7:   with sink 'max_year' of type
+                                                             ["null", "string"]
+../../../../dev/output/workflows/SDM/SDM_ewlgcp.cwl:94:5:   Source
+                                                           'data>getGBIFObservations>getGBIFObservations.yml@139|min_year'
+                                                           of type ["null", "int"] is incompatible
+../../../../dev/output/workflows/SDM/SDM_ewlgcp.cwl:440:7:   with sink 'min_year' of type
+                                                             ["null", "string"][0m

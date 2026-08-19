@@ -1,0 +1,4 @@
+[1;30mINFO[0m /Users/laetitiatremblay/.local/bin/cwl-runner 3.2.20260720092025
+[1;30mINFO[0m Resolved '/Users/laetitiatremblay/dev/output/workflows/SDM/MaxEnt with LAI.cwl' to 'file:///Users/laetitiatremblay/dev/output/workflows/SDM/MaxEnt%20with%20LAI.cwl'
+[1;30mERROR[0m [31mI'm sorry, I couldn't load this CWL file, try again with --debug for more information.
+The error was: [0m

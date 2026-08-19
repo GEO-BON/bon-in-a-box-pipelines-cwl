@@ -1,19 +1,19 @@
-[1;30mINFO[0m /usr/bin/cwl-runner 3.1.20240112164112
-[1;30mINFO[0m Resolved '/home/jmlord/code/cwl-test/export/workflows/Site Selection blocks BAS/site_selection_BAS.cwl' to 'file:///home/jmlord/code/cwl-test/export/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl'
+[1;30mINFO[0m /Users/laetitiatremblay/.local/bin/cwl-runner 3.2.20260720092025
+[1;30mINFO[0m Resolved '/Users/laetitiatremblay/dev/output/workflows/Site Selection blocks BAS/site_selection_BAS.cwl' to 'file:///Users/laetitiatremblay/dev/output/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl'
 [1;30mERROR[0m [31mTool definition failed validation:
-../../cwl-test/export/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl:388:1: checking field
-                                                                                              'outputs'
-../../cwl-test/export/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl:395:3:   checking object
-                                                                                                '../../cwl-test/export/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl#site_selection_BAS>BAS_algorithm.yml@26|pts_df'
-../../cwl-test/export/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl:396:5:     Field 'type'
-                                                                                                  references unknown
-                                                                                                  identifier 'csv',
-                                                                                                  tried
-                                                                                                  file:///home/jmlord/code/cwl-test/export/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl#csv
-../../cwl-test/export/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl:389:3:   checking object
-                                                                                                '../../cwl-test/export/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl#site_selection_BAS>Block_creation.yml@0|pca_summary_df'
-../../cwl-test/export/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl:390:5:     Field 'type'
-                                                                                                  references unknown
-                                                                                                  identifier 'csv',
-                                                                                                  tried
-                                                                                                  file:///home/jmlord/code/cwl-test/export/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl#csv[0m
+../../../../dev/output/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl:388:1: checking field
+                                                                                               'outputs'
+../../../../dev/output/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl:395:3:   checking object
+                                                                                                 '../../../../dev/output/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl#site_selection_BAS>BAS_algorithm.yml@26|pts_df'
+../../../../dev/output/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl:396:5:     Field 'type'
+                                                                                                   references unknown
+                                                                                                   identifier 'csv',
+                                                                                                   tried
+                                                                                                   file:///Users/laetitiatremblay/dev/output/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl#csv
+../../../../dev/output/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl:389:3:   checking object
+                                                                                                 '../../../../dev/output/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl#site_selection_BAS>Block_creation.yml@0|pca_summary_df'
+../../../../dev/output/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl:390:5:     Field 'type'
+                                                                                                   references unknown
+                                                                                                   identifier 'csv',
+                                                                                                   tried
+                                                                                                   file:///Users/laetitiatremblay/dev/output/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl#csv[0m

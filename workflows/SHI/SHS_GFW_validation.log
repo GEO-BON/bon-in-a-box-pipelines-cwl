@@ -1,5 +1,5 @@
-[1;30mINFO[0m /usr/bin/cwl-runner 3.1.20240112164112
-[1;30mINFO[0m Resolved '/home/jmlord/code/cwl-test/export/workflows/SHI/SHS_GFW.cwl' to 'file:///home/jmlord/code/cwl-test/export/workflows/SHI/SHS_GFW.cwl'
+[1;30mINFO[0m /Users/laetitiatremblay/.local/bin/cwl-runner 3.2.20260720092025
+[1;30mINFO[0m Resolved '/Users/laetitiatremblay/dev/output/workflows/SHI/SHS_GFW.cwl' to 'file:///Users/laetitiatremblay/dev/output/workflows/SHI/SHS_GFW.cwl'
 [1;30mERROR[0m [31mTool definition failed validation:
-file:///home/jmlord/code/cwl-test/export/workflows/SHI/SHS_GFW.cwl:180:75: mapping values are not
-                                                                           allowed here[0m
+file:///Users/laetitiatremblay/dev/output/workflows/SHI/SHS_GFW.cwl:180:75: mapping values are not
+                                                                            allowed here[0m
