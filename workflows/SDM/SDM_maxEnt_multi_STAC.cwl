@@ -10,16 +10,16 @@ label: Species distribution modeling with Maxent and multiple STAC catalogues
 doc:
   - |
     Description:
-    ## Introduction 
-    Species distributions are an important [Essential Biodiversity Variable (EBV)](https://geobon.org/ebvs/what-are-ebvs/) in the species populations class. Knowing where species are likely to occur is essential for understanding biodiversity patterns, identifying conservation priorities, assessing potential impacts of environmental change, and supporting biodiversity indicators. However, species occurrence data are often sparse, unevenly distributed, and affected by spatial and taxonomic sampling bias. Species distribution models (SDMs) help fill these gaps by estimating where suitable environmental conditions occur for a species based on known observations and environmental predictors (Peterson, 2001; Elith and Leathwick, 2009).  
-    
-    The MaxEnt pipeline builds a species distribution model using occurrence records from the [Global Biodiversity Information Facility (GBIF)](https://www.gbif.org/) and environmental raster layers from the [GEO BON STAC catalog](https://stac.geobon.org/). The pipeline retrieves GBIF observations for the selected taxon or taxa, cleans occurrence coordinates, removes highly collinear environmental predictors, generates background points, and fits a MaxEnt model using the ENMeval R package (Kass et al. 2021). MaxEnt is a presence-background modeling approach, meaning it compares known species presences with background environmental conditions across the study area. The MaxEnt SDM is run by 1\) partitioning occurrence and background points into subsets for training and evaluation, 2\) building the model with different algorithmic settings (model tuning), and 3\) evaluating their performance ([see package vignette](https://jamiemkass.github.io/ENMeval/articles/ENMeval-2.0-vignette.html#partition)). Lastly, the pipeline computes the 95% confidence interval using bootstrapping and cross validation techniques.  
-    
-    The pipeline evaluates different MaxEnt settings, including feature classes and regularization multipliers, and selects a tuned model based on model performance. It produces a habitat suitability prediction raster, cleaned occurrence records, selected environmental predictors, a GBIF download DOI, and a raster summarizing variability among model runs.  
+    ## Introduction
+    Species distributions are an important [Essential Biodiversity Variable (EBV)](https://geobon.org/ebvs/what-are-ebvs/) in the species populations class. Knowing where species are likely to occur is essential for understanding biodiversity patterns, identifying conservation priorities, assessing potential impacts of environmental change, and supporting biodiversity indicators. However, species occurrence data are often sparse, unevenly distributed, and affected by spatial and taxonomic sampling bias. Species distribution models (SDMs) help fill these gaps by estimating where suitable environmental conditions occur for a species based on known observations and environmental predictors (Peterson, 2001; Elith and Leathwick, 2009).
+
+    The MaxEnt pipeline builds a species distribution model using occurrence records from the [Global Biodiversity Information Facility (GBIF)](https://www.gbif.org/) and environmental raster layers from the [GEO BON STAC catalog](https://stac.geobon.org/). The pipeline retrieves GBIF observations for the selected taxon or taxa, cleans occurrence coordinates, removes highly collinear environmental predictors, generates background points, and fits a MaxEnt model using the ENMeval R package (Kass et al. 2021). MaxEnt is a presence-background modeling approach, meaning it compares known species presences with background environmental conditions across the study area. The MaxEnt SDM is run by 1\) partitioning occurrence and background points into subsets for training and evaluation, 2\) building the model with different algorithmic settings (model tuning), and 3\) evaluating their performance ([see package vignette](https://jamiemkass.github.io/ENMeval/articles/ENMeval-2.0-vignette.html#partition)). Lastly, the pipeline computes the 95% confidence interval using bootstrapping and cross validation techniques.
+
+    The pipeline evaluates different MaxEnt settings, including feature classes and regularization multipliers, and selects a tuned model based on model performance. It produces a habitat suitability prediction raster, cleaned occurrence records, selected environmental predictors, a GBIF download DOI, and a raster summarizing variability among model runs.
     ## Uses
-    The MaxEnt pipeline can be used to estimate the potential distribution or relative habitat suitability of one or more species within a selected study area. Outputs can support conservation planning, sampling prioritization, identification of biodiversity hotspots, protected area planning, risk assessment for species of conservation concern, and environmental impact assessments.  
-    
-    The results can also be used as inputs to other biodiversity analyses and indicators, such as identifying areas where species are likely to occur, mapping speciesrichness,comparing predicted habitat suitability across regions, or highlighting areas where additional occurrence sampling may be needed. Because the pipeline retrieves both GBIF observations and environmental predictor layers, it provides a reproducible workflow for generating species distribution maps from public biodiversity and environmental data. 
+    The MaxEnt pipeline can be used to estimate the potential distribution or relative habitat suitability of one or more species within a selected study area. Outputs can support conservation planning, sampling prioritization, identification of biodiversity hotspots, protected area planning, risk assessment for species of conservation concern, and environmental impact assessments.
+
+    The results can also be used as inputs to other biodiversity analyses and indicators, such as identifying areas where species are likely to occur, mapping speciesrichness,comparing predicted habitat suitability across regions, or highlighting areas where additional occurrence sampling may be needed. Because the pipeline retrieves both GBIF observations and environmental predictor layers, it provides a reproducible workflow for generating species distribution maps from public biodiversity and environmental data.
     ## Pipeline limitations
     * MaxEnt uses presence-background data, not confirmed absence data. Predictions should be interpreted as relative habitat suitability or relative occurrence potential, not confirmed species presence or absence.
     * GBIF records may contain spatial, taxonomic, and temporal biases. The pipeline applies coordinate-cleaning steps, but users should still inspect the cleaned presences and interpret results cautiously, especially for poorly sampled taxa or regions.
@@ -29,12 +29,12 @@ doc:
     * The pipeline estimates suitability based on the predictor layers supplied by the user. It does not directly account for dispersal limits, biotic interactions, land-use barriers, species detectability, or future environmental change unless those factors are represented in the input data.
     * Larger study areas, finer spatial resolutions, more environmental predictors, and more model runs increase computation time and memory use.
     ## Before you start
-    A GBIF API key is required to run this pipeline and can be added into the runner.env file.  
-    
-    Before running the pipeline, choose the taxon or taxa you want to model and make sure the names match the GBIF taxonomic backbone. Species names can be checked on the [GBIF website](https://www.gbif.org/).  
-    
-    Select a study area using the bounding box and CRS input. The CRS and spatial resolution determine the scale of the analysis, so choose a CRS appropriate for the region and make sure the spatial resolution is in the units of that CRS.  
-    
+    A GBIF API key is required to run this pipeline and can be added into the runner.env file.
+
+    Before running the pipeline, choose the taxon or taxa you want to model and make sure the names match the GBIF taxonomic backbone. Species names can be checked on the [GBIF website](https://www.gbif.org/).
+
+    Select a study area using the bounding box and CRS input. The CRS and spatial resolution determine the scale of the analysis, so choose a CRS appropriate for the region and make sure the spatial resolution is in the units of that CRS.
+
     Choose environmental predictor layers from the [STAC catalog](https://stac.geobon.org/) that are ecologically relevant to the species being modeled. For example, climate, vegetation, elevation, land cover, or habitat-related predictors may be appropriate depending on the species. Avoid including many predictors that represent the same underlying environmental gradient.
   - |
     Authors:
@@ -68,6 +68,9 @@ requirements:
     class: StepInputExpressionRequirement
   InlineJavascriptRequirement:
     class: InlineJavascriptRequirement
+  LoadListingRequirement:
+    class: LoadListingRequirement
+    loadListing: no_listing
 
 inputs:
   #################
@@ -84,7 +87,7 @@ inputs:
     label: Minimum year or start date
     doc: >
       Earliest year for GBIF records. Accepts YYYY or YYYY-MM-DD; if a full date is supplied, only the year is used.
-      
+
       It is recommended to use an early start date (e.g. 1980) to maximize the number of occurrence records for a given species.
     default: '1980'
 
@@ -127,7 +130,7 @@ inputs:
       - `random`: background points are randomly sampled throughout the whole study extent. Good choice if your occurrence data has little spatial bias toward human activity/accessibility (e.g., roads, cities, well-surveyed areas).
       - `weighted_raster`: background points are sampled in proportion to the number of observations in the observation-density heatmap of the selected taxonomic group. Recommended for heavily biased data, or when occurrences are missing due to gaps in survey/study coverage. This is the more extreme correction of the two raster-based methods (weighted and unweighted).
       - `unweighted_raster`: background points are sampled only in cells where there are observations from a target group. Also addresses sampling bias and survey gaps, but more conservatively than weighted_raster. Recommended as the default of the two (weighted and unweighted).
-      - `inclusion_buffer`: background points are sampled within a buffer around observations. Useful if you don't think your species is well represented by the target taxonomic group. 
+      - `inclusion_buffer`: background points are sampled within a buffer around observations. Useful if you don't think your species is well represented by the target taxonomic group.
       - `thickening`: background points are sampled in proportion to the local density of observations, within a buffer around each observation. Also useful when the target taxon group doesn't represent your species well, as an alternative to inclusion_buffer.
     default: random
 
@@ -158,9 +161,9 @@ inputs:
     label: Partition type
     doc: >
       This option controls how ENMeval partitions presence and background data while tuning MaxEnt parameters.
-      
+
       It is recommended to start with random k-fold. If you suspect overfitting or spatial autocorrelation, switch to block or checkerboard because these partition data geographically rather than randomly, which makes evaluation more robust to spatial autocorrelation between nearby points. If you don't have enough occurrence points for spatial partitioning, use jackknife.
-      
+
          - Random k-fold \- partitions groups randomly into a user-specified (K) number of bins, and runs the model k times, with each bin used once as testing. Recommended to start with 10 folds.
         - Block \- partitions the bounding box into four equally sized quadrants and assigns groups by quadrant. Because each fold is a large, contiguous geographic region, this tests how well the model transfers to broad, spatially distinct areas. This is a stricter test of spatial autocorrelation than checkerboard.
         - Checkerboard 1 \- generates a checkerboard grid from the study area and assigns groups based on which square the points fall in. Folds are smaller and spatially interspersed (alternating across the study area) rather than large contiguous blocks, so it tests spatial independence at a finer scale than block.
@@ -173,9 +176,9 @@ inputs:
     label: STAC 1 collection items
     doc: >
       To pull a specific collection item, input the collection name followed by | followed by the item ID (e.g. "chelsa-clim|bio1").
-      
+
       To extract a whole collection, type the collection name only (e.g. "chelsa-clim").
-      
+
       If pulling a layer that is tiled (e.g. https://stac.geobon.org/viewer/gfw-lossyear/_80N_180W), enter the collection name (e.g. gfw-lossyear) and a bounding box, and the script will assemble the tiles into a continuous layer automatically.
     default:
     - chelsa-clim|bio1
@@ -186,14 +189,14 @@ inputs:
     label: Spatial resolution
     doc: >
       Target spatial resolution for the predictor rasters and GBIF heatmap. Units must match the selected CRS, for example meters for projected CRS or degrees for latitude-longitude CRS.
-      
+
       Choosing a coarser resolution reduces computation time, but at the cost of fine-scale predictor detail. Variables like land cover and elevation may lose relevance at coarse scales, while broader-scale variables such as climate become comparatively more informative.
     default: 1000
 
   SDM>runMaxent.yml@108|rm:
     type: float[]?
     label: Regularization multiplier
-    doc: Regularization multiplier values to evaluate for MaxEnt model tuning. The regularization multiplier controls how strongly MaxEnt penalizes model complexity. Lower values allow a more flexible model that may fit local patterns closely. Higher values produce smoother, more generalized predictions and reduce overfitting risk. 
+    doc: Regularization multiplier values to evaluate for MaxEnt model tuning. The regularization multiplier controls how strongly MaxEnt penalizes model complexity. Lower values allow a more flexible model that may fit local patterns closely. Higher values produce smoother, more generalized predictions and reduce overfitting risk.
     default:
     - 0.5
     - 1
@@ -212,7 +215,7 @@ inputs:
     label: Bounding box and CRS
     doc: >
       Bounding box and coordinate reference system defining the analysis extent. This extent is used to retrieve GBIF occurrences, environmental predictor rasters, the GBIF sampling-effort heatmap, and the study extent for modelling.
-      
+
       The extent you choose affects how results should be interpreted and may change which predictors emerge as important.
       * Larger than the species' range: results lean toward occurrence/accessibility. Predictors tied to broad-scale distributional limits (climate, biogeography) may dominate.
       * Similar to or smaller than the species' range: results lean toward habitat suitability. Predictors tied to local habitat structure (vegetation, soil) may matter more.
@@ -283,7 +286,7 @@ inputs:
     label: Number of background points
     doc: >
       Target number of background points to generate within the study extent. These points are used to represent the available environment.
-      
+
       Typically it is recommended to start with 10000 points. If you have a very large study area you can increase this amount to fully capture the available environmental space. If you have a very small study area (i.e. fewer than 10000 pixels) you can reduce the number of background points.
     default: 10000
 
@@ -378,14 +381,14 @@ steps:
         - |
           echo "Exporting all environments"
           mkdir -p "$OUTPUT_LOCATION" "$CONDA_PKGS_DIRS" /conda-env-yml/envs
-          
+
           function getPackedEnv {
             condaEnvName=$1
             condaEnvYml=$2
             # We use a dedicated env folder to avoid copying the whole env folder between steps in a k8 context
             dedicatedEnvFolder=$(inputs.envFolderWrite.path)/$condaEnvName
             mkdir -p "$dedicatedEnvFolder"
-            
+
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh "$OUTPUT_LOCATION" "$condaEnvName" \
               "$condaEnvYml" "$dedicatedEnvFolder" "$(inputs.condaPackURL)" --noActivate
@@ -393,33 +396,33 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
           bash -c 'getPackedEnv "filtering__cleanCoordinates" "channels: [conda-forge, r]
           dependencies: [r-terra, r-rjson, r-raster, r-dplyr, r-CoordinateCleaner, r-gdalcubes]
           name: filtering__cleanCoordinates
           "'
-          
+
           bash -c 'getPackedEnv "SDM__selectBackground" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-terra, r-dplyr, r-raster, r-CoordinateCleaner, r-stars,
             r-rstac, r-gdalcubes]
           name: SDM__selectBackground
           "'
-          
+
           bash -c 'getPackedEnv "SDM__setupDataSdm" "channels: [conda-forge, r]
           dependencies: [r-gdalcubes, r-terra, r-rjson, r-raster, r-dplyr, r-ENMeval, r-devtools]
           name: SDM__setupDataSdm
           "'
-          
+
           bash -c 'getPackedEnv "SDM__rangePredictions" "channels: [conda-forge, r]
           dependencies: [r-terra, r-rjson, r-raster, r-dplyr]
           name: SDM__rangePredictions
           "'
-          
+
           bash -c 'getPackedEnv "SDM__removeCollinearity" "channels: [conda-forge, r]
           dependencies: [r-terra, r-rjson, r-dplyr, r-gdalcubes]
           name: SDM__removeCollinearity
           "'
-          
+
           bash -c 'getPackedEnv "SDM__runMaxent" "channels: [conda-forge, r]
           dependencies: [libgdal, r-abind, r-base, r-curl, r-dismo, r-downloader, r-dplyr, r-enmeval=2.0.3,
             r-ecospat, r-essentials, r-geojsonsf, r-ggsci, r-jpeg, r-landscapemetrics, r-magrittr,
@@ -427,18 +430,18 @@ steps:
             r-terra, r-this.path, r-tidyselect, r-tidyverse, r-stringr]
           name: SDM__runMaxent
           "'
-          
+
           bash -c 'getPackedEnv "data__getGBIFObservations__getGBIFObservations" "channels: [conda-forge]
           dependencies: [pygbif, pandas, pyproj]
           name: data__getGBIFObservations__getGBIFObservations
           "'
-          
+
           bash -c 'getPackedEnv "data__loadFromStac" "channels: [conda-forge, r]
           dependencies: [libgdal, r-lubridate, proj, r-proj, r-gdalcubes=0.7.4, r-rstac, r-dplyr,
             r-rcurl, r-rjson, r-sf, r-stars, r-terra]
           name: data__loadFromStac
           "'
-          
+
       inputs:
         envFolderWrite:
           type: Directory?
@@ -474,7 +477,7 @@ steps:
         default: false
       runFolder:
           source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/filtering__cleanCoordinates/34' } : null)" 
+          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/filtering__cleanCoordinates/34' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -497,7 +500,7 @@ steps:
         default: false
       runFolder:
           source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__selectBackground/40' } : null)" 
+          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__selectBackground/40' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -521,7 +524,7 @@ steps:
         default: false
       runFolder:
           source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__setupDataSdm/44' } : null)" 
+          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__setupDataSdm/44' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -539,7 +542,7 @@ steps:
         default: false
       runFolder:
           source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__rangePredictions/68' } : null)" 
+          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__rangePredictions/68' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -562,7 +565,7 @@ steps:
         default: false
       runFolder:
           source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__removeCollinearity/97' } : null)" 
+          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__removeCollinearity/97' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -578,7 +581,7 @@ steps:
       width_buffer: { default: 0 }
       runFolder:
           source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__studyExtent/104' } : null)" 
+          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__studyExtent/104' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -604,7 +607,7 @@ steps:
         default: false
       runFolder:
           source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__runMaxent/108' } : null)" 
+          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__runMaxent/108' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -619,7 +622,7 @@ steps:
       spatial_res: pipeline@128
       runFolder:
           source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__GBIFHeatmapFromSTAC/139' } : null)" 
+          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__GBIFHeatmapFromSTAC/139' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -640,7 +643,7 @@ steps:
         default: false
       runFolder:
           source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getGBIFObservations__getGBIFObservations/142' } : null)" 
+          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getGBIFObservations__getGBIFObservations/142' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -667,7 +670,7 @@ steps:
         default: false
       runFolder:
           source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/144' } : null)" 
+          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/144' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -694,7 +697,7 @@ steps:
         default: false
       runFolder:
           source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/150' } : null)" 
+          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/150' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -708,7 +711,7 @@ steps:
       rasters2: data>loadFromStac.yml@144/rasters
       runFolder:
           source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/summarise_layers__combine_rasters/153' } : null)" 
+          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/summarise_layers__combine_rasters/153' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
