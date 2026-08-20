@@ -8,10 +8,10 @@ pipeline@46: 2  # default value of type 'int'. (optional)
 pipeline@147: 10  # default value of type 'int'. (optional)
 pipeline@146: '2024'  # default value of type 'string'. (optional)
 pipeline@145: '1980'  # default value of type 'string'. (optional)
-pipeline@140:  # "file:///Users/laetitiatremblay/dev/output/workflows/SDM/SDM_maxEnt.cwl#pipeline@140/crsBBox" record type.
+pipeline@140:  # "file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_maxEnt.cwl#pipeline@140/crsBBox" record type.
     bbox:  # array of type 'float'
       - 0.1
-    CRS:  # "file:///Users/laetitiatremblay/dev/output/workflows/SDM/SDM_maxEnt.cwl#pipeline@140/crsBBox/CRS/CRSDefinition" record type.
+    CRS:  # "file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_maxEnt.cwl#pipeline@140/crsBBox/CRS/CRSDefinition" record type.
         wktDef: a_string  # type 'string' (optional)
         proj4Def: a_string  # type 'string' (optional)
         CRSBboxWGS84:  # array of type 'float' (optional)
@@ -39,17 +39,16 @@ data>loadFromStac.yml@144|collections_items:  # array of type 'string' (optional
   - chelsa-clim|bio1
   - chelsa-clim|bio2
 
-data>GBIFHeatmapFromSTAC.yml@139|taxa: plants  # enum; valid values: "file:///Users/laetitiatremblay/dev/output/workflows/SDM/SDM_maxEnt.cwl#data>GBIFHeatmapFromSTAC.yml@139|taxa/reptiles", "file:///Users/laetitiatremblay/dev/output/workflows/SDM/SDM_maxEnt.cwl#data>GBIFHeatmapFromSTAC.yml@139|taxa/plants", "file:///Users/laetitiatremblay/dev/output/workflows/SDM/SDM_maxEnt.cwl#data>GBIFHeatmapFromSTAC.yml@139|taxa/mammals", "file:///Users/laetitiatremblay/dev/output/workflows/SDM/SDM_maxEnt.cwl#data>GBIFHeatmapFromSTAC.yml@139|taxa/birds", "file:///Users/laetitiatremblay/dev/output/workflows/SDM/SDM_maxEnt.cwl#data>GBIFHeatmapFromSTAC.yml@139|taxa/arthropods", "file:///Users/laetitiatremblay/dev/output/workflows/SDM/SDM_maxEnt.cwl#data>GBIFHeatmapFromSTAC.yml@139|taxa/amphibians", "file:///Users/laetitiatremblay/dev/output/workflows/SDM/SDM_maxEnt.cwl#data>GBIFHeatmapFromSTAC.yml@139|taxa/all"
-condaPackURL: 
-    https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
+data>GBIFHeatmapFromSTAC.yml@139|taxa: plants  # enum; valid values: "file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_maxEnt.cwl#data>GBIFHeatmapFromSTAC.yml@139|taxa/reptiles", "file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_maxEnt.cwl#data>GBIFHeatmapFromSTAC.yml@139|taxa/plants", "file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_maxEnt.cwl#data>GBIFHeatmapFromSTAC.yml@139|taxa/mammals", "file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_maxEnt.cwl#data>GBIFHeatmapFromSTAC.yml@139|taxa/birds", "file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_maxEnt.cwl#data>GBIFHeatmapFromSTAC.yml@139|taxa/arthropods", "file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_maxEnt.cwl#data>GBIFHeatmapFromSTAC.yml@139|taxa/amphibians", "file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_maxEnt.cwl#data>GBIFHeatmapFromSTAC.yml@139|taxa/all"
+condaPackURL: https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
 SDM>selectBackground.yml@40|n_background: 10000  # default value of type 'int'. (optional)
-SDM>selectBackground.yml@40|method_background: random  # enum; valid values: "file:///Users/laetitiatremblay/dev/output/workflows/SDM/SDM_maxEnt.cwl#SDM>selectBackground.yml@40|method_background/random", "file:///Users/laetitiatremblay/dev/output/workflows/SDM/SDM_maxEnt.cwl#SDM>selectBackground.yml@40|method_background/inclusion_buffer", "file:///Users/laetitiatremblay/dev/output/workflows/SDM/SDM_maxEnt.cwl#SDM>selectBackground.yml@40|method_background/weighted_raster", "file:///Users/laetitiatremblay/dev/output/workflows/SDM/SDM_maxEnt.cwl#SDM>selectBackground.yml@40|method_background/unweighted_raster", "file:///Users/laetitiatremblay/dev/output/workflows/SDM/SDM_maxEnt.cwl#SDM>selectBackground.yml@40|method_background/thickening"
+SDM>selectBackground.yml@40|method_background: random  # enum; valid values: "file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_maxEnt.cwl#SDM>selectBackground.yml@40|method_background/random", "file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_maxEnt.cwl#SDM>selectBackground.yml@40|method_background/inclusion_buffer", "file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_maxEnt.cwl#SDM>selectBackground.yml@40|method_background/weighted_raster", "file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_maxEnt.cwl#SDM>selectBackground.yml@40|method_background/unweighted_raster", "file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_maxEnt.cwl#SDM>selectBackground.yml@40|method_background/thickening"
 SDM>runMaxent.yml@108|rm:  # array of type 'float' (optional)
   - 0.5
   - 1
   - 2
 
-SDM>runMaxent.yml@108|partition_type: randomkfold  # enum; valid values: "file:///Users/laetitiatremblay/dev/output/workflows/SDM/SDM_maxEnt.cwl#SDM>runMaxent.yml@108|partition_type/randomkfold", "file:///Users/laetitiatremblay/dev/output/workflows/SDM/SDM_maxEnt.cwl#SDM>runMaxent.yml@108|partition_type/jackknife", "file:///Users/laetitiatremblay/dev/output/workflows/SDM/SDM_maxEnt.cwl#SDM>runMaxent.yml@108|partition_type/block", "file:///Users/laetitiatremblay/dev/output/workflows/SDM/SDM_maxEnt.cwl#SDM>runMaxent.yml@108|partition_type/checkerboard1", "file:///Users/laetitiatremblay/dev/output/workflows/SDM/SDM_maxEnt.cwl#SDM>runMaxent.yml@108|partition_type/checkerboard2"
+SDM>runMaxent.yml@108|partition_type: randomkfold  # enum; valid values: "file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_maxEnt.cwl#SDM>runMaxent.yml@108|partition_type/randomkfold", "file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_maxEnt.cwl#SDM>runMaxent.yml@108|partition_type/jackknife", "file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_maxEnt.cwl#SDM>runMaxent.yml@108|partition_type/block", "file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_maxEnt.cwl#SDM>runMaxent.yml@108|partition_type/checkerboard1", "file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_maxEnt.cwl#SDM>runMaxent.yml@108|partition_type/checkerboard2"
 SDM>runMaxent.yml@108|fc:  # array of type 'string' (optional)
   - L
   - LQ

@@ -1,0 +1,49 @@
+time_points:  # array of type 'string' (optional)
+  - y2000
+  - y2001
+  - y2002
+  - y2003
+  - y2004
+  - y2005
+  - y2006
+  - y2007
+  - y2008
+  - y2009
+  - y2010
+  - y2011
+  - y2012
+  - y2013
+  - y2014
+  - y2015
+  - y2016
+  - y2017
+  - y2018
+  - y2019
+  - y2020
+  - y2021
+  - y2022
+  - y2023
+
+
+
+  ###################
+  # Run environment #
+  ###################
+
+scripts_root:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+scriptPath: GFS_IndicatorsTool/pop_area_by_habitat.R  # default value of type 'string'.
+runFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+population_polygons: /userdata/population_polygons.geojson  # default value of type 'File'. (optional)
+habitat_map: /userdata/tcyy.tif  # default value of type 'File'. (optional)
+environment:  # type 'File' (optional)
+    class: File
+    path: a/file/path
+envFolderWritable: true  # default value of type 'boolean'.
+envFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+condaPackURL: https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.

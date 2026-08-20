@@ -4,8 +4,8 @@ scripts_root:  # type 'Directory' (optional)
 runFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-pipeline@43:  # "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#pipeline@43/bboxCRS" record type.
-    region:  # "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#pipeline@43/bboxCRS/region/regionDefinition" record type.
+pipeline@43:  # "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#pipeline@43/bboxCRS" record type.
+    region:  # "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#pipeline@43/bboxCRS/region/regionDefinition" record type.
         bboxWGS84:  # array of type 'float' (optional)
           - 0.1
         regionName: a_string  # type 'string' (optional)
@@ -13,7 +13,7 @@ pipeline@43:  # "file:///Users/laetitiatremblay/dev/output/workflows/landcover_p
         countryEnglishName: a_string  # type 'string' (optional)
     bbox:  # array of type 'float'
       - 0.1
-    CRS:  # "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#pipeline@43/bboxCRS/CRS/CRSDefinition" record type.
+    CRS:  # "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#pipeline@43/bboxCRS/CRS/CRSDefinition" record type.
         wktDef: a_string  # type 'string' (optional)
         proj4Def: a_string  # type 'string' (optional)
         CRSBboxWGS84:  # array of type 'float' (optional)
@@ -22,7 +22,7 @@ pipeline@43:  # "file:///Users/laetitiatremblay/dev/output/workflows/landcover_p
         authority: a_string  # type 'string' (optional)
         code: 0  # type 'int' (optional)
         unit: a_string  # type 'string' (optional)
-    country:  # "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#pipeline@43/bboxCRS/country/countryDefinition" record type.
+    country:  # "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#pipeline@43/bboxCRS/country/countryDefinition" record type.
         bboxWGS84:  # array of type 'float' (optional)
           - 0.1
         ISO3: a_string  # type 'string' (optional)
@@ -38,10 +38,9 @@ data>loadFromStac.yml@42|t1: '2020-12-31'  # default value of type 'string'. (op
 data>loadFromStac.yml@42|t0: '2020-01-01'  # default value of type 'string'. (optional)
 data>loadFromStac.yml@42|stac_url: https://stac.geobon.org/  # default value of type 'string'. (optional)
 data>loadFromStac.yml@42|spatial_res: 0.008833  # default value of type 'float'. (optional)
-data>loadFromStac.yml@42|resampling: near  # enum; valid values: "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/near", "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/bilinear", "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/average", "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/mode", "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/cubic", "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/cubicspline", "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/lanczos", "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/rms", "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/min", "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/max", "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/sum", "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/med", "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/q1", "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/q3"
+data>loadFromStac.yml@42|resampling: near  # enum; valid values: "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/near", "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/bilinear", "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/average", "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/mode", "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/cubic", "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/cubicspline", "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/lanczos", "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/rms", "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/min", "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/max", "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/sum", "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/med", "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/q1", "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|resampling/q3"
 data>loadFromStac.yml@42|collections_items:  # array of type 'string' (optional)
   - esacci-lc|esacci-lc-2020
 
-data>loadFromStac.yml@42|aggregation: first  # enum; valid values: "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|aggregation/first", "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|aggregation/min", "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|aggregation/max", "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|aggregation/mean", "file:///Users/laetitiatremblay/dev/output/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|aggregation/median"
-condaPackURL: 
-    https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
+data>loadFromStac.yml@42|aggregation: first  # enum; valid values: "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|aggregation/first", "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|aggregation/min", "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|aggregation/max", "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|aggregation/mean", "file:///home/jmlord/code/cwl-test/export/workflows/landcover_percent.cwl#data>loadFromStac.yml@42|aggregation/median"
+condaPackURL: https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.

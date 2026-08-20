@@ -1,16 +1,16 @@
-[1;30mINFO[0m /Users/laetitiatremblay/.local/bin/cwl-runner 3.2.20260720092025
-[1;30mINFO[0m Resolved '/Users/laetitiatremblay/dev/output/tools/site_selection_BAS/Block_creation.cwl' to 'file:///Users/laetitiatremblay/dev/output/tools/site_selection_BAS/Block_creation.cwl'
+[1;30mINFO[0m /usr/bin/cwl-runner 3.1.20240112164112
+[1;30mINFO[0m Resolved '/home/jmlord/code/cwl-test/export/tools/site_selection_BAS/Block_creation.cwl' to 'file:///home/jmlord/code/cwl-test/export/tools/site_selection_BAS/Block_creation.cwl'
 [1;30mERROR[0m [31mTool definition failed validation:
-../../../../dev/output/tools/site_selection_BAS/Block_creation.cwl:228:1: checking field 'outputs'
-../../../../dev/output/tools/site_selection_BAS/Block_creation.cwl:274:3:   checking object
-                                                                            '../../../../dev/output/tools/site_selection_BAS/Block_creation.cwl#colors_vect'
-../../../../dev/output/tools/site_selection_BAS/Block_creation.cwl:275:5:     Field 'type'
-                                                                              references unknown
-                                                                              identifier 'csv', tried
-                                                                              file:///Users/laetitiatremblay/dev/output/tools/site_selection_BAS/Block_creation.cwl#csv
-../../../../dev/output/tools/site_selection_BAS/Block_creation.cwl:261:3:   checking object
-                                                                            '../../../../dev/output/tools/site_selection_BAS/Block_creation.cwl#pca_summary_df'
-../../../../dev/output/tools/site_selection_BAS/Block_creation.cwl:262:5:     Field 'type'
-                                                                              references unknown
-                                                                              identifier 'csv', tried
-                                                                              file:///Users/laetitiatremblay/dev/output/tools/site_selection_BAS/Block_creation.cwl#csv[0m
+../../cwl-test/export/tools/site_selection_BAS/Block_creation.cwl:228:1: checking field 'outputs'
+../../cwl-test/export/tools/site_selection_BAS/Block_creation.cwl:274:3:   checking object
+                                                                           '../../cwl-test/export/tools/site_selection_BAS/Block_creation.cwl#colors_vect'
+../../cwl-test/export/tools/site_selection_BAS/Block_creation.cwl:275:5:     Field 'type'
+                                                                             references unknown
+                                                                             identifier 'csv', tried
+                                                                             file:///home/jmlord/code/cwl-test/export/tools/site_selection_BAS/Block_creation.cwl#csv
+../../cwl-test/export/tools/site_selection_BAS/Block_creation.cwl:261:3:   checking object
+                                                                           '../../cwl-test/export/tools/site_selection_BAS/Block_creation.cwl#pca_summary_df'
+../../cwl-test/export/tools/site_selection_BAS/Block_creation.cwl:262:5:     Field 'type'
+                                                                             references unknown
+                                                                             identifier 'csv', tried
+                                                                             file:///home/jmlord/code/cwl-test/export/tools/site_selection_BAS/Block_creation.cwl#csv[0m

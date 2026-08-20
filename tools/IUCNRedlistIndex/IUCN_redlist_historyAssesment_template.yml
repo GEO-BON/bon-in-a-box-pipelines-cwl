@@ -1,0 +1,17 @@
+species_data: /scripts/IUCN_redlist_historyAssesment/input/data_sp.csv  # default value of type 'File'. (optional)
+sp_col: scientific_name  # default value of type 'string'. (optional)
+scripts_root:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+scriptPath: IUCNRedlistIndex/IUCN_redlist_historyAssesment.R  # default value of type 'string'.
+runFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+environment:  # type 'File' (optional)
+    class: File
+    path: a/file/path
+envFolderWritable: true  # default value of type 'boolean'.
+envFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+condaPackURL: https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
