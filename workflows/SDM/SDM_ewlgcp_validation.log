@@ -3,21 +3,21 @@
 ../../cwl-test/export/tools/SDM/selectBackground.cwl:176:3: object id '../../cwl-test/export/tools/SDM/selectBackground.cwl#n_background' previously defined
 [1;30mWARNING[0m [33m../../cwl-test/export/tools/SDM/selectBackground.cwl:176:3: object id '../../cwl-test/export/tools/SDM/selectBackground.cwl#n_background' previously defined[0m
 [1;30mWARNING[0m [33mWorkflow checker warning:
-../../cwl-test/export/workflows/SDM/SDM_ewlgcp.cwl:64:5:  Source 'pipeline@121' of type ["null",
+../../cwl-test/export/workflows/SDM/SDM_ewlgcp.cwl:66:5:  Source 'pipeline@121' of type ["null",
                                                           {"type": "array", "items": "string"}] may
                                                           be incompatible
-../../cwl-test/export/workflows/SDM/SDM_ewlgcp.cwl:571:5:   with sink
+../../cwl-test/export/workflows/SDM/SDM_ewlgcp.cwl:573:5:   with sink
                                                             'pipeline@121|default_output' of type
                                                             {"type": "array", "items": "string"}[0m
 [1;30mERROR[0m [31mTool definition failed validation:
 
-../../cwl-test/export/workflows/SDM/SDM_ewlgcp.cwl:153:5: Source
+../../cwl-test/export/workflows/SDM/SDM_ewlgcp.cwl:155:5: Source
                                                           'data>getGBIFObservations>getGBIFObservations.yml@139|max_year'
                                                           of type ["null", "int"] is incompatible
-../../cwl-test/export/workflows/SDM/SDM_ewlgcp.cwl:441:7:   with sink 'max_year' of type ["null",
+../../cwl-test/export/workflows/SDM/SDM_ewlgcp.cwl:443:7:   with sink 'max_year' of type ["null",
                                                             "string"]
-../../cwl-test/export/workflows/SDM/SDM_ewlgcp.cwl:94:5:   Source
+../../cwl-test/export/workflows/SDM/SDM_ewlgcp.cwl:96:5:   Source
                                                           'data>getGBIFObservations>getGBIFObservations.yml@139|min_year'
                                                           of type ["null", "int"] is incompatible
-../../cwl-test/export/workflows/SDM/SDM_ewlgcp.cwl:440:7:   with sink 'min_year' of type ["null",
+../../cwl-test/export/workflows/SDM/SDM_ewlgcp.cwl:442:7:   with sink 'min_year' of type ["null",
                                                             "string"][0m

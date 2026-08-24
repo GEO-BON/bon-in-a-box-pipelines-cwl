@@ -54,3 +54,13 @@ SDM>runMaxent.yml@108|fc:  # array of type 'string' (optional)
   - LQ
   - LQHP
 
+SDM>runMaxent.yml@108|crs:  # "file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_maxEnt.cwl#SDM>runMaxent.yml@108|crs/CRS" record type.
+    CRS:  # "file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_maxEnt.cwl#SDM>runMaxent.yml@108|crs/CRS/CRS/CRSDefinition" record type.
+        wktDef: a_string  # type 'string' (optional)
+        proj4Def: a_string  # type 'string' (optional)
+        CRSBboxWGS84:  # array of type 'float' (optional)
+          - 0.1
+        name: a_string  # type 'string' (optional)
+        authority: a_string  # type 'string' (optional)
+        code: 0  # type 'int' (optional)
+        unit: a_string  # type 'string' (optional)

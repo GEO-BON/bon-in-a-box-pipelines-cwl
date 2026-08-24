@@ -37,6 +37,8 @@ requirements:
     class: StepInputExpressionRequirement
   InlineJavascriptRequirement:
     class: InlineJavascriptRequirement
+  MultipleInputFeatureRequirement:
+    class: MultipleInputFeatureRequirement
 
 inputs:
   #################

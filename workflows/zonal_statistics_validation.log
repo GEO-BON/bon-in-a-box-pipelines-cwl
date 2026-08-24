@@ -5,31 +5,31 @@
                                                            '../../cwl-test/export/workflows/zonal_statistics.cwl'
                                                            is not valid because
                                                              tried 'Workflow' but
-../../cwl-test/export/workflows/zonal_statistics.cwl:29:1:     the 'inputs' field is not valid
+../../cwl-test/export/workflows/zonal_statistics.cwl:31:1:     the 'inputs' field is not valid
                                                                because
-../../cwl-test/export/workflows/zonal_statistics.cwl:59:3:       item is invalid because
-../../cwl-test/export/workflows/zonal_statistics.cwl:60:5:         the 'type' field is not valid
+../../cwl-test/export/workflows/zonal_statistics.cwl:61:3:       item is invalid because
+../../cwl-test/export/workflows/zonal_statistics.cwl:62:5:         the 'type' field is not valid
                                                                    because
                                                                      - tried InputRecordSchema but
-../../cwl-test/export/workflows/zonal_statistics.cwl:61:7:             * the 'type' field is not
+../../cwl-test/export/workflows/zonal_statistics.cwl:63:7:             * the 'type' field is not
                                                                        valid because
                                                                          value is a CommentedMap
                                                                          but expected a string
-../../cwl-test/export/workflows/zonal_statistics.cwl:62:7:             * invalid field 'symbols',
+../../cwl-test/export/workflows/zonal_statistics.cwl:64:7:             * invalid field 'symbols',
                                                                        expected one of: 'fields', 'type',
                                                                        'label', 'doc', 'name'
-../../cwl-test/export/workflows/zonal_statistics.cwl:60:5:           - tried InputEnumSchema but
-../../cwl-test/export/workflows/zonal_statistics.cwl:61:7:             the 'type' field is not
+../../cwl-test/export/workflows/zonal_statistics.cwl:62:5:           - tried InputEnumSchema but
+../../cwl-test/export/workflows/zonal_statistics.cwl:63:7:             the 'type' field is not
                                                                        valid because
                                                                          value is a CommentedMap
                                                                          but expected a string
-../../cwl-test/export/workflows/zonal_statistics.cwl:60:5:           - tried InputArraySchema but
+../../cwl-test/export/workflows/zonal_statistics.cwl:62:5:           - tried InputArraySchema but
                                                                        * missing required field
                                                                        'items'
-../../cwl-test/export/workflows/zonal_statistics.cwl:61:7:             * the 'type' field is not
+../../cwl-test/export/workflows/zonal_statistics.cwl:63:7:             * the 'type' field is not
                                                                        valid because
                                                                          value is a CommentedMap
                                                                          but expected a string
-../../cwl-test/export/workflows/zonal_statistics.cwl:62:7:             * invalid field 'symbols',
+../../cwl-test/export/workflows/zonal_statistics.cwl:64:7:             * invalid field 'symbols',
                                                                        expected one of: 'items', 'type',
                                                                        'label', 'doc', 'name'[0m

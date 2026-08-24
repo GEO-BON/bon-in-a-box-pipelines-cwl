@@ -68,6 +68,8 @@ requirements:
     class: StepInputExpressionRequirement
   InlineJavascriptRequirement:
     class: InlineJavascriptRequirement
+  MultipleInputFeatureRequirement:
+    class: MultipleInputFeatureRequirement
 
 inputs:
   #################
@@ -244,6 +246,33 @@ inputs:
             type: string?
       - name: bbox
         type: float[]
+
+  SDM>runMaxent.yml@108|crs:
+    label: CRS
+    doc: Object containing CRS.
+    type:
+      type: record
+      name: CRS
+      fields:
+      - name: CRS
+        type:
+          name: CRSDefinition
+          type: record
+          fields:
+          - name: unit
+            type: string?
+          - name: code
+            type: int?
+          - name: authority
+            type: string?
+          - name: name
+            type: string?
+          - name: CRSBboxWGS84
+            type: float[]?
+          - name: proj4Def
+            type: string?
+          - name: wktDef
+            type: string?
 
   data>loadFromStac.yml@144|stac_url:
     type: string?
@@ -560,7 +589,7 @@ steps:
       rm: SDM>runMaxent.yml@108|rm
       partition_type: SDM>runMaxent.yml@108|partition_type
       orientation_block: { default: lat_lon }
-      crs: pipeline@140
+      crs: SDM>runMaxent.yml@108|crs
       n_folds: pipeline@147
       method_select_params: { default: AUC }
       envFolder:

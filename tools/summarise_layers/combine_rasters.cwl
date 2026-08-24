@@ -7,16 +7,14 @@ class: CommandLineTool
 # envFolder will keep conda environments between runs.
 # environment file is necessary when the script requires credentials.
 
-label: GBIF Heatmap
+label: Combine Layers
 doc:
   - |
     Description:
-    Download raster representing the number of observations in GBIF for each pixel for specific taxonomic groups.
-    Source layer can be found on the [GEO BON STAC catalog](https://stac.geobon.org/viewer/).
-  - "Lifecycle tag: Core."
+    This script combines two sets of raster layers into a single set of raster layers.
   - |
     Authors:
-    Guillaume Larocque (https://orcid.org/0000-0002-5967-9156)
+    Samara Manzin (samara.manzin@mcgill.ca, https://orcid.org/0009-0005-9134-9981)
 
 
 requirements:
@@ -107,9 +105,8 @@ arguments:
     cat > "$OUTPUT_LOCATION/input.json" <<'JSON'
     ${
       return JSON.stringify({
-        taxa: inputs.taxa,
-        bbox_crs: inputs.bbox_crs,
-        spatial_res: inputs.spatial_res,
+        rasters1: (inputs.rasters1 || []).map(function(file) { return file.path; }),
+        rasters2: (inputs.rasters2 || []).map(function(file) { return file.path; }),
       }, null, 2);
     }
     JSON
@@ -117,8 +114,10 @@ arguments:
     echo "Inputs:" | tee -a $log
     cat $OUTPUT_LOCATION/input.json | tee -a $log
 
-    source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "rbase" \
-    "" /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
+    source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "summarise_layers__combine_rasters" \
+    "channels: [conda-forge, r]
+    name: summarise_layers__combine_rasters
+    " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
 
     Rscript \
       $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \
@@ -133,7 +132,7 @@ arguments:
       cp -a "$OUTPUT_LOCATION"/. "$(runtime.outdir)"/
     fi
 
-    source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh rbase /conda-envs >> "$log" 2>&1
+    source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh summarise_layers__combine_rasters /conda-envs >> "$log" 2>&1
 
     exit "$scriptExitCode"
 
@@ -141,55 +140,15 @@ inputs:
   #################
   # Script inputs #
   #################
-  taxa:
-    type:
-      type: enum
-      symbols:
-        - reptiles
-        - plants
-        - mammals
-        - birds
-        - arthropods
-        - amphibians
-        - all
-    label: Taxa
-    doc: taxonomic group for which to retrieve GBIF heatmap
-    default: plants
+  rasters1:
+    type: File[]?
+    label: rasters1
+    doc: Path to the first set of raster layers to be combined. The layers should be in GeoTIFF format. The layers should have the same spatial resolution and extent.
 
-  bbox_crs:
-    label: Bounding box and CRS
-    doc: Select a bounding box and CRS
-    type:
-      type: record
-      name: crsBBox
-      fields:
-      - name: CRS
-        type:
-          name: CRSDefinition
-          type: record
-          fields:
-          - name: unit
-            type: string?
-          - name: code
-            type: int?
-          - name: authority
-            type: string?
-          - name: name
-            type: string?
-          - name: CRSBboxWGS84
-            type: float[]?
-          - name: proj4Def
-            type: string?
-          - name: wktDef
-            type: string?
-      - name: bbox
-        type: float[]
-
-  spatial_res:
-    type: float?
-    label: Spatial resolution
-    doc: Integer, spatial resolution of the rasters
-    default: 1000.0
+  rasters2:
+    type: File[]?
+    label: rasters2
+    doc: Path to the second set of raster layers to be combined. The layers should be in GeoTIFF format. The layers should have the same spatial resolution and extent.
 
 
 
@@ -233,25 +192,29 @@ inputs:
   scriptPath:
     type: string
     doc: Path to the script, relative to scripts root.
-    default: data/loadFromStac.R
+    default: summarise_layers/combine_rasters.R
 
   scripts_root:
     type: Directory?
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  rasters:
-    type: File
-    label: Density raster
-    doc: Array with output raster path
+  combined_rasters:
+    type: File[]
+    label: combined_rasters
+    doc: Path to the combined raster layers. The layers will be in GeoTIFF format.
     outputBinding:
       glob: "output.json"
       loadContents: true
       outputEval: |
         ${
-          var value = extractOutput(self, "rasters");
+          var value = extractOutput(self, "combined_rasters");
           if (value === null) return null;
-          return { class: "File", location: "file://" + value };
+          var items = Array.isArray(value) ? value : [value];
+          return items.map(function (value) {
+            if (value === null) return null;
+            return { class: "File", location: "file://" + value };
+          });
         }
 
 

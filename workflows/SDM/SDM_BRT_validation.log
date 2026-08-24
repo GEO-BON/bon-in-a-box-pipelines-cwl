@@ -1,21 +1,21 @@
 [1;30mINFO[0m /usr/bin/cwl-runner 3.1.20240112164112
 [1;30mINFO[0m Resolved '/home/jmlord/code/cwl-test/export/workflows/SDM/SDM_BRT.cwl' to 'file:///home/jmlord/code/cwl-test/export/workflows/SDM/SDM_BRT.cwl'
 [1;30mWARNING[0m [33mWorkflow checker warning:
-../../cwl-test/export/workflows/SDM/SDM_BRT.cwl:54:5:  Source 'pipeline@121' of type ["null",
+../../cwl-test/export/workflows/SDM/SDM_BRT.cwl:56:5:  Source 'pipeline@121' of type ["null",
                                                        {"type": "array", "items": "string"}] may be
                                                        incompatible
-../../cwl-test/export/workflows/SDM/SDM_BRT.cwl:465:5:   with sink 'pipeline@121|default_output'
+../../cwl-test/export/workflows/SDM/SDM_BRT.cwl:467:5:   with sink 'pipeline@121|default_output'
                                                          of type {"type": "array", "items":
                                                          "string"}[0m
 [1;30mERROR[0m [31mTool definition failed validation:
 
-../../cwl-test/export/workflows/SDM/SDM_BRT.cwl:158:5: Source
+../../cwl-test/export/workflows/SDM/SDM_BRT.cwl:160:5: Source
                                                        'data>getGBIFObservations>getGBIFObservations.yml@159|max_year'
                                                        of type ["null", "int"] is incompatible
-../../cwl-test/export/workflows/SDM/SDM_BRT.cwl:340:7:   with sink 'max_year' of type ["null",
+../../cwl-test/export/workflows/SDM/SDM_BRT.cwl:342:7:   with sink 'max_year' of type ["null",
                                                          "string"]
-../../cwl-test/export/workflows/SDM/SDM_BRT.cwl:32:5:   Source
+../../cwl-test/export/workflows/SDM/SDM_BRT.cwl:34:5:   Source
                                                        'data>getGBIFObservations>getGBIFObservations.yml@159|min_year'
                                                        of type ["null", "int"] is incompatible
-../../cwl-test/export/workflows/SDM/SDM_BRT.cwl:339:7:   with sink 'min_year' of type ["null",
+../../cwl-test/export/workflows/SDM/SDM_BRT.cwl:341:7:   with sink 'min_year' of type ["null",
                                                          "string"][0m
