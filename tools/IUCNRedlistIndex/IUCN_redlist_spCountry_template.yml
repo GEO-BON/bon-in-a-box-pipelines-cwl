@@ -12,8 +12,8 @@ envFolderWritable: true  # default value of type 'boolean'.
 envFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-country:  # "file:///home/jmlord/code/cwl-test/export/tools/IUCNRedlistIndex/IUCN_redlist_spCountry.cwl#country/country" record type.
-    country:  # "file:///home/jmlord/code/cwl-test/export/tools/IUCNRedlistIndex/IUCN_redlist_spCountry.cwl#country/country/country/countryDefinition" record type.
+country:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spCountry.cwl#country/country" record type.
+    country:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spCountry.cwl#country/country/country/countryDefinition" record type.
         bboxWGS84:  # array of type 'float' (optional)
           - 0.1
         ISO3: a_string  # type 'string' (optional)

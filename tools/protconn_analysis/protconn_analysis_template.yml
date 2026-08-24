@@ -29,8 +29,8 @@ distance_threshold:  # array of type 'int' (optional)
   - 10000
 
 date_column_name: a_string  # type 'string' (optional)
-crs:  # "file:///home/jmlord/code/cwl-test/export/tools/protconn_analysis/protconn_analysis.cwl#crs/bboxCRS" record type.
-    region:  # "file:///home/jmlord/code/cwl-test/export/tools/protconn_analysis/protconn_analysis.cwl#crs/bboxCRS/region/regionDefinition" record type.
+crs:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/protconn_analysis/protconn_analysis.cwl#crs/bboxCRS" record type.
+    region:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/protconn_analysis/protconn_analysis.cwl#crs/bboxCRS/region/regionDefinition" record type.
         bboxWGS84:  # array of type 'float' (optional)
           - 0.1
         regionName: a_string  # type 'string' (optional)
@@ -38,7 +38,7 @@ crs:  # "file:///home/jmlord/code/cwl-test/export/tools/protconn_analysis/protco
         countryEnglishName: a_string  # type 'string' (optional)
     bbox:  # array of type 'float'
       - 0.1
-    CRS:  # "file:///home/jmlord/code/cwl-test/export/tools/protconn_analysis/protconn_analysis.cwl#crs/bboxCRS/CRS/CRSDefinition" record type.
+    CRS:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/protconn_analysis/protconn_analysis.cwl#crs/bboxCRS/CRS/CRSDefinition" record type.
         wktDef: a_string  # type 'string' (optional)
         proj4Def: a_string  # type 'string' (optional)
         CRSBboxWGS84:  # array of type 'float' (optional)
@@ -47,7 +47,7 @@ crs:  # "file:///home/jmlord/code/cwl-test/export/tools/protconn_analysis/protco
         authority: a_string  # type 'string' (optional)
         code: 0  # type 'int' (optional)
         unit: a_string  # type 'string' (optional)
-    country:  # "file:///home/jmlord/code/cwl-test/export/tools/protconn_analysis/protconn_analysis.cwl#crs/bboxCRS/country/countryDefinition" record type.
+    country:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/protconn_analysis/protconn_analysis.cwl#crs/bboxCRS/country/countryDefinition" record type.
         bboxWGS84:  # array of type 'float' (optional)
           - 0.1
         ISO3: a_string  # type 'string' (optional)

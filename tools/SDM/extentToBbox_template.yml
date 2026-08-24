@@ -2,7 +2,7 @@ ymin: -1971146  # default value of type 'float'. (optional)
 ymax: 1511916  # default value of type 'float'. (optional)
 xmin: -2316297  # default value of type 'float'. (optional)
 xmax: 1015207  # default value of type 'float'. (optional)
-source: box_coordinates  # enum; valid values: "file:///home/jmlord/code/cwl-test/export/tools/SDM/extentToBbox.cwl#source/df_coordinates", "file:///home/jmlord/code/cwl-test/export/tools/SDM/extentToBbox.cwl#source/box_coordinates", "file:///home/jmlord/code/cwl-test/export/tools/SDM/extentToBbox.cwl#source/shapefile"
+source: box_coordinates  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/SDM/extentToBbox.cwl#source/df_coordinates", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/SDM/extentToBbox.cwl#source/box_coordinates", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/SDM/extentToBbox.cwl#source/shapefile"
 scripts_root:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path

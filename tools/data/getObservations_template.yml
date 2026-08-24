@@ -9,7 +9,7 @@ runFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
 proj: EPSG:6623  # default value of type 'string'. (optional)
-occurrence_status: present  # enum; valid values: "file:///home/jmlord/code/cwl-test/export/tools/data/getObservations.cwl#occurrence_status/present", "file:///home/jmlord/code/cwl-test/export/tools/data/getObservations.cwl#occurrence_status/absent", "file:///home/jmlord/code/cwl-test/export/tools/data/getObservations.cwl#occurrence_status/present absent"
+occurrence_status: present  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/data/getObservations.cwl#occurrence_status/present", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/data/getObservations.cwl#occurrence_status/absent", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/data/getObservations.cwl#occurrence_status/present absent"
 limit: 2000  # default value of type 'int'. (optional)
 environment:  # type 'File' (optional)
     class: File

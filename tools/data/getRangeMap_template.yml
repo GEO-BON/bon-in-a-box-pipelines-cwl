@@ -8,7 +8,7 @@ scriptPath: data/getRangeMap.R  # default value of type 'string'.
 runFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-expert_source: IUCN  # enum; valid values: "file:///home/jmlord/code/cwl-test/export/tools/data/getRangeMap.cwl#expert_source/MOL", "file:///home/jmlord/code/cwl-test/export/tools/data/getRangeMap.cwl#expert_source/IUCN", "file:///home/jmlord/code/cwl-test/export/tools/data/getRangeMap.cwl#expert_source/QC"
+expert_source: IUCN  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/data/getRangeMap.cwl#expert_source/MOL", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/data/getRangeMap.cwl#expert_source/IUCN", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/data/getRangeMap.cwl#expert_source/QC"
 environment:  # type 'File' (optional)
     class: File
     path: a/file/path

@@ -16,7 +16,7 @@ predictors:  # array of type 'File' (optional)
   - /output/SDM/loadPredictors_R/e09acd85debd23c991652771b1d771b2/bio81981-01-01.tif
   - /output/SDM/loadPredictors_R/e09acd85debd23c991652771b1d771b2/bio91981-01-01.tif
 
-partition_type: none  # enum; valid values: "file:///home/jmlord/code/cwl-test/export/tools/SDM/setupDataSdm.cwl#partition_type/bootstrap", "file:///home/jmlord/code/cwl-test/export/tools/SDM/setupDataSdm.cwl#partition_type/crossvalidation", "file:///home/jmlord/code/cwl-test/export/tools/SDM/setupDataSdm.cwl#partition_type/none"
+partition_type: none  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/SDM/setupDataSdm.cwl#partition_type/bootstrap", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/SDM/setupDataSdm.cwl#partition_type/crossvalidation", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/SDM/setupDataSdm.cwl#partition_type/none"
 environment:  # type 'File' (optional)
     class: File
     path: a/file/path

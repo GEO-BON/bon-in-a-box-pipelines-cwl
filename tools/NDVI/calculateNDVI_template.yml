@@ -1,4 +1,4 @@
-summary_statistic: mean  # enum; valid values: "file:///home/jmlord/code/cwl-test/export/tools/NDVI/calculateNDVI.cwl#summary_statistic/mean", "file:///home/jmlord/code/cwl-test/export/tools/NDVI/calculateNDVI.cwl#summary_statistic/median", "file:///home/jmlord/code/cwl-test/export/tools/NDVI/calculateNDVI.cwl#summary_statistic/max", "file:///home/jmlord/code/cwl-test/export/tools/NDVI/calculateNDVI.cwl#summary_statistic/min"
+summary_statistic: mean  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/NDVI/calculateNDVI.cwl#summary_statistic/mean", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/NDVI/calculateNDVI.cwl#summary_statistic/median", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/NDVI/calculateNDVI.cwl#summary_statistic/max", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/NDVI/calculateNDVI.cwl#summary_statistic/min"
 study_area_polygon:  # type 'File' (optional)
     class: File
     path: a/file/path
@@ -20,8 +20,8 @@ envFolder:  # type 'Directory' (optional)
     path: a/directory/path
 end_date: '2019-09-30'  # default value of type 'string'. (optional)
 condaPackURL: https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
-bbox_crs:  # "file:///home/jmlord/code/cwl-test/export/tools/NDVI/calculateNDVI.cwl#bbox_crs/bboxCRS" record type.
-    region:  # "file:///home/jmlord/code/cwl-test/export/tools/NDVI/calculateNDVI.cwl#bbox_crs/bboxCRS/region/regionDefinition" record type.
+bbox_crs:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/NDVI/calculateNDVI.cwl#bbox_crs/bboxCRS" record type.
+    region:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/NDVI/calculateNDVI.cwl#bbox_crs/bboxCRS/region/regionDefinition" record type.
         bboxWGS84:  # array of type 'float' (optional)
           - 0.1
         regionName: a_string  # type 'string' (optional)
@@ -29,7 +29,7 @@ bbox_crs:  # "file:///home/jmlord/code/cwl-test/export/tools/NDVI/calculateNDVI.
         countryEnglishName: a_string  # type 'string' (optional)
     bbox:  # array of type 'float'
       - 0.1
-    CRS:  # "file:///home/jmlord/code/cwl-test/export/tools/NDVI/calculateNDVI.cwl#bbox_crs/bboxCRS/CRS/CRSDefinition" record type.
+    CRS:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/NDVI/calculateNDVI.cwl#bbox_crs/bboxCRS/CRS/CRSDefinition" record type.
         wktDef: a_string  # type 'string' (optional)
         proj4Def: a_string  # type 'string' (optional)
         CRSBboxWGS84:  # array of type 'float' (optional)
@@ -38,7 +38,7 @@ bbox_crs:  # "file:///home/jmlord/code/cwl-test/export/tools/NDVI/calculateNDVI.
         authority: a_string  # type 'string' (optional)
         code: 0  # type 'int' (optional)
         unit: a_string  # type 'string' (optional)
-    country:  # "file:///home/jmlord/code/cwl-test/export/tools/NDVI/calculateNDVI.cwl#bbox_crs/bboxCRS/country/countryDefinition" record type.
+    country:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/NDVI/calculateNDVI.cwl#bbox_crs/bboxCRS/country/countryDefinition" record type.
         bboxWGS84:  # array of type 'float' (optional)
           - 0.1
         ISO3: a_string  # type 'string' (optional)

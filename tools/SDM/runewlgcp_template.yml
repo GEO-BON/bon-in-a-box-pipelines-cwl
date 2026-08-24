@@ -16,7 +16,7 @@ predictors:  # array of type 'File' (optional)
   - /output/SDM/loadPredictors_R/e09acd85debd23c991652771b1d771b2/bio81981-01-01.tif
   - /output/SDM/loadPredictors_R/e09acd85debd23c991652771b1d771b2/bio91981-01-01.tif
 
-orientation_block: lat_lon  # enum; valid values: "file:///home/jmlord/code/cwl-test/export/tools/SDM/runewlgcp.cwl#orientation_block/lat_lon", "file:///home/jmlord/code/cwl-test/export/tools/SDM/runewlgcp.cwl#orientation_block/lon_lat", "file:///home/jmlord/code/cwl-test/export/tools/SDM/runewlgcp.cwl#orientation_block/lon_lon", "file:///home/jmlord/code/cwl-test/export/tools/SDM/runewlgcp.cwl#orientation_block/lat_lat"
+orientation_block: lat_lon  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/SDM/runewlgcp.cwl#orientation_block/lat_lon", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/SDM/runewlgcp.cwl#orientation_block/lon_lat", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/SDM/runewlgcp.cwl#orientation_block/lon_lon", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/SDM/runewlgcp.cwl#orientation_block/lat_lat"
 n_folds: 5  # default value of type 'int'. (optional)
 environment:  # type 'File' (optional)
     class: File
@@ -25,8 +25,8 @@ envFolderWritable: true  # default value of type 'boolean'.
 envFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-crs:  # "file:///home/jmlord/code/cwl-test/export/tools/SDM/runewlgcp.cwl#crs/bboxCRS" record type.
-    region:  # "file:///home/jmlord/code/cwl-test/export/tools/SDM/runewlgcp.cwl#crs/bboxCRS/region/regionDefinition" record type.
+crs:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/SDM/runewlgcp.cwl#crs/bboxCRS" record type.
+    region:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/SDM/runewlgcp.cwl#crs/bboxCRS/region/regionDefinition" record type.
         bboxWGS84:  # array of type 'float' (optional)
           - 0.1
         regionName: a_string  # type 'string' (optional)
@@ -34,7 +34,7 @@ crs:  # "file:///home/jmlord/code/cwl-test/export/tools/SDM/runewlgcp.cwl#crs/bb
         countryEnglishName: a_string  # type 'string' (optional)
     bbox:  # array of type 'float'
       - 0.1
-    CRS:  # "file:///home/jmlord/code/cwl-test/export/tools/SDM/runewlgcp.cwl#crs/bboxCRS/CRS/CRSDefinition" record type.
+    CRS:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/SDM/runewlgcp.cwl#crs/bboxCRS/CRS/CRSDefinition" record type.
         wktDef: a_string  # type 'string' (optional)
         proj4Def: a_string  # type 'string' (optional)
         CRSBboxWGS84:  # array of type 'float' (optional)
@@ -43,7 +43,7 @@ crs:  # "file:///home/jmlord/code/cwl-test/export/tools/SDM/runewlgcp.cwl#crs/bb
         authority: a_string  # type 'string' (optional)
         code: 0  # type 'int' (optional)
         unit: a_string  # type 'string' (optional)
-    country:  # "file:///home/jmlord/code/cwl-test/export/tools/SDM/runewlgcp.cwl#crs/bboxCRS/country/countryDefinition" record type.
+    country:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/SDM/runewlgcp.cwl#crs/bboxCRS/country/countryDefinition" record type.
         bboxWGS84:  # array of type 'float' (optional)
           - 0.1
         ISO3: a_string  # type 'string' (optional)
