@@ -4,8 +4,8 @@ scripts_root:  # type 'Directory' (optional)
 runFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-pipeline@210:  # "file:///home/jmlord/code/cwl-test/export/workflows/ndvi_pipeline.cwl#pipeline@210/bboxCRS" record type.
-    region:  # "file:///home/jmlord/code/cwl-test/export/workflows/ndvi_pipeline.cwl#pipeline@210/bboxCRS/region/regionDefinition" record type.
+pipeline@210:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/ndvi_pipeline.cwl#pipeline@210/bboxCRS" record type.
+    region:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/ndvi_pipeline.cwl#pipeline@210/bboxCRS/region/regionDefinition" record type.
         bboxWGS84:  # array of type 'float' (optional)
           - 0.1
         regionName: a_string  # type 'string' (optional)
@@ -13,7 +13,7 @@ pipeline@210:  # "file:///home/jmlord/code/cwl-test/export/workflows/ndvi_pipeli
         countryEnglishName: a_string  # type 'string' (optional)
     bbox:  # array of type 'float'
       - 0.1
-    CRS:  # "file:///home/jmlord/code/cwl-test/export/workflows/ndvi_pipeline.cwl#pipeline@210/bboxCRS/CRS/CRSDefinition" record type.
+    CRS:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/ndvi_pipeline.cwl#pipeline@210/bboxCRS/CRS/CRSDefinition" record type.
         wktDef: a_string  # type 'string' (optional)
         proj4Def: a_string  # type 'string' (optional)
         CRSBboxWGS84:  # array of type 'float' (optional)
@@ -22,7 +22,7 @@ pipeline@210:  # "file:///home/jmlord/code/cwl-test/export/workflows/ndvi_pipeli
         authority: a_string  # type 'string' (optional)
         code: 0  # type 'int' (optional)
         unit: a_string  # type 'string' (optional)
-    country:  # "file:///home/jmlord/code/cwl-test/export/workflows/ndvi_pipeline.cwl#pipeline@210/bboxCRS/country/countryDefinition" record type.
+    country:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/ndvi_pipeline.cwl#pipeline@210/bboxCRS/country/countryDefinition" record type.
         bboxWGS84:  # array of type 'float' (optional)
           - 0.1
         ISO3: a_string  # type 'string' (optional)
@@ -33,9 +33,9 @@ environment:  # type 'File' (optional)
 envFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-data>load_polygons.yml@211|polygon_type: Country or region  # enum; valid values: "file:///home/jmlord/code/cwl-test/export/workflows/ndvi_pipeline.cwl#data>load_polygons.yml@211|polygon_type/Country or region", "file:///home/jmlord/code/cwl-test/export/workflows/ndvi_pipeline.cwl#data>load_polygons.yml@211|polygon_type/Polygon of bounding box"
+data>load_polygons.yml@211|polygon_type: Country or region  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/ndvi_pipeline.cwl#data>load_polygons.yml@211|polygon_type/Country or region", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/ndvi_pipeline.cwl#data>load_polygons.yml@211|polygon_type/Polygon of bounding box"
 condaPackURL: https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
-NDVI>calculateNDVI.yml@199|summary_statistic: mean  # enum; valid values: "file:///home/jmlord/code/cwl-test/export/workflows/ndvi_pipeline.cwl#NDVI>calculateNDVI.yml@199|summary_statistic/mean", "file:///home/jmlord/code/cwl-test/export/workflows/ndvi_pipeline.cwl#NDVI>calculateNDVI.yml@199|summary_statistic/median", "file:///home/jmlord/code/cwl-test/export/workflows/ndvi_pipeline.cwl#NDVI>calculateNDVI.yml@199|summary_statistic/max", "file:///home/jmlord/code/cwl-test/export/workflows/ndvi_pipeline.cwl#NDVI>calculateNDVI.yml@199|summary_statistic/min"
+NDVI>calculateNDVI.yml@199|summary_statistic: mean  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/ndvi_pipeline.cwl#NDVI>calculateNDVI.yml@199|summary_statistic/mean", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/ndvi_pipeline.cwl#NDVI>calculateNDVI.yml@199|summary_statistic/median", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/ndvi_pipeline.cwl#NDVI>calculateNDVI.yml@199|summary_statistic/max", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/ndvi_pipeline.cwl#NDVI>calculateNDVI.yml@199|summary_statistic/min"
 NDVI>calculateNDVI.yml@199|start_date: '2024-01-01'  # default value of type 'string'. (optional)
 NDVI>calculateNDVI.yml@199|spatial_resolution: 0.008  # default value of type 'float'. (optional)
 NDVI>calculateNDVI.yml@199|end_date: '2024-01-31'  # default value of type 'string'. (optional)
