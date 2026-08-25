@@ -34,7 +34,8 @@ envFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
 data>load_polygons.yml@211|polygon_type: Country or region  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/ndvi_pipeline.cwl#data>load_polygons.yml@211|polygon_type/Country or region", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/ndvi_pipeline.cwl#data>load_polygons.yml@211|polygon_type/Polygon of bounding box"
-condaPackURL: https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
+condaPackURL: 
+    https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
 NDVI>calculateNDVI.yml@199|summary_statistic: mean  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/ndvi_pipeline.cwl#NDVI>calculateNDVI.yml@199|summary_statistic/mean", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/ndvi_pipeline.cwl#NDVI>calculateNDVI.yml@199|summary_statistic/median", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/ndvi_pipeline.cwl#NDVI>calculateNDVI.yml@199|summary_statistic/max", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/ndvi_pipeline.cwl#NDVI>calculateNDVI.yml@199|summary_statistic/min"
 NDVI>calculateNDVI.yml@199|start_date: '2024-01-01'  # default value of type 'string'. (optional)
 NDVI>calculateNDVI.yml@199|spatial_resolution: 0.008  # default value of type 'float'. (optional)

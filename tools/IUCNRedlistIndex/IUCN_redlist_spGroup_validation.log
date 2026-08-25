@@ -1,58 +1,41 @@
-[1;30mINFO[0m /usr/bin/cwl-runner 3.1.20240112164112
-[1;30mINFO[0m Resolved '/home/jmlord/code/cwl-test/export/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl' to 'file:///home/jmlord/code/cwl-test/export/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl'
-../../cwl-test/export/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:145:3: object id '../../cwl-test/export/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group' previously defined
-[1;30mWARNING[0m [33m../../cwl-test/export/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:145:3: object id '../../cwl-test/export/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group' previously defined[0m
+[1;30mINFO[0m /home/jean-michel/.local/bin/cwl-runner 3.2.20260413085819
+[1;30mINFO[0m Resolved '/home/jean-michel/code/cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl' to 'file:///home/jean-michel/code/cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl'
+[1;30mWARNING[0m [33m../../cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:145:3: object id '../../cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group' previously defined[0m
 [1;30mERROR[0m [31mTool definition failed validation:
-../../cwl-test/export/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:2:1:     Object
-                                                                             '../../cwl-test/export/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl'
-                                                                             is not valid because
-                                                                               tried
-                                                                               'CommandLineTool' but
-../../cwl-test/export/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:141:1:     the 'inputs' field
-                                                                                 is not valid because
-../../cwl-test/export/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:145:3:       item is invalid
-                                                                                   because
-../../cwl-test/export/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:146:5:         the 'type'
-                                                                                     field is not valid
-                                                                                     because
-                                                                                       - tried
-                                                                                       CommandInputRecordSchema
-                                                                                       but
-../../cwl-test/export/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:147:7:             * the
-                                                                                         'type' field is not
-                                                                                         valid because
-                                                                                           value is
-                                                                                           a CommentedMap but
-                                                                                           expected a string
-../../cwl-test/export/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:148:7:             * invalid
-                                                                                         field 'symbols',
-                                                                                         expected one of:
-                                                                                         'fields', 'type',
-                                                                                         'label', 'doc',
-                                                                                         'name', 'inputBinding'
-../../cwl-test/export/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:146:5:           - tried
-                                                                                       CommandInputEnumSchema
-                                                                                       but
-../../cwl-test/export/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:147:7:             the 'type'
-                                                                                         field is not valid
-                                                                                         because
-                                                                                           value is
-                                                                                           a CommentedMap but
-                                                                                           expected a string
-../../cwl-test/export/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:146:5:           - tried
-                                                                                       CommandInputArraySchema
-                                                                                       but
-                                                                                         * missing
-                                                                                         required field 'items'
-../../cwl-test/export/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:147:7:             * the
-                                                                                         'type' field is not
-                                                                                         valid because
-                                                                                           value is
-                                                                                           a CommentedMap but
-                                                                                           expected a string
-../../cwl-test/export/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:148:7:             * invalid
-                                                                                         field 'symbols',
-                                                                                         expected one of:
-                                                                                         'items', 'type',
-                                                                                         'label', 'doc',
-                                                                                         'name', 'inputBinding'[0m
+../../cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:2:1:     Object
+                                                                 '../../cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl'
+                                                                 is not valid because
+                                                                   tried 'CommandLineTool' but
+../../cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:141:1:     the 'inputs' field is not
+                                                                     valid because
+../../cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:145:3:       item is invalid because
+../../cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:146:5:         the 'type' field is not
+                                                                         valid because
+                                                                           - tried
+                                                                           CommandInputRecordSchema but
+../../cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:147:7:             * the 'type' field is
+                                                                             not valid because
+                                                                               value is a
+                                                                               CommentedMap but expected a string
+../../cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:148:7:             * invalid field
+                                                                             'symbols', expected one of:
+                                                                             'fields', 'type', 'label', 'doc',
+                                                                             'name', 'inputBinding'
+../../cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:146:5:           - tried
+                                                                           CommandInputEnumSchema but
+../../cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:147:7:             the 'type' field is
+                                                                             not valid because
+                                                                               value is a
+                                                                               CommentedMap but expected a string
+../../cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:146:5:           - tried
+                                                                           CommandInputArraySchema but
+                                                                             * missing required
+                                                                             field 'items'
+../../cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:147:7:             * the 'type' field is
+                                                                             not valid because
+                                                                               value is a
+                                                                               CommentedMap but expected a string
+../../cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:148:7:             * invalid field
+                                                                             'symbols', expected one of:
+                                                                             'items', 'type', 'label', 'doc',
+                                                                             'name', 'inputBinding'[0m

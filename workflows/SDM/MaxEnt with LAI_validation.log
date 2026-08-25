@@ -1,4 +1,4 @@
-[1;30mINFO[0m /usr/bin/cwl-runner 3.1.20240112164112
-[1;30mINFO[0m Resolved '/home/jmlord/code/cwl-test/export/workflows/SDM/MaxEnt with LAI.cwl' to 'file:///home/jmlord/code/cwl-test/export/workflows/SDM/MaxEnt%20with%20LAI.cwl'
+[1;30mINFO[0m /home/jean-michel/.local/bin/cwl-runner 3.2.20260413085819
+[1;30mINFO[0m Resolved '/home/jean-michel/code/cwl/workflows/SDM/MaxEnt with LAI.cwl' to 'file:///home/jean-michel/code/cwl/workflows/SDM/MaxEnt%20with%20LAI.cwl'
 [1;30mERROR[0m [31mI'm sorry, I couldn't load this CWL file, try again with --debug for more information.
 The error was: [0m

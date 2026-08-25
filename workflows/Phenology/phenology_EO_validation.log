@@ -1,40 +1,32 @@
-[1;30mINFO[0m /usr/bin/cwl-runner 3.1.20240112164112
-[1;30mINFO[0m Resolved '/home/jmlord/code/cwl-test/export/workflows/Phenology/phenology_EO.cwl' to 'file:///home/jmlord/code/cwl-test/export/workflows/Phenology/phenology_EO.cwl'
+[1;30mINFO[0m /home/jean-michel/.local/bin/cwl-runner 3.2.20260413085819
+[1;30mINFO[0m Resolved '/home/jean-michel/code/cwl/workflows/Phenology/phenology_EO.cwl' to 'file:///home/jean-michel/code/cwl/workflows/Phenology/phenology_EO.cwl'
 [1;30mERROR[0m [31mTool definition failed validation:
-../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:1:1:   Object
-                                                                 '../../cwl-test/export/workflows/Phenology/phenology_EO.cwl'
-                                                                 is not valid because
-                                                                   tried 'Workflow' but
-../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:39:1:     the 'inputs' field is not
-                                                                     valid because
-../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:73:3:       item is invalid because
-../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:74:5:         the 'type' field is not
-                                                                         valid because
-                                                                           - tried
-                                                                           InputRecordSchema but
-../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:75:7:             * the 'type' field is
-                                                                             not valid because
-                                                                               value is a
-                                                                               CommentedMap but expected a string
-../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:76:7:             * invalid field
-                                                                             'symbols', expected one of:
-                                                                             'fields', 'type', 'label', 'doc',
-                                                                             'name'
-../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:74:5:           - tried InputEnumSchema
-                                                                           but
-../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:75:7:             the 'type' field is
-                                                                             not valid because
-                                                                               value is a
-                                                                               CommentedMap but expected a string
-../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:74:5:           - tried InputArraySchema
-                                                                           but
-                                                                             * missing required
-                                                                             field 'items'
-../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:75:7:             * the 'type' field is
-                                                                             not valid because
-                                                                               value is a
-                                                                               CommentedMap but expected a string
-../../cwl-test/export/workflows/Phenology/phenology_EO.cwl:76:7:             * invalid field
-                                                                             'symbols', expected one of:
-                                                                             'items', 'type', 'label', 'doc',
-                                                                             'name'[0m
+../../cwl/workflows/Phenology/phenology_EO.cwl:1:1:     Object
+                                                      '../../cwl/workflows/Phenology/phenology_EO.cwl'
+                                                      is not valid because
+                                                        tried 'Workflow' but
+../../cwl/workflows/Phenology/phenology_EO.cwl:39:1:       the 'inputs' field is not valid because
+../../cwl/workflows/Phenology/phenology_EO.cwl:117:3:       item is invalid because
+../../cwl/workflows/Phenology/phenology_EO.cwl:118:5:         the 'type' field is not valid because
+                                                                - tried InputRecordSchema but
+../../cwl/workflows/Phenology/phenology_EO.cwl:119:7:             * the 'type' field is not valid
+                                                                  because
+                                                                    value is a CommentedMap but
+                                                                    expected a string
+../../cwl/workflows/Phenology/phenology_EO.cwl:120:7:             * invalid field 'symbols',
+                                                                  expected one of: 'fields', 'type', 'label',
+                                                                  'doc', 'name'
+../../cwl/workflows/Phenology/phenology_EO.cwl:118:5:           - tried InputEnumSchema but
+../../cwl/workflows/Phenology/phenology_EO.cwl:119:7:             the 'type' field is not valid
+                                                                  because
+                                                                    value is a CommentedMap but
+                                                                    expected a string
+../../cwl/workflows/Phenology/phenology_EO.cwl:118:5:           - tried InputArraySchema but
+                                                                  * missing required field 'items'
+../../cwl/workflows/Phenology/phenology_EO.cwl:119:7:             * the 'type' field is not valid
+                                                                  because
+                                                                    value is a CommentedMap but
+                                                                    expected a string
+../../cwl/workflows/Phenology/phenology_EO.cwl:120:7:             * invalid field 'symbols',
+                                                                  expected one of: 'items', 'type', 'label',
+                                                                  'doc', 'name'[0m

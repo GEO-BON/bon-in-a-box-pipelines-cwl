@@ -48,14 +48,6 @@ inputs:
     doc: Desired resolution for land cover map, will be obtained via resampling. To be specified in decimal degrees (0.01 ~ 1 km). Minimal value 0.003 (~300m).
     default: 0.01
 
-  GFS_IndicatorsTool>get_LCY.yml@115|lc_classes:
-    type: int[]?
-    label: Landcover classes
-    doc: List of landcover class identifiers to be extract (for identifiers see https://savs.eumetsat.int/html/images/landcover_legend.png)
-    default:
-    - 130
-    - 140
-
   GFS_IndicatorsTool>get_LCY.yml@115|yoi:
     type: int[]?
     label: Years of interest
@@ -67,6 +59,14 @@ inputs:
     - 2010
     - 2015
     - 2020
+
+  GFS_IndicatorsTool>get_LCY.yml@115|lc_classes:
+    type: int[]?
+    label: Landcover classes
+    doc: List of landcover class identifiers to be extract (for identifiers see https://savs.eumetsat.int/html/images/landcover_legend.png)
+    default:
+    - 130
+    - 140
 
 
 
@@ -161,7 +161,7 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
 
           
       inputs:
@@ -193,8 +193,8 @@ steps:
       yoi: GFS_IndicatorsTool>get_LCY.yml@115|yoi
       lc_classes: GFS_IndicatorsTool>get_LCY.yml@115|lc_classes
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/GFS_IndicatorsTool__get_LCY/115' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/GFS_IndicatorsTool__get_LCY/115' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -202,15 +202,15 @@ steps:
 
 
 outputs:
-  GFS_IndicatorsTool>get_LCY.yml@115|time_points:
-    type: string[]
-    label: Years with land cover information
-    doc: List of years for which land cover information is available.
-    outputSource: GFS_IndicatorsTool>get_LCY.yml@115/time_points
-
   GFS_IndicatorsTool>get_LCY.yml@115|lcyy:
     type: File
     label: Land cover year-by-year
     doc: Tif file showing the year-by-year disrtribution of land cover classes of interest.
     outputSource: GFS_IndicatorsTool>get_LCY.yml@115/lcyy
+
+  GFS_IndicatorsTool>get_LCY.yml@115|time_points:
+    type: string[]
+    label: Years with land cover information
+    doc: List of years for which land cover information is available.
+    outputSource: GFS_IndicatorsTool>get_LCY.yml@115/time_points
 

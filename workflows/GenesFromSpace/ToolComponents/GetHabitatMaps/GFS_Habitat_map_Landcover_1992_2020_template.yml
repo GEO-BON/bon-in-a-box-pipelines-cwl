@@ -10,7 +10,8 @@ environment:  # type 'File' (optional)
 envFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-condaPackURL: https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
+condaPackURL: 
+    https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
 GFS_IndicatorsTool>get_LCY.yml@115|yoi:  # array of type 'int' (optional)
   - 1995
   - 2000
@@ -19,15 +20,16 @@ GFS_IndicatorsTool>get_LCY.yml@115|yoi:  # array of type 'int' (optional)
   - 2015
   - 2020
 
+GFS_IndicatorsTool>get_LCY.yml@115|res: 0.01  # default value of type 'float'. (optional)
+GFS_IndicatorsTool>get_LCY.yml@115|population_polygons: 
+    /userdata/population_polygons.geojson  # default value of type 'File'. (optional)
+GFS_IndicatorsTool>get_LCY.yml@115|lc_classes:  # array of type 'int' (optional)
+  - 130
+  - 140
+
 
 
   ###################
   # Run environment #
   ###################
-
-GFS_IndicatorsTool>get_LCY.yml@115|res: 0.01  # default value of type 'float'. (optional)
-GFS_IndicatorsTool>get_LCY.yml@115|population_polygons: /userdata/population_polygons.geojson  # default value of type 'File'. (optional)
-GFS_IndicatorsTool>get_LCY.yml@115|lc_classes:  # array of type 'int' (optional)
-  - 130
-  - 140
 

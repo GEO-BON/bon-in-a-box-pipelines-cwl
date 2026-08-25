@@ -39,6 +39,16 @@ inputs:
   #################
   # Script inputs #
   #################
+  data>load_polygons.yml@25|polygon_type:
+    type:
+      type: enum
+      symbols:
+        - Country or region
+        - Polygon of bounding box
+    label: Polygon type
+    doc: Type of polygon to load. Country or region polygons, World database of Protected Areas (WDPA), Exclusive Economic Zones (EEZs), or a custom polygon of a bounding box.
+    default: Country or region
+
   pipeline@23:
     label: Bounding box and CRS
     doc: Select a country/region and a CRS to obtain the associated bounding box. You may also draw/input a custom bounding box along with a CRS.
@@ -92,22 +102,6 @@ inputs:
           - name: bboxWGS84
             type: float[]?
 
-  pipeline@20:
-    type:
-      type: enum
-      symbols:
-        - first
-        - min
-        - max
-        - mean
-        - median
-    label: Aggregation method
-    doc: >
-      Method used to aggregate items when layers combining over time.
-      
-      Will be ignored if not aggregating.
-    default: first
-
   data>loadFromStac.yml@1|t0:
     type: string?
     label: Start date (optional)
@@ -159,15 +153,21 @@ inputs:
       Will be ignored if not resampling.
     default: near
 
-  data>load_polygons.yml@25|polygon_type:
+  pipeline@20:
     type:
       type: enum
       symbols:
-        - Country or region
-        - Polygon of bounding box
-    label: Polygon type
-    doc: Type of polygon to load. Country or region polygons, World database of Protected Areas (WDPA), Exclusive Economic Zones (EEZs), or a custom polygon of a bounding box.
-    default: Country or region
+        - first
+        - min
+        - max
+        - mean
+        - median
+    label: Aggregation method
+    doc: >
+      Method used to aggregate items when layers combining over time.
+      
+      Will be ignored if not aggregating.
+    default: first
 
 
 
@@ -262,7 +262,7 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
           bash -c 'getPackedEnv "bilbi_indicators__bilbi_weighted_mean" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-terra, r-tidyverse]
           name: bilbi_indicators__bilbi_weighted_mean
@@ -314,8 +314,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/bilbi_indicators__bilbi_weighted_mean/0' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/bilbi_indicators__bilbi_weighted_mean/0' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -341,8 +341,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/1' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/1' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -368,8 +368,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/2' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/2' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -388,8 +388,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/25' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/25' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -403,12 +403,6 @@ outputs:
     doc: Output raster files in geotiff format.
     outputSource: data>loadFromStac.yml@1/rasters
 
-  bilbi_indicators>bilbi_weighted_mean.yml@0|time_series_plot:
-    type: File
-    label: Time series plot
-    doc: Plot of the geometric mean of the indicator over time in the study area of interest
-    outputSource: bilbi_indicators>bilbi_weighted_mean.yml@0/time_series_plot
-
   bilbi_indicators>bilbi_weighted_mean.yml@0|summarised_values:
     type: File
     label: PARC summary
@@ -417,6 +411,12 @@ outputs:
       
       A high score indicates that a higher percentage of the region's biodiversity and environmental variation is represented in protected areas. A low score suggests that some ecological types are underrepresented.
     outputSource: bilbi_indicators>bilbi_weighted_mean.yml@0/summarised_values
+
+  bilbi_indicators>bilbi_weighted_mean.yml@0|time_series_plot:
+    type: File
+    label: Time series plot
+    doc: Plot of the geometric mean of the indicator over time in the study area of interest
+    outputSource: bilbi_indicators>bilbi_weighted_mean.yml@0/time_series_plot
 
   data>load_polygons.yml@25|polygon:
     type: File

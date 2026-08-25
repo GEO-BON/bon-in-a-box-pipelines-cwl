@@ -32,69 +32,6 @@ inputs:
   #################
   # Script inputs #
   #################
-  data>loadFromStac.yml@25|t0:
-    type: string?
-    label: Start date (optional)
-    doc: Start date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if extracting items by name.
-
-  data>loadFromStac.yml@25|t1:
-    type: string?
-    label: End date (optional)
-    doc: End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if extracting items by name.
-
-  data>loadFromStac.yml@25|aggregation:
-    type:
-      type: enum
-      symbols:
-        - first
-        - min
-        - max
-        - mean
-        - median
-    label: Aggregation method
-    doc: >
-      Method used to aggregate items when layers combining over time.
-      
-      Will be ignored if not combining over time.
-    default: first
-
-  zonal_statistics>zonal_stats.yml@4|summary_statistic:
-    type:
-      type: enum[]
-      symbols:
-        - mean
-        - median
-        - sum
-        - min
-        - max
-        - stdev
-        - variance
-        - mode
-    label: Summary statistic
-    doc: Summary statistic for layers
-    default:
-    - mean
-    - variance
-
-  data>loadFromStac.yml@25|stac_url:
-    type: string?
-    label: STAC URL
-    doc: URL of the STAC catalog.
-    default: https://stac.geobon.org/
-
-  data>loadFromStac.yml@25|collections_items:
-    type: string[]?
-    label: STAC collection items
-    doc: Vector of strings. To pull specific collection items, input the collection name followed by '|' followed by item id (e.g. "chelsa-clim|bio1"). To extract a whole collection, type the collection name only (e.g. "chelsa-clim"). To pull collection items by date, write the collection name and provide a start date, end date, and temporal resolution.
-    default:
-    - chelsa-clim|bio1
-    - chelsa-clim|bio2
-
-  data>loadFromStac.yml@25|temporal_res:
-    type: string?
-    label: Temporal resolution (optional)
-    doc: Temporal resolution to use when querying STAC items by date, in the format ("P", time interval, and time unit, e.g. "P1Y" is yearly, "P1M" is montly, and "P1D" is daily). Leave blank if not querying by date. If the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated with the aggregation method chosen below.
-
   data>load_polygons.yml@28|polygon_type:
     type:
       type: enum
@@ -105,31 +42,6 @@ inputs:
     label: Polygon type
     doc: Type of polygon to load. Country or region polygons, World database of Protected Areas (WDPA), Exclusive Economic Zones (EEZs), or a custom polygon of a bounding box.
     default: Country or region
-
-  data>loadFromStac.yml@25|resampling:
-    type:
-      type: enum
-      symbols:
-        - near
-        - bilinear
-        - average
-        - mode
-        - cubic
-        - cubicspline
-        - lanczos
-        - rms
-        - min
-        - max
-        - sum
-        - med
-        - q1
-        - q3
-    label: Resampling method
-    doc: >
-      Resampling method used when rescaling and/or reprojecting the raster layers. See [gdalwarp](https://gdal.org/en/latest/programs/gdalwarp.html) for description.
-      
-      Will be ignored if not resampling.
-    default: near
 
   pipeline@27:
     label: Bounding box and CRS
@@ -184,6 +96,53 @@ inputs:
           - name: bboxWGS84
             type: float[]?
 
+  zonal_statistics>zonal_stats.yml@4|summary_statistic:
+    type:
+      type: enum[]
+      symbols:
+        - mean
+        - median
+        - sum
+        - min
+        - max
+        - stdev
+        - variance
+        - mode
+    label: Summary statistic
+    doc: Summary statistic for layers
+    default:
+    - mean
+    - variance
+
+  data>loadFromStac.yml@25|stac_url:
+    type: string?
+    label: STAC URL
+    doc: URL of the STAC catalog.
+    default: https://stac.geobon.org/
+
+  data>loadFromStac.yml@25|collections_items:
+    type: string[]?
+    label: STAC collection items
+    doc: Vector of strings. To pull specific collection items, input the collection name followed by '|' followed by item id (e.g. "chelsa-clim|bio1"). To extract a whole collection, type the collection name only (e.g. "chelsa-clim"). To pull collection items by date, write the collection name and provide a start date, end date, and temporal resolution.
+    default:
+    - chelsa-clim|bio1
+    - chelsa-clim|bio2
+
+  data>loadFromStac.yml@25|t0:
+    type: string?
+    label: Start date (optional)
+    doc: Start date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if extracting items by name.
+
+  data>loadFromStac.yml@25|t1:
+    type: string?
+    label: End date (optional)
+    doc: End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if extracting items by name.
+
+  data>loadFromStac.yml@25|temporal_res:
+    type: string?
+    label: Temporal resolution (optional)
+    doc: Temporal resolution to use when querying STAC items by date, in the format ("P", time interval, and time unit, e.g. "P1Y" is yearly, "P1M" is montly, and "P1D" is daily). Leave blank if not querying by date. If the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated with the aggregation method chosen below.
+
   data>loadFromStac.yml@25|spatial_res:
     type: float?
     label: Spatial resolution (optional)
@@ -194,6 +153,47 @@ inputs:
       
       If the spatial resolution is coarser than the native resolution of the rasters, the layers will be resampled with the resampling method chosen below.
     default: 1000
+
+  data>loadFromStac.yml@25|resampling:
+    type:
+      type: enum
+      symbols:
+        - near
+        - bilinear
+        - average
+        - mode
+        - cubic
+        - cubicspline
+        - lanczos
+        - rms
+        - min
+        - max
+        - sum
+        - med
+        - q1
+        - q3
+    label: Resampling method
+    doc: >
+      Resampling method used when rescaling and/or reprojecting the raster layers. See [gdalwarp](https://gdal.org/en/latest/programs/gdalwarp.html) for description.
+      
+      Will be ignored if not resampling.
+    default: near
+
+  data>loadFromStac.yml@25|aggregation:
+    type:
+      type: enum
+      symbols:
+        - first
+        - min
+        - max
+        - mean
+        - median
+    label: Aggregation method
+    doc: >
+      Method used to aggregate items when layers combining over time.
+      
+      Will be ignored if not combining over time.
+    default: first
 
 
 
@@ -288,7 +288,7 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
           bash -c 'getPackedEnv "zonal_statistics__zonal_stats" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-terra, r-dplyr, r-sf, r-exactextractr, r-tidyr]
           name: zonal_statistics__zonal_stats
@@ -341,8 +341,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/zonal_statistics__zonal_stats/4' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/zonal_statistics__zonal_stats/4' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -368,8 +368,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/25' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/25' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -388,8 +388,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/28' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/28' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root

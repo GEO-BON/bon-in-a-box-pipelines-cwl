@@ -85,6 +85,12 @@ inputs:
           - name: bboxWGS84
             type: float[]?
 
+  data>loadFromStac.yml@42|stac_url:
+    type: string?
+    label: STAC URL
+    doc: URL of the STAC catalog.
+    default: https://stac.geobon.org/
+
   data>loadFromStac.yml@42|collections_items:
     type: string[]?
     label: STAC collection items
@@ -94,6 +100,35 @@ inputs:
       Layers used in this pipeline must be categorical variables (e.g. landcover). 
     default:
     - esacci-lc|esacci-lc-2020
+
+  data>loadFromStac.yml@42|t0:
+    type: string?
+    label: Start date
+    doc: Start date for time series layers in format YYYY-MM-DD. Leave blank if extracting items by name.
+    default: '2020-01-01'
+
+  data>loadFromStac.yml@42|t1:
+    type: string?
+    label: End date
+    doc: End date for time series layers in format YYYY-MM-DD. Leave blank if extracting items by name.
+    default: '2020-12-31'
+
+  data>loadFromStac.yml@42|temporal_res:
+    type: string?
+    label: Temporal resolution
+    doc: Temporal resolution to use when querying STAC items by date, in the format ("P", time interval, and time unit, e.g. "P1Y" is yearly, "P1M" is montly, and "P1D" is daily). Leave blank if not querying by date. If the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated with the aggregation method chosen below.
+    default: P1Y
+
+  data>loadFromStac.yml@42|spatial_res:
+    type: float?
+    label: Spatial resolution (optional)
+    doc: >
+      Integer, spatial resolution of the rasters in the same units as the coordinate reference system (meters for projected reference systems and degrees for reference systems in lat long). 
+      
+      If this is left blank it will use the native resolution of the rasters. 
+      
+      If the spatial resolution is coarser than the native resolution of the rasters, the layers will be resampled with the resampling method chosen below.
+    default: 0.008833
 
   data>loadFromStac.yml@42|resampling:
     type:
@@ -129,41 +164,6 @@ inputs:
     label: Aggregation method
     doc: Method used to aggregate items when layers combining over time.
     default: first
-
-  data>loadFromStac.yml@42|stac_url:
-    type: string?
-    label: STAC URL
-    doc: URL of the STAC catalog.
-    default: https://stac.geobon.org/
-
-  data>loadFromStac.yml@42|temporal_res:
-    type: string?
-    label: Temporal resolution
-    doc: Temporal resolution to use when querying STAC items by date, in the format ("P", time interval, and time unit, e.g. "P1Y" is yearly, "P1M" is montly, and "P1D" is daily). Leave blank if not querying by date. If the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated with the aggregation method chosen below.
-    default: P1Y
-
-  data>loadFromStac.yml@42|t0:
-    type: string?
-    label: Start date
-    doc: Start date for time series layers in format YYYY-MM-DD. Leave blank if extracting items by name.
-    default: '2020-01-01'
-
-  data>loadFromStac.yml@42|spatial_res:
-    type: float?
-    label: Spatial resolution (optional)
-    doc: >
-      Integer, spatial resolution of the rasters in the same units as the coordinate reference system (meters for projected reference systems and degrees for reference systems in lat long). 
-      
-      If this is left blank it will use the native resolution of the rasters. 
-      
-      If the spatial resolution is coarser than the native resolution of the rasters, the layers will be resampled with the resampling method chosen below.
-    default: 0.008833
-
-  data>loadFromStac.yml@42|t1:
-    type: string?
-    label: End date
-    doc: End date for time series layers in format YYYY-MM-DD. Leave blank if extracting items by name.
-    default: '2020-12-31'
 
 
 
@@ -258,7 +258,7 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
           bash -c 'getPackedEnv "zonal_statistics__percentage_cover_classes" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-terra, r-dplyr, r-sf, r-exactextractr]
           name: zonal_statistics__percentage_cover_classes
@@ -309,8 +309,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/zonal_statistics__percentage_cover_classes/22' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/zonal_statistics__percentage_cover_classes/22' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -336,8 +336,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/42' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/42' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -356,8 +356,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/44' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/44' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root

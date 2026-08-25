@@ -88,30 +88,6 @@ inputs:
   #################
   # Script inputs #
   #################
-  IUCNRedlistIndex>IUCN_redlist_spThreats.yml@92|threat_category_input:
-    type:
-      type: enum[]
-      symbols:
-        - Do not filter by threat category
-        - Residential & commercial development
-        - Agriculture & aquaculture
-        - Energy production & mining
-        - Transportation & service corridors
-        - Biological resource use
-        - Human intrusions & disturbance
-        - Natural system modifications
-        - Invasive and other problematic species, genes & diseases
-        - Invasive alien species or diseases
-        - Pollution
-        - Geological events
-        - Climate change & severe weather
-        - Fisheries
-        - Other options
-    label: Threat category
-    doc: Select the species threat(s) to filter for. This returns a list of IUCN Red List species that are threatened by the categories selected.
-    default:
-    - Do not filter by threat category
-
   pipeline@95:
     label: Country
     doc: Country of interest.
@@ -220,6 +196,30 @@ inputs:
     default:
     - Do not filter by species use or trade
 
+  IUCNRedlistIndex>IUCN_redlist_spThreats.yml@92|threat_category_input:
+    type:
+      type: enum[]
+      symbols:
+        - Do not filter by threat category
+        - Residential & commercial development
+        - Agriculture & aquaculture
+        - Energy production & mining
+        - Transportation & service corridors
+        - Biological resource use
+        - Human intrusions & disturbance
+        - Natural system modifications
+        - Invasive and other problematic species, genes & diseases
+        - Invasive alien species or diseases
+        - Pollution
+        - Geological events
+        - Climate change & severe weather
+        - Fisheries
+        - Other options
+    label: Threat category
+    doc: Select the species threat(s) to filter for. This returns a list of IUCN Red List species that are threatened by the categories selected.
+    default:
+    - Do not filter by threat category
+
 
 
   ###################
@@ -313,7 +313,7 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
           bash -c 'getPackedEnv "IUCNRedlistIndex__IUCN_redlist_historyAssesment" "channels: [conda-forge, r]
           dependencies: [r-magrittr, r-data.table, r-dplyr, r-plyr, r-ggplot2, r-tibble, r-pbapply,
             r-rredlist, r-plyr, r-reshape2, r-rjson]
@@ -389,8 +389,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_historyAssesment/55' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_historyAssesment/55' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -413,8 +413,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spList/58' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spList/58' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -438,8 +438,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__RedListIndex/59' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__RedListIndex/59' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -456,8 +456,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spUse/77' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spUse/77' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -474,8 +474,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spGroup/82' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spGroup/82' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -492,8 +492,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spThreats/92' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spThreats/92' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -510,8 +510,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spCountry/96' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spCountry/96' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -524,6 +524,18 @@ outputs:
     label: Red List data
     doc: Dataset containing the results of the Red List Index (RLI) calculation.
     outputSource: IUCNRedlistIndex>RedListIndex.yml@59/redlist_data
+
+  IUCNRedlistIndex>RedListIndex.yml@59|redlist_trend_plot:
+    type: File
+    label: Red List trend
+    doc: The Red List Index of species for the chosen taxonomy group over time. An RLI of 1.0 indicates that all species have a status of Least Concerned, while 0.0 indicates Extinct. If the RLI value is constant over time, the overall extinction risk remains unchanged. An upward trend shows a reduction in the rate of biodiversity loss.
+    outputSource: IUCNRedlistIndex>RedListIndex.yml@59/redlist_trend_plot
+
+  IUCNRedlistIndex>RedListIndex.yml@59|redlist_matrix:
+    type: File
+    label: Red List matrix
+    doc: Matrix showing the distribution of threat categories over time for the group of species.
+    outputSource: IUCNRedlistIndex>RedListIndex.yml@59/redlist_matrix
 
   IUCNRedlistIndex>IUCN_redlist_spList.yml@58|number_species:
     type: int
@@ -543,27 +555,15 @@ outputs:
     doc: IUCN threat category
     outputSource: IUCNRedlistIndex>IUCN_redlist_spThreats.yml@92/threat_category
 
-  IUCNRedlistIndex>RedListIndex.yml@59|redlist_trend_plot:
-    type: File
-    label: Red List trend
-    doc: The Red List Index of species for the chosen taxonomy group over time. An RLI of 1.0 indicates that all species have a status of Least Concerned, while 0.0 indicates Extinct. If the RLI value is constant over time, the overall extinction risk remains unchanged. An upward trend shows a reduction in the rate of biodiversity loss.
-    outputSource: IUCNRedlistIndex>RedListIndex.yml@59/redlist_trend_plot
+  IUCNRedlistIndex>IUCN_redlist_spUse.yml@77|species_use:
+    type: string[]
+    label: Species use(s)
+    doc: The species use(s) or trade(s) selected.
+    outputSource: IUCNRedlistIndex>IUCN_redlist_spUse.yml@77/species_use
 
   IUCNRedlistIndex>IUCN_redlist_historyAssesment.yml@55|api_citation:
     type: File
     label: IUCN API citation
     doc: Citation for the data acquired using the IUCN Red List API.
     outputSource: IUCNRedlistIndex>IUCN_redlist_historyAssesment.yml@55/api_citation
-
-  IUCNRedlistIndex>RedListIndex.yml@59|redlist_matrix:
-    type: File
-    label: Red List matrix
-    doc: Matrix showing the distribution of threat categories over time for the group of species.
-    outputSource: IUCNRedlistIndex>RedListIndex.yml@59/redlist_matrix
-
-  IUCNRedlistIndex>IUCN_redlist_spUse.yml@77|species_use:
-    type: string[]
-    label: Species use(s)
-    doc: The species use(s) or trade(s) selected.
-    outputSource: IUCNRedlistIndex>IUCN_redlist_spUse.yml@77/species_use
 

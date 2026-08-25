@@ -1,4 +1,5 @@
-url: https://drive.google.com/file/d/1KKFOBKInnroe452Y7P8uu-h42QbHM6ff/view?usp=sharing  # default value of type 'string'. (optional)
+url: 
+    https://drive.google.com/file/d/1KKFOBKInnroe452Y7P8uu-h42QbHM6ff/view?usp=sharing  # default value of type 'string'. (optional)
 shp_name: shape_study_area_nolakes_nad83  # default value of type 'string'. (optional)
 scripts_root:  # type 'Directory' (optional)
     class: Directory
@@ -14,4 +15,5 @@ envFolderWritable: true  # default value of type 'boolean'.
 envFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-condaPackURL: https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
+condaPackURL: 
+    https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.

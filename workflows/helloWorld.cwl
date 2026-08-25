@@ -183,7 +183,7 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
 
           
       inputs:
@@ -213,8 +213,8 @@ steps:
       some_int: helloWorld>helloPython.yml@0|some_int
       study_area_bbox: helloWorld>helloPython.yml@0|study_area_bbox
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/helloWorld__helloPython/0' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/helloWorld__helloPython/0' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root

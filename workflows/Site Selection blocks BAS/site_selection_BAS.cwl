@@ -58,35 +58,17 @@ inputs:
   #################
   # Script inputs #
   #################
-  site_selection_BAS>BAS_algorithm.yml@26|ndesign:
-    type: int?
-    label: Target total sites
-    doc: A number of target sampling sites to obtain with the algorithm
-    default: 100
-
-  site_selection_BAS>Block_creation.yml@0|n_cols:
-    type: int?
-    label: Number of columns
-    doc: Number of columns for the environmental space grid (together with rows will define the final number of environmental blocks)
-    default: 10
-
-  data>loadFromStac.yml@2|collections_items:
-    type: string[]?
-    label: Environmental variables (STAC collection items)
-    doc: Set of environmental variables to use  (e.g. for temperature "chelsa-clim|bio1", precipitation "chelsa-clim|bio12"), on which to run the PCA (a minimum of 2 variables are needed). Environmental variables must be continuous values.
-    default:
-    - chelsa-clim|bio1
-    - chelsa-clim|bio2
-
-  site_selection_BAS>BAS_algorithm.yml@26|options_bas:
+  data>load_polygons.yml@61|polygon_type:
     type:
       type: enum
       symbols:
-        - equal
-        - unequal
-    label: Sampling type
-    doc: Select and option between equal BAS or unequal probability BAS. "Equal" will not consider the blocks and place all sampling randomly in the whole study area.  "Unequal" will take into account the size of the each environmental block and redistribute the sampling sites based on the size of block.  
-    default: equal
+        - Country or region
+        - WDPA
+        - EEZ
+        - Polygon of bounding box
+    label: Polygon type
+    doc: Type of polygon to load. Country or region polygons, World database of Protected Areas (WDPA), Exclusive Economic Zones (EEZs), or a custom polygon of a bounding box.
+    default: Country or region
 
   pipeline@60:
     label: Bounding box and CRS
@@ -141,17 +123,35 @@ inputs:
           - name: bboxWGS84
             type: float[]?
 
-  data>load_polygons.yml@61|polygon_type:
+  data>loadFromStac.yml@2|collections_items:
+    type: string[]?
+    label: Environmental variables (STAC collection items)
+    doc: Set of environmental variables to use  (e.g. for temperature "chelsa-clim|bio1", precipitation "chelsa-clim|bio12"), on which to run the PCA (a minimum of 2 variables are needed). Environmental variables must be continuous values.
+    default:
+    - chelsa-clim|bio1
+    - chelsa-clim|bio2
+
+  site_selection_BAS>BAS_algorithm.yml@26|options_bas:
     type:
       type: enum
       symbols:
-        - Country or region
-        - WDPA
-        - EEZ
-        - Polygon of bounding box
-    label: Polygon type
-    doc: Type of polygon to load. Country or region polygons, World database of Protected Areas (WDPA), Exclusive Economic Zones (EEZs), or a custom polygon of a bounding box.
-    default: Country or region
+        - equal
+        - unequal
+    label: Sampling type
+    doc: Select and option between equal BAS or unequal probability BAS. "Equal" will not consider the blocks and place all sampling randomly in the whole study area.  "Unequal" will take into account the size of the each environmental block and redistribute the sampling sites based on the size of block.  
+    default: equal
+
+  site_selection_BAS>BAS_algorithm.yml@26|ndesign:
+    type: int?
+    label: Target total sites
+    doc: A number of target sampling sites to obtain with the algorithm
+    default: 100
+
+  site_selection_BAS>Block_creation.yml@0|n_cols:
+    type: int?
+    label: Number of columns
+    doc: Number of columns for the environmental space grid (together with rows will define the final number of environmental blocks)
+    default: 10
 
   site_selection_BAS>Block_creation.yml@0|n_rows:
     type: int?
@@ -252,7 +252,7 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
           bash -c 'getPackedEnv "site_selection_BAS__Block_creation" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-terra, r-ggplot2, r-tidyterra, r-cowplot, r-factoextra]
           name: site_selection_BAS__Block_creation
@@ -310,8 +310,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/site_selection_BAS__Block_creation/0' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/site_selection_BAS__Block_creation/0' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -337,8 +337,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/2' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/2' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -359,8 +359,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/site_selection_BAS__BAS_algorithm/26' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/site_selection_BAS__BAS_algorithm/26' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -379,8 +379,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/61' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/61' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -388,29 +388,17 @@ steps:
 
 
 outputs:
-  site_selection_BAS>Block_creation.yml@0|pca_summary_df:
-    type: csv
-    label: Summary of PCA
-    doc: Principal component analysis summary for the environmental variables included in the analysis
-    outputSource: site_selection_BAS>Block_creation.yml@0/pca_summary_df
-
-  site_selection_BAS>BAS_algorithm.yml@26|pts_df:
-    type: csv
-    label: Selected points
-    doc: dataframe of selected points
-    outputSource: site_selection_BAS>BAS_algorithm.yml@26/pts_df
-
   site_selection_BAS>Block_creation.yml@0|rast_blocks:
     type: File[]
     label: Environmental blocks raster
     doc: Raster file of the study area with the environmental blocks as categorical classes  
     outputSource: site_selection_BAS>Block_creation.yml@0/rast_blocks
 
-  site_selection_BAS>BAS_algorithm.yml@26|maps_output:
-    type: File
-    label: Maps output
-    doc: Maps of study area with selected sampling points only (no environmental blocks) and also including the environmental blocks.
-    outputSource: site_selection_BAS>BAS_algorithm.yml@26/maps_output
+  site_selection_BAS>Block_creation.yml@0|pca_summary_df:
+    type: csv
+    label: Summary of PCA
+    doc: Principal component analysis summary for the environmental variables included in the analysis
+    outputSource: site_selection_BAS>Block_creation.yml@0/pca_summary_df
 
   site_selection_BAS>Block_creation.yml@0|blocks_plot:
     type: File
@@ -418,15 +406,27 @@ outputs:
     doc: Blocks showing the PCA 1 and 2 result and the predefined blocks dividing the environmental space and the map of the environmental blocks in geographic space
     outputSource: site_selection_BAS>Block_creation.yml@0/blocks_plot
 
-  site_selection_BAS>BAS_algorithm.yml@26|points_shape:
+  site_selection_BAS>BAS_algorithm.yml@26|maps_output:
     type: File
-    label: selected points shapefile
-    doc: Vector shapefile of selected points
-    outputSource: site_selection_BAS>BAS_algorithm.yml@26/points_shape
+    label: Maps output
+    doc: Maps of study area with selected sampling points only (no environmental blocks) and also including the environmental blocks.
+    outputSource: site_selection_BAS>BAS_algorithm.yml@26/maps_output
 
   data>loadFromStac.yml@2|rasters:
     type: File[]
     label: Environmental Rasters
     doc: Array of environmental rasters (for exploration only)
     outputSource: data>loadFromStac.yml@2/rasters
+
+  site_selection_BAS>BAS_algorithm.yml@26|pts_df:
+    type: csv
+    label: Selected points
+    doc: dataframe of selected points
+    outputSource: site_selection_BAS>BAS_algorithm.yml@26/pts_df
+
+  site_selection_BAS>BAS_algorithm.yml@26|points_shape:
+    type: File
+    label: selected points shapefile
+    doc: Vector shapefile of selected points
+    outputSource: site_selection_BAS>BAS_algorithm.yml@26/points_shape
 

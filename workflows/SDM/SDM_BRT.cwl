@@ -30,40 +30,12 @@ inputs:
   #################
   # Script inputs #
   #################
-  data>getGBIFObservations>getGBIFObservations.yml@159|min_year:
-    type: int?
-    label: minimum year
-    doc: Min year observations wanted
-    default: 2010
-
-  pipeline@137:
-    type: string[]?
-    label: Environmental Predictors
-    doc: Vector of strings, collection name followed by '|' followed by item id. View GEO BON STAC catalog items [here](https://stac.geobon.org/viewer/). The collection name and item name can be found in the URL (e.g. for "https://stac.geobon.org/viewer/chelsa-clim/bio1" the collection name is chelsa-clim and the item id is bio1). 
-    default:
-    - chelsa-clim|bio1
-    - chelsa-clim|bio3
-    - chelsa-clim|bio4
-    - chelsa-clim|bio12
-    - chelsa-clim|bio15
-
-  pipeline@167:
-    type: File?
-    label: Study area
-    doc: Polygon of study area used to crop output layers
-
   pipeline@121:
     type: string[]?
     label: Species
     doc: Name of species
     default:
     - Acer saccharum
-
-  pipeline@154:
-    type: float?
-    label: Pseudoabsence proportion
-    doc: The number of PAs, given by the proportion of the total occurrences to use.
-    default: 2.4
 
   pipeline@174:
     label: Bounding and CRS
@@ -118,27 +90,28 @@ inputs:
           - name: bboxWGS84
             type: float[]?
 
-  pipeline@152:
-    type: float?
-    label: Pseudoabsence Buffer
-    doc: The minimum distance a PA is allowed to be from a presence in kilometers
-    default: 10
+  pipeline@137:
+    type: string[]?
+    label: Environmental Predictors
+    doc: Vector of strings, collection name followed by '|' followed by item id. View GEO BON STAC catalog items [here](https://stac.geobon.org/viewer/). The collection name and item name can be found in the URL (e.g. for "https://stac.geobon.org/viewer/chelsa-clim/bio1" the collection name is chelsa-clim and the item id is bio1). 
+    default:
+    - chelsa-clim|bio1
+    - chelsa-clim|bio3
+    - chelsa-clim|bio4
+    - chelsa-clim|bio12
+    - chelsa-clim|bio15
 
-  pipeline@153:
+  data>getGBIFObservations>getGBIFObservations.yml@159|min_year:
     type: int?
-    label: Max Candidate Pseudoabsences
-    doc: The maximum number of candidate pseudoabsences to consider. This speeds up PA generation on large rasters.
-    default: 100000
+    label: minimum year
+    doc: Min year observations wanted
+    default: 2010
 
-  data>loadFromStac.yml@161|t1:
-    type: string?
-    label: End date
-    doc: End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. For example, ESA landcover can be extracted by specifying the item name or specifying the whole collection and the start and end date here. Leave blank if extracting items by name.
-
-  data>loadFromStac.yml@161|temporal_res:
-    type: string?
-    label: Temporal resolution
-    doc: Temporal resolution to use when querying STAC items by date, in the format ("P", time interval, and time unit, e.g. "P1Y" is yearly, "P1M" is montly, and "P1D" is daily). Leave blank if not querying by date. If the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated with the aggregation method chosen below.
+  data>getGBIFObservations>getGBIFObservations.yml@159|max_year:
+    type: int?
+    label: maximum year
+    doc: Max year observations wanted
+    default: 2024
 
   pipeline@128:
     type: float?
@@ -151,16 +124,43 @@ inputs:
       If the spatial resolution is coarser than the native resolution of the rasters, the layers will be resampled with the resampling method "near".
     default: 1000
 
+  pipeline@152:
+    type: float?
+    label: Pseudoabsence Buffer
+    doc: The minimum distance a PA is allowed to be from a presence in kilometers
+    default: 10
+
+  pipeline@153:
+    type: int?
+    label: Max Candidate Pseudoabsences
+    doc: The maximum number of candidate pseudoabsences to consider. This speeds up PA generation on large rasters.
+    default: 100000
+
+  pipeline@154:
+    type: float?
+    label: Pseudoabsence proportion
+    doc: The number of PAs, given by the proportion of the total occurrences to use.
+    default: 2.4
+
+  pipeline@167:
+    type: File?
+    label: Study area
+    doc: Polygon of study area used to crop output layers
+
   data>loadFromStac.yml@161|t0:
     type: string?
     label: Start date
     doc: Start date for time series layers in STAC catalog. Can be in the format YYYY or YYYY-MM-DD. For example, ESA landcover can be extracted by specifying the item name or specifying the whole collection and the start and end date here. Leave blank if extracting items by name.
 
-  data>getGBIFObservations>getGBIFObservations.yml@159|max_year:
-    type: int?
-    label: maximum year
-    doc: Max year observations wanted
-    default: 2024
+  data>loadFromStac.yml@161|t1:
+    type: string?
+    label: End date
+    doc: End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. For example, ESA landcover can be extracted by specifying the item name or specifying the whole collection and the start and end date here. Leave blank if extracting items by name.
+
+  data>loadFromStac.yml@161|temporal_res:
+    type: string?
+    label: Temporal resolution
+    doc: Temporal resolution to use when querying STAC items by date, in the format ("P", time interval, and time unit, e.g. "P1Y" is yearly, "P1M" is montly, and "P1D" is daily). Leave blank if not querying by date. If the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated with the aggregation method chosen below.
 
 
 
@@ -255,7 +255,7 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
           bash -c 'getPackedEnv "filtering__cleanCoordinates" "channels: [conda-forge, r]
           dependencies: [r-terra, r-rjson, r-raster, r-dplyr, r-CoordinateCleaner, r-gdalcubes]
           name: filtering__cleanCoordinates
@@ -306,8 +306,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/filtering__cleanCoordinates/34' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/filtering__cleanCoordinates/34' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -325,8 +325,8 @@ steps:
       pseudoabsence_buffer: pipeline@152
       pa_proportion: pipeline@154
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__BRT__fitBRT/132' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__BRT__fitBRT/132' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -346,8 +346,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getGBIFObservations__getGBIFObservations/159' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getGBIFObservations__getGBIFObservations/159' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -373,8 +373,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/160' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/160' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -400,8 +400,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/161' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/161' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -409,11 +409,17 @@ steps:
 
 
 outputs:
-  SDM>BRT>fitBRT.yml@132|sdm_uncertainty:
+  pipeline@121|default_output:
+    type: string[]
+    label: Species
+    doc: Name of species
+    outputSource: pipeline@121
+
+  filtering>cleanCoordinates.yml@34|clean_presence:
     type: File
-    label: SDM Uncertainty
-    doc: Map of the BRT's relative uncertainty for each location.
-    outputSource: SDM>BRT>fitBRT.yml@132/sdm_uncertainty
+    label: Presences
+    doc: Occurrences from GBIF after cleaning
+    outputSource: filtering>cleanCoordinates.yml@34/clean_presence
 
   SDM>BRT>fitBRT.yml@132|pseudoabsences:
     type: File
@@ -427,29 +433,17 @@ outputs:
     doc: Diagnostic plot of the location of presences (blue) and pseudoabsences (red) in environment space for up to the first 5 predictors.
     outputSource: SDM>BRT>fitBRT.yml@132/env_corners
 
+  SDM>BRT>fitBRT.yml@132|tuning:
+    type: File
+    label: Tuning Curve
+    doc: Describes how the Matthew's Correlation Coefficient (MCC) changes as the threshold value changes from 0 to 1.
+    outputSource: SDM>BRT>fitBRT.yml@132/tuning
+
   SDM>BRT>fitBRT.yml@132|fit_stats:
     type: File
     label: Fit Statistics
     doc: JSON of BRT fit statistics and optimal threshold value.
     outputSource: SDM>BRT>fitBRT.yml@132/fit_stats
-
-  SDM>BRT>fitBRT.yml@132|range:
-    type: File
-    label: Range
-    doc: Range map thresholded at the optimal value.
-    outputSource: SDM>BRT>fitBRT.yml@132/range
-
-  data>getGBIFObservations>getGBIFObservations.yml@159|gbif_doi:
-    type: string
-    label: DOI of GBIF download
-    doc: DOI of GBIF download. Used for citing downloaded data.
-    outputSource: data>getGBIFObservations>getGBIFObservations.yml@159/gbif_doi
-
-  data>loadFromStac.yml@161|rasters:
-    type: File[]
-    label: Rasters
-    doc: Output raster files in geotiff format.
-    outputSource: data>loadFromStac.yml@161/rasters
 
   SDM>BRT>fitBRT.yml@132|predicted_sdm:
     type: File
@@ -457,27 +451,33 @@ outputs:
     doc: Map of occurrence score between 0 and 1.
     outputSource: SDM>BRT>fitBRT.yml@132/predicted_sdm
 
+  SDM>BRT>fitBRT.yml@132|range:
+    type: File
+    label: Range
+    doc: Range map thresholded at the optimal value.
+    outputSource: SDM>BRT>fitBRT.yml@132/range
+
+  SDM>BRT>fitBRT.yml@132|sdm_uncertainty:
+    type: File
+    label: SDM Uncertainty
+    doc: Map of the BRT's relative uncertainty for each location.
+    outputSource: SDM>BRT>fitBRT.yml@132/sdm_uncertainty
+
+  data>getGBIFObservations>getGBIFObservations.yml@159|gbif_doi:
+    type: string
+    label: DOI of GBIF download
+    doc: DOI of GBIF download. Used for citing downloaded data.
+    outputSource: data>getGBIFObservations>getGBIFObservations.yml@159/gbif_doi
+
   data>loadFromStac.yml@160|rasters:
     type: File[]
     label: Rasters
     doc: array of output raster paths
     outputSource: data>loadFromStac.yml@160/rasters
 
-  pipeline@121|default_output:
-    type: string[]
-    label: Species
-    doc: Name of species
-    outputSource: pipeline@121
-
-  filtering>cleanCoordinates.yml@34|clean_presence:
-    type: File
-    label: Presences
-    doc: Occurrences from GBIF after cleaning
-    outputSource: filtering>cleanCoordinates.yml@34/clean_presence
-
-  SDM>BRT>fitBRT.yml@132|tuning:
-    type: File
-    label: Tuning Curve
-    doc: Describes how the Matthew's Correlation Coefficient (MCC) changes as the threshold value changes from 0 to 1.
-    outputSource: SDM>BRT>fitBRT.yml@132/tuning
+  data>loadFromStac.yml@161|rasters:
+    type: File[]
+    label: Rasters
+    doc: Output raster files in geotiff format.
+    outputSource: data>loadFromStac.yml@161/rasters
 

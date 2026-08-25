@@ -38,83 +38,6 @@ inputs:
   #################
   # Script inputs #
   #################
-  pipeline@20:
-    type:
-      type: enum
-      symbols:
-        - first
-        - min
-        - max
-        - mean
-        - median
-    label: Aggregation method
-    doc: >
-      Method used to aggregate items when layers combining over time.
-      
-      Will be ignored if not aggregating.
-    default: first
-
-  data>loadFromStac.yml@1|t0:
-    type: string?
-    label: Start date (optional)
-    doc: Start date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
-
-  data>loadFromStac.yml@1|t1:
-    type: string?
-    label: End date (optional)
-    doc: End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
-
-  data>loadFromStac.yml@1|temporal_res:
-    type: string?
-    label: Temporal resolution (optional)
-    doc: Temporal resolution to use when querying STAC items by date, in the format ("P", time interval, and time unit, e.g. "P1Y" is yearly, "P1M" is monthly, and "P1D" is daily). Leave blank if not querying by date. If the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated with the aggregation method chosen below.
-
-  pipeline@19:
-    type: float?
-    label: Spatial resolution
-    doc: >
-      Integer, spatial resolution of the rasters in the same units as the coordinate reference system (meters for projected reference systems and degrees for reference systems in lat long). 
-      
-      If this is left blank it will use the native resolution of the rasters. 
-      
-      If the spatial resolution is coarser than the native resolution of the rasters, the layers will be resampled with the resampling method chosen below.
-    default: 0.008833
-
-  pipeline@18:
-    type:
-      type: enum
-      symbols:
-        - near
-        - bilinear
-        - average
-        - mode
-        - cubic
-        - cubicspline
-        - lanczos
-        - rms
-        - min
-        - max
-        - sum
-        - med
-        - q1
-        - q3
-    label: Resampling method
-    doc: >
-      Resampling method used when rescaling and/or reprojecting the raster layers. See [gdalwarp](https://gdal.org/en/latest/programs/gdalwarp.html) for description.
-      
-      Will be ignored if not resampling.
-    default: near
-
-  data>load_polygons.yml@25|polygon_type:
-    type:
-      type: enum
-      symbols:
-        - Country or region
-        - Polygon of bounding box
-    label: Polygon type
-    doc: Type of polygon to load. Country or region polygons, World database of Protected Areas (WDPA), or Exclusive Economic Zones (EEZs).
-    default: Country or region
-
   pipeline@24:
     label: Bounding box and CRS
     doc: Select a country/region and a CRS to obtain the associated bounding box. You may also draw/input a custom bounding box along with a CRS.
@@ -167,6 +90,83 @@ inputs:
             type: string?
           - name: bboxWGS84
             type: float[]?
+
+  data>load_polygons.yml@25|polygon_type:
+    type:
+      type: enum
+      symbols:
+        - Country or region
+        - Polygon of bounding box
+    label: Polygon type
+    doc: Type of polygon to load. Country or region polygons, World database of Protected Areas (WDPA), or Exclusive Economic Zones (EEZs).
+    default: Country or region
+
+  data>loadFromStac.yml@1|t0:
+    type: string?
+    label: Start date (optional)
+    doc: Start date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
+
+  data>loadFromStac.yml@1|t1:
+    type: string?
+    label: End date (optional)
+    doc: End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
+
+  data>loadFromStac.yml@1|temporal_res:
+    type: string?
+    label: Temporal resolution (optional)
+    doc: Temporal resolution to use when querying STAC items by date, in the format ("P", time interval, and time unit, e.g. "P1Y" is yearly, "P1M" is monthly, and "P1D" is daily). Leave blank if not querying by date. If the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated with the aggregation method chosen below.
+
+  pipeline@19:
+    type: float?
+    label: Spatial resolution
+    doc: >
+      Integer, spatial resolution of the rasters in the same units as the coordinate reference system (meters for projected reference systems and degrees for reference systems in lat long). 
+      
+      If this is left blank it will use the native resolution of the rasters. 
+      
+      If the spatial resolution is coarser than the native resolution of the rasters, the layers will be resampled with the resampling method chosen below.
+    default: 0.008833
+
+  pipeline@18:
+    type:
+      type: enum
+      symbols:
+        - near
+        - bilinear
+        - average
+        - mode
+        - cubic
+        - cubicspline
+        - lanczos
+        - rms
+        - min
+        - max
+        - sum
+        - med
+        - q1
+        - q3
+    label: Resampling method
+    doc: >
+      Resampling method used when rescaling and/or reprojecting the raster layers. See [gdalwarp](https://gdal.org/en/latest/programs/gdalwarp.html) for description.
+      
+      Will be ignored if not resampling.
+    default: near
+
+  pipeline@20:
+    type:
+      type: enum
+      symbols:
+        - first
+        - min
+        - max
+        - mean
+        - median
+    label: Aggregation method
+    doc: >
+      Method used to aggregate items when layers combining over time.
+      
+      Will be ignored if not aggregating.
+    default: first
 
 
 
@@ -261,7 +261,7 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
           bash -c 'getPackedEnv "bilbi_indicators__bilbi_weighted_mean" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-terra, r-tidyverse]
           name: bilbi_indicators__bilbi_weighted_mean
@@ -313,8 +313,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/bilbi_indicators__bilbi_weighted_mean/0' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/bilbi_indicators__bilbi_weighted_mean/0' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -340,8 +340,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/1' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/1' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -367,8 +367,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/2' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/2' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -387,8 +387,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/25' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/25' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -402,12 +402,6 @@ outputs:
     doc: Output raster files in geotiff format.
     outputSource: data>loadFromStac.yml@1/rasters
 
-  bilbi_indicators>bilbi_weighted_mean.yml@0|time_series_plot:
-    type: File
-    label: Time series plot
-    doc: Plot of the geometric mean of the indicator over time in the study area of interest
-    outputSource: bilbi_indicators>bilbi_weighted_mean.yml@0/time_series_plot
-
   bilbi_indicators>bilbi_weighted_mean.yml@0|summarised_values:
     type: File
     label: BERI summary
@@ -417,4 +411,10 @@ outputs:
       
       The value, ranging from 0 to 1 represents the proportion of connected habitat expected to remain under climate change compared to what would exist without human modification or climate change.
     outputSource: bilbi_indicators>bilbi_weighted_mean.yml@0/summarised_values
+
+  bilbi_indicators>bilbi_weighted_mean.yml@0|time_series_plot:
+    type: File
+    label: Time series plot
+    doc: Plot of the geometric mean of the indicator over time in the study area of interest
+    outputSource: bilbi_indicators>bilbi_weighted_mean.yml@0/time_series_plot
 

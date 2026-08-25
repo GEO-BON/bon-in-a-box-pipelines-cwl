@@ -76,20 +76,6 @@ inputs:
   #################
   # Script inputs #
   #################
-  data>cleanWDPA.yml@48|include_marine:
-    type: boolean?
-    label: Include marine and coastal protected areas
-    doc: >
-      Toggle on to include marine and coastal protected areas. Note that the analysis is still limited to the bounds of the study 
-      area polygon.
-    default: false
-
-  pipeline@41:
-    type: File[]?
-    label: Polygon of study area (optional)
-    doc: Polygon of the study area, in geopackage format. To use a custom study area, input the path to the file in userdata (e.g. /userdata/study_area_polygon.gpkg) and it will override the country polygon from the "Get country polygon" script. Leave blank to use country or region polygons pulled from the "Get country polygon" script. Protected areas outside of the country polygon will be cropped out.
-    default: []
-
   pipeline@60:
     label: Bounding box and CRS
     doc: >
@@ -146,6 +132,32 @@ inputs:
           - name: bboxWGS84
             type: float[]?
 
+  pipeline@41:
+    type: File[]?
+    label: Polygon of study area (optional)
+    doc: Polygon of the study area, in geopackage format. To use a custom study area, input the path to the file in userdata (e.g. /userdata/study_area_polygon.gpkg) and it will override the country polygon from the "Get country polygon" script. Leave blank to use country or region polygons pulled from the "Get country polygon" script. Protected areas outside of the country polygon will be cropped out.
+    default: []
+
+  pipeline@29:
+    type: File[]?
+    label: Polygon of protected areas (optional)
+    doc: The protected areas (PAs) of interest. To combine WDPA data and custom data, add the path to the custom geopackage here "e.g. /userdata/my_protected_areas.gpkg). They will be combined within the script. If you want to use only custom polygons, please use the "ProtConn analysis with custom PAs" pipeline. Leave blank to use only WDPA data.
+    default: []
+
+  pipeline@69:
+    type: float?
+    label: Transboundary buffer
+    doc: >
+      Buffer for pulling transboundary protected areas (WDPA data only). The buffer will pull protected areas within that distance of the country border or bounding box in the unit of the coordinate reference system (meters or degrees). If pulling WDPA data with a custom bounding box, the buffer will not be applied.
+      
+      It is recommended that the user chooses a transboundary distance 5 times greater than the largest distance threshold, which corresponds to a dispersal probability of ~0.03.
+    default: 0
+
+  protconn_analysis>protconn_analysis.yml@42|date_column_name:
+    type: string?
+    label: Date column name (optional)
+    doc: Name of the column in the user provided protected area file that specifies when the PA was created. Leave blank if only using WDPA data.
+
   protconn_analysis>protconn_analysis.yml@42|distance_threshold:
     type: int[]?
     label: Distance analysis threshold
@@ -165,20 +177,6 @@ inputs:
     doc: Toggle on to calculate a time series ProtConn values based on date of PA establishment
     default: true
 
-  protconn_analysis>protconn_analysis.yml@42|date_column_name:
-    type: string?
-    label: Date column name (optional)
-    doc: Name of the column in the user provided protected area file that specifies when the PA was created. Leave blank if only using WDPA data.
-
-  data>cleanWDPA.yml@48|buffer_points:
-    type: boolean?
-    label: Buffer protected area points
-    doc: >
-      Toggle on to buffer protected area points by reported area. Some protected areas are reported as single points rather than polygons.
-      If checked, this will create a circular protected area around the reported point that is equal to the reported area.
-      If there is no reported area, it will remove the point. If left unchecked, all protected areas represented as points will be removed.
-    default: true
-
   protconn_analysis>protconn_analysis.yml@42|start_year:
     type: int?
     label: Start year (optional)
@@ -191,55 +189,17 @@ inputs:
     doc: Year for which you want ProtConn calculated (e.g. an input of 2000 will calculate ProtConn only for PAs that were designated before the year 2000)
     default: 2026
 
-  protconn_analysis>protconn_analysis.yml@42|pa_size_threshold:
-    type: float?
-    label: PA size threshold
-    doc: Size threshold for PAs, in meters squared. Protected areas smaller than this area will be removed. A threshold of 1000m2 was used in Saura et al. 2017 because at larger scales, protected areas less than 1000m2 do not have a large impact on ProtConn values. Removing small protected areas significantly speeds up calculation and is recommended for large areas. Input a value of 0 to keep all protected areas.
-    default: 1000
-
-  protconn_analysis>protconn_analysis.yml@42|include_na_dates:
-    type: boolean?
-    label: Include missing values for date
-    doc: How missing values for date should be handled in the time series analysis. If toggled on, protected areas with missing values for establishment date will be included in the time series analysis and assigned to the chosen value for start year. If not, these protected areas will be omitted from the time series analysis (note they will still be included in the main analysis).
-    default: true
-
-  data>cleanWDPA.yml@48|include_unesco:
-    type: boolean?
-    label: Include UNESCO Biosphere reserves
-    doc: >
-      Check to include UNESCO Biosphere reserves.  These serve as learning sites for sustainable development 
-      and combine biodiversity conservation with the sustainable use of natural resources and sustainable development. 
-      They may not be legally protected and may not be fully conserved, because they are often used for development or
-      human settlement. Excluding these will limit the dataset to meeting stricter conservation standards.
-    default: true
-
-  pipeline@29:
-    type: File[]?
-    label: Polygon of protected areas (optional)
-    doc: The protected areas (PAs) of interest. To combine WDPA data and custom data, add the path to the custom geopackage here "e.g. /userdata/my_protected_areas.gpkg). They will be combined within the script. If you want to use only custom polygons, please use the "ProtConn analysis with custom PAs" pipeline. Leave blank to use only WDPA data.
-    default: []
-
-  data>cleanWDPA.yml@48|include_oecm:
-    type: boolean?
-    label: Include OECMs
-    doc: >
-      Toggle on to include areas with other effective area-based conservation measures (OECMs). These are not officially designated protected areas but are still achieving conservation outcomes.
-    default: true
-
-  pipeline@69:
-    type: float?
-    label: Transboundary buffer
-    doc: >
-      Buffer for pulling transboundary protected areas (WDPA data only). The buffer will pull protected areas within that distance of the country border or bounding box in the unit of the coordinate reference system (meters or degrees). If pulling WDPA data with a custom bounding box, the buffer will not be applied.
-      
-      It is recommended that the user chooses a transboundary distance 5 times greater than the largest distance threshold, which corresponds to a dispersal probability of ~0.03.
-    default: 0
-
   protconn_analysis>protconn_analysis.yml@42|year_int:
     type: int?
     label: Year interval (optional)
     doc: Year interval for the time series plot of ProtConn values (e.g. an input of 20 will calculate ProtConn for every 20 years by filtering out protected areas established before that year). This input will only be used if the time series input is selected.
     default: 20
+
+  protconn_analysis>protconn_analysis.yml@42|pa_size_threshold:
+    type: float?
+    label: PA size threshold
+    doc: Size threshold for PAs, in meters squared. Protected areas smaller than this area will be removed. A threshold of 1000m2 was used in Saura et al. 2017 because at larger scales, protected areas less than 1000m2 do not have a large impact on ProtConn values. Removing small protected areas significantly speeds up calculation and is recommended for large areas. Input a value of 0 to keep all protected areas.
+    default: 1000
 
   pipeline@68:
     type:
@@ -269,6 +229,46 @@ inputs:
     - Established
     - Proposed
     - Adopted
+
+  data>cleanWDPA.yml@48|include_unesco:
+    type: boolean?
+    label: Include UNESCO Biosphere reserves
+    doc: >
+      Check to include UNESCO Biosphere reserves.  These serve as learning sites for sustainable development 
+      and combine biodiversity conservation with the sustainable use of natural resources and sustainable development. 
+      They may not be legally protected and may not be fully conserved, because they are often used for development or
+      human settlement. Excluding these will limit the dataset to meeting stricter conservation standards.
+    default: true
+
+  data>cleanWDPA.yml@48|buffer_points:
+    type: boolean?
+    label: Buffer protected area points
+    doc: >
+      Toggle on to buffer protected area points by reported area. Some protected areas are reported as single points rather than polygons.
+      If checked, this will create a circular protected area around the reported point that is equal to the reported area.
+      If there is no reported area, it will remove the point. If left unchecked, all protected areas represented as points will be removed.
+    default: true
+
+  data>cleanWDPA.yml@48|include_oecm:
+    type: boolean?
+    label: Include OECMs
+    doc: >
+      Toggle on to include areas with other effective area-based conservation measures (OECMs). These are not officially designated protected areas but are still achieving conservation outcomes.
+    default: true
+
+  data>cleanWDPA.yml@48|include_marine:
+    type: boolean?
+    label: Include marine and coastal protected areas
+    doc: >
+      Toggle on to include marine and coastal protected areas. Note that the analysis is still limited to the bounds of the study 
+      area polygon.
+    default: false
+
+  protconn_analysis>protconn_analysis.yml@42|include_na_dates:
+    type: boolean?
+    label: Include missing values for date
+    doc: How missing values for date should be handled in the time series analysis. If toggled on, protected areas with missing values for establishment date will be included in the time series analysis and assigned to the chosen value for start year. If not, these protected areas will be omitted from the time series analysis (note they will still be included in the main analysis).
+    default: true
 
 
 
@@ -363,7 +363,7 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
           bash -c 'getPackedEnv "data__cleanWDPA" "channels: [conda-forge, r]
           dependencies: [r-rjson=0.2.23, r-sf=1.1-0, r-lwgeom, r-remotes, r-lubridate=1.9.5,
             r-tidyverse=2.0.0]
@@ -418,8 +418,8 @@ steps:
       start_year: protconn_analysis>protconn_analysis.yml@42|start_year
       year_int: protconn_analysis>protconn_analysis.yml@42|year_int
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/protconn_analysis__protconn_analysis/42' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/protconn_analysis__protconn_analysis/42' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -443,8 +443,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__cleanWDPA/48' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__cleanWDPA/48' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -463,8 +463,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/61' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/61' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -483,8 +483,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/64' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/64' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -510,11 +510,11 @@ outputs:
             is the proportion connected through direct physical adjascency, capturing the value of neighboring or touching PAs. 
     outputSource: protconn_analysis>protconn_analysis.yml@42/protconn_result
 
-  data>load_polygons.yml@61|polygon:
+  protconn_analysis>protconn_analysis.yml@42|result_plot:
     type: File
-    label: Study area polygon
-    doc: Polygon of the study area
-    outputSource: data>load_polygons.yml@61/polygon
+    label: ProtConn result plot
+    doc: Donut plot of the percentage of total area that is unprotected, protected and connected, and protected and unconnected for each input dispersal distance (in meters).
+    outputSource: protconn_analysis>protconn_analysis.yml@42/result_plot
 
   protconn_analysis>protconn_analysis.yml@42|result_yrs:
     type: File
@@ -528,9 +528,9 @@ outputs:
     doc: Change in the percentage area that is protected and the percentage that is protected and connected over time, at the chosen time interval, compared to the Kunming-Montreal GBF goals.
     outputSource: protconn_analysis>protconn_analysis.yml@42/result_yrs_plot
 
-  protconn_analysis>protconn_analysis.yml@42|result_plot:
+  data>load_polygons.yml@61|polygon:
     type: File
-    label: ProtConn result plot
-    doc: Donut plot of the percentage of total area that is unprotected, protected and connected, and protected and unconnected for each input dispersal distance (in meters).
-    outputSource: protconn_analysis>protconn_analysis.yml@42/result_plot
+    label: Study area polygon
+    doc: Polygon of the study area
+    outputSource: data>load_polygons.yml@61/polygon
 

@@ -33,6 +33,12 @@ inputs:
   #################
   # Script inputs #
   #################
+  GFS_IndicatorsTool>get_pop_poly.yml@5|species_obs:
+    type: File?
+    label: Coordinates of species occurrence
+    doc: Path to the table storing the species observation coordinates. The table must incude header with "decimal_longitude" and "decimal_latitude" columns, indicating the coordinates of every observation.
+    default: /userdata/obs_data.tsv
+
   GFS_IndicatorsTool>get_pop_poly.yml@5|buffer_size:
     type: float?
     label: Size of buffer
@@ -44,12 +50,6 @@ inputs:
     label: Distance between populations
     doc: Distance [in km] to separate species observations in different populations.
     default: 50
-
-  GFS_IndicatorsTool>get_pop_poly.yml@5|species_obs:
-    type: File?
-    label: Coordinates of species occurrence
-    doc: Path to the table storing the species observation coordinates. The table must incude header with "decimal_longitude" and "decimal_latitude" columns, indicating the coordinates of every observation.
-    default: /userdata/obs_data.tsv
 
 
 
@@ -144,7 +144,7 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
 
           
       inputs:
@@ -176,8 +176,8 @@ steps:
       pop_distance: GFS_IndicatorsTool>get_pop_poly.yml@5|pop_distance
       countries: { default: [] }
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/GFS_IndicatorsTool__get_pop_poly/5' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/GFS_IndicatorsTool__get_pop_poly/5' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root

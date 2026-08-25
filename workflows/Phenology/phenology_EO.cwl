@@ -50,89 +50,6 @@ inputs:
     doc: Type of polygon to load. Country or region polygons, World database of Protected Areas (WDPA), Exclusive Economic Zones (EEZs), or a custom polygon of a bounding box.
     default: Country or region
 
-  pipeline@45:
-    type: string?
-    label: End year
-    doc: End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
-    default: '2024'
-
-  phenology>summarise_phenology.yml@37|spatial_resolution:
-    type: float?
-    label: Spatial resolution
-    doc: >
-      Integer, spatial resolution of the rasters in the same units as the coordinate reference system (meters for projected reference systems and degrees for reference systems in lat long).
-      Leave blank to use the original spatial resolution of the layers. If left blank, CRS must be EPSG:4326.
-    default: 0
-
-  pipeline@44:
-    type: string?
-    label: Start year
-    doc: Start date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
-    default: '2017'
-
-  phenology>summarise_phenology.yml@37|bands:
-    type:
-      type: enum[]
-      symbols:
-        - SOSD
-        - EOSD
-        - SOSV
-        - EOSV
-        - MAXD
-        - MAXV
-        - MINV
-        - AMPL
-        - LENGTH
-        - LSLOPE
-        - RSLOPE
-        - SPROD
-        - TPROD
-        - QFLAG
-    label: Bands
-    doc: >
-      Bands of interest for the calculations. 
-      - SOSD (Start of season date) - date when the vegetation growing season starts, when the PPI value reaches 25% of the season amplitude during the green-up period.
-      - EOSD (End of season date) - the date when the vegetation growing season ends in the time profile of the PPI. Occurs when the PPI value reaches 15% of the season amplitude during the green-down period.
-      - SOSV (Start of season value) - the value of the PPI at the start of the vegetation growing season
-      - EOSV (End of season value) - the value of the PPI at the end of the vegetation growing season
-      - MAXV (Season maximum value) - the maximum (peak) value that the PPI reaches during the vegetation growing season
-      - MAXD (Season maximum date) - date in the vegetation growing season where the maximum PPI is reached
-      - MINV (Season minimum value) - average PPI of minima of left and right sides of each season
-      - AMPL (Season amplitude) - difference between the maximum and minimum PPI values reached during the season
-      - LENGTH (Season length) - number of days between the start and end dates of the vegetation growing season
-      - LSLOPE (Slope of the green-up period) - the rate of change in the values of PPI at the day when the vegetation growing season starts
-      - RSLOPE (Slope of the green-down period) - the rate of change in the values of PPO at the date when the vegetation growing season ends
-      - SPROD (Seasonal productivity) - growing season integral computed as sum of all daily PPI values between the dates of the season start and end, minus their base level.
-      - TPROD (Total productivity) - the growing season integral computed as sum of all daily PPI values between the dates of the season start and end
-      - QFLAG (Quality flag) - quality indicator assisting users with the screening of clouds, shadows from clouds and topography, other dark areas, snow and water surfaces in their analysis of the PPI dataset
-    default:
-    - LENGTH
-    - AMPL
-
-  phenology>summarise_phenology.yml@37|aggregate_function:
-    type:
-      type: enum
-      symbols:
-        - mean
-        - min
-        - max
-    label: Aggregate function
-    doc: >
-      Method used to aggregate items when layers combining over time.
-      Will be ignored if not aggregating.
-    default: mean
-
-  phenology>summarise_phenology.yml@37|season:
-    type:
-      type: enum
-      symbols:
-        - SEASON1
-        - SEASON2
-    label: Season of interest
-    doc: >
-      Season for which to run phenology analyses. Season 1 is the first growing season (spring and early summer) and season 2 is the second growing season (late summer and fall).
-    default: SEASON1
-
   pipeline@68:
     label: Bounding box and CRS
     doc: Select a country/region and a CRS to obtain the associated bounding box.
@@ -185,6 +102,89 @@ inputs:
             type: string?
           - name: bboxWGS84
             type: float[]?
+
+  phenology>summarise_phenology.yml@37|season:
+    type:
+      type: enum
+      symbols:
+        - SEASON1
+        - SEASON2
+    label: Season of interest
+    doc: >
+      Season for which to run phenology analyses. Season 1 is the first growing season (spring and early summer) and season 2 is the second growing season (late summer and fall).
+    default: SEASON1
+
+  phenology>summarise_phenology.yml@37|bands:
+    type:
+      type: enum[]
+      symbols:
+        - SOSD
+        - EOSD
+        - SOSV
+        - EOSV
+        - MAXD
+        - MAXV
+        - MINV
+        - AMPL
+        - LENGTH
+        - LSLOPE
+        - RSLOPE
+        - SPROD
+        - TPROD
+        - QFLAG
+    label: Bands
+    doc: >
+      Bands of interest for the calculations. 
+      - SOSD (Start of season date) - date when the vegetation growing season starts, when the PPI value reaches 25% of the season amplitude during the green-up period.
+      - EOSD (End of season date) - the date when the vegetation growing season ends in the time profile of the PPI. Occurs when the PPI value reaches 15% of the season amplitude during the green-down period.
+      - SOSV (Start of season value) - the value of the PPI at the start of the vegetation growing season
+      - EOSV (End of season value) - the value of the PPI at the end of the vegetation growing season
+      - MAXV (Season maximum value) - the maximum (peak) value that the PPI reaches during the vegetation growing season
+      - MAXD (Season maximum date) - date in the vegetation growing season where the maximum PPI is reached
+      - MINV (Season minimum value) - average PPI of minima of left and right sides of each season
+      - AMPL (Season amplitude) - difference between the maximum and minimum PPI values reached during the season
+      - LENGTH (Season length) - number of days between the start and end dates of the vegetation growing season
+      - LSLOPE (Slope of the green-up period) - the rate of change in the values of PPI at the day when the vegetation growing season starts
+      - RSLOPE (Slope of the green-down period) - the rate of change in the values of PPO at the date when the vegetation growing season ends
+      - SPROD (Seasonal productivity) - growing season integral computed as sum of all daily PPI values between the dates of the season start and end, minus their base level.
+      - TPROD (Total productivity) - the growing season integral computed as sum of all daily PPI values between the dates of the season start and end
+      - QFLAG (Quality flag) - quality indicator assisting users with the screening of clouds, shadows from clouds and topography, other dark areas, snow and water surfaces in their analysis of the PPI dataset
+    default:
+    - LENGTH
+    - AMPL
+
+  phenology>summarise_phenology.yml@37|spatial_resolution:
+    type: float?
+    label: Spatial resolution
+    doc: >
+      Integer, spatial resolution of the rasters in the same units as the coordinate reference system (meters for projected reference systems and degrees for reference systems in lat long).
+      Leave blank to use the original spatial resolution of the layers. If left blank, CRS must be EPSG:4326.
+    default: 0
+
+  pipeline@44:
+    type: string?
+    label: Start year
+    doc: Start date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
+    default: '2017'
+
+  pipeline@45:
+    type: string?
+    label: End year
+    doc: End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
+    default: '2024'
+
+  phenology>summarise_phenology.yml@37|aggregate_function:
+    type:
+      type: enum
+      symbols:
+        - mean
+        - min
+        - max
+    label: Aggregate function
+    doc: >
+      Method used to aggregate items when layers combining over time.
+      Will be ignored if not aggregating.
+    default: mean
 
 
 
@@ -279,7 +279,7 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
           bash -c 'getPackedEnv "phenology__summarise_phenology" "channels: [conda-forge]
           dependencies: [openeo, pandas, geopandas, shapely]
           name: phenology__summarise_phenology
@@ -330,8 +330,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/phenology__summarise_phenology/37' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/phenology__summarise_phenology/37' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -346,8 +346,8 @@ steps:
       end_year: pipeline@45
       timeseries: phenology>summarise_phenology.yml@37/timeseries
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/phenology__phenology_difference/48' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/phenology__phenology_difference/48' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -366,8 +366,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/69' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/69' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -375,18 +375,6 @@ steps:
 
 
 outputs:
-  data>load_polygons.yml@69|polygon:
-    type: File
-    label: Polygon
-    doc: Polygons of the country, WDPA, EEZs for the country or region of interest
-    outputSource: data>load_polygons.yml@69/polygon
-
-  phenology>phenology_difference.yml@48|phenology_change_plot:
-    type: File
-    label: Plot of phenology change
-    doc: Plot of the summarised phenology values over time for the bands of interest
-    outputSource: phenology>phenology_difference.yml@48/phenology_change_plot
-
   phenology>summarise_phenology.yml@37|rasters:
     type: File[]
     label: Phenology rasters
@@ -401,9 +389,21 @@ outputs:
       Raster plot of change in phenology from the start year to the end year. The end year is subtracted from the start year, so larger values indicate a greater decrease in the given value over time.
     outputSource: phenology>phenology_difference.yml@48/phenology_change
 
+  phenology>phenology_difference.yml@48|phenology_change_plot:
+    type: File
+    label: Plot of phenology change
+    doc: Plot of the summarised phenology values over time for the bands of interest
+    outputSource: phenology>phenology_difference.yml@48/phenology_change_plot
+
   phenology>summarise_phenology.yml@37|timeseries:
     type: File
     label: Zonal statistics
     doc: Summarised values over the polygon of interest (mean, minimum, or maximum) for each year for each band of interest
     outputSource: phenology>summarise_phenology.yml@37/timeseries
+
+  data>load_polygons.yml@69|polygon:
+    type: File
+    label: Polygon
+    doc: Polygons of the country, WDPA, EEZs for the country or region of interest
+    outputSource: data>load_polygons.yml@69/polygon
 

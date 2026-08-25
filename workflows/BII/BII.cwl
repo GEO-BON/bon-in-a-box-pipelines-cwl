@@ -46,6 +46,16 @@ inputs:
   #################
   # Script inputs #
   #################
+  data>load_polygons.yml@68|polygon_type:
+    type:
+      type: enum
+      symbols:
+        - Country or region
+        - Polygon of bounding box
+    label: Polygon type
+    doc: Type of polygon to load. Country or region polygons, World database of Protected Areas (WDPA), Exclusive Economic Zones (EEZs), or a custom polygon of a bounding box.
+    default: Country or region
+
   pipeline@67:
     label: Bounding box and CRS
     doc: Select a country/region and a CRS to obtain the associated bounding box.
@@ -99,32 +109,6 @@ inputs:
           - name: bboxWGS84
             type: float[]?
 
-  data>load_polygons.yml@68|polygon_type:
-    type:
-      type: enum
-      symbols:
-        - Country or region
-        - Polygon of bounding box
-    label: Polygon type
-    doc: Type of polygon to load. Country or region polygons, World database of Protected Areas (WDPA), Exclusive Economic Zones (EEZs), or a custom polygon of a bounding box.
-    default: Country or region
-
-  pipeline@64:
-    type: string?
-    label: End date (optional)
-    doc: End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
-
-  pipeline@63:
-    type: string?
-    label: Start date (optional)
-    doc: Start date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
-
-  data>loadFromStac.yml@56|spatial_res:
-    type: float?
-    label: Spatial resolution (optional)
-    doc: Integer, spatial resolution of the rasters in the same units as the coordinate reference system (meters for projected reference systems and degrees for reference systems in lat long). If this is left blank it will use the native resolution of the rasters. If the spatial resolution is coarser than the native resolution of the rasters, the layers will be resampled using method "near".
-    default: 0.00833
-
   zonal_statistics>zonal_stats.yml@25|summary_statistic:
     type:
       type: enum[]
@@ -141,6 +125,22 @@ inputs:
     doc: Summary statistic for layers
     default:
     - mean
+
+  data>loadFromStac.yml@56|spatial_res:
+    type: float?
+    label: Spatial resolution (optional)
+    doc: Integer, spatial resolution of the rasters in the same units as the coordinate reference system (meters for projected reference systems and degrees for reference systems in lat long). If this is left blank it will use the native resolution of the rasters. If the spatial resolution is coarser than the native resolution of the rasters, the layers will be resampled using method "near".
+    default: 0.00833
+
+  pipeline@63:
+    type: string?
+    label: Start date (optional)
+    doc: Start date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
+
+  pipeline@64:
+    type: string?
+    label: End date (optional)
+    doc: End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
 
 
 
@@ -235,7 +235,7 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
           bash -c 'getPackedEnv "zonal_statistics__zonal_stats" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-terra, r-dplyr, r-sf, r-exactextractr, r-tidyr]
           name: zonal_statistics__zonal_stats
@@ -282,8 +282,8 @@ steps:
       start_year: pipeline@63
       end_year: pipeline@64
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/BII__BIIChange/14' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/BII__BIIChange/14' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -303,8 +303,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/zonal_statistics__zonal_stats/25' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/zonal_statistics__zonal_stats/25' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -330,8 +330,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/56' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/56' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -350,8 +350,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/68' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/68' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -365,11 +365,11 @@ outputs:
     doc: Summary statistic over the polygon
     outputSource: zonal_statistics>zonal_stats.yml@25/zonal_stats
 
-  data>loadFromStac.yml@56|rasters:
+  BII>BIIChange.yml@14|bii_change:
     type: File[]
-    label: Rasters
-    doc: Output raster files in geotiff format.
-    outputSource: data>loadFromStac.yml@56/rasters
+    label: Change in BII
+    doc: Raster plot of change in BII. Higher numbers indicate greater BII loss.
+    outputSource: BII>BIIChange.yml@14/bii_change
 
   data>load_polygons.yml@68|polygon:
     type: File
@@ -377,9 +377,9 @@ outputs:
     doc: Polygons of the country, WDPA, EEZs for the country or region of interest
     outputSource: data>load_polygons.yml@68/polygon
 
-  BII>BIIChange.yml@14|bii_change:
+  data>loadFromStac.yml@56|rasters:
     type: File[]
-    label: Change in BII
-    doc: Raster plot of change in BII. Higher numbers indicate greater BII loss.
-    outputSource: BII>BIIChange.yml@14/bii_change
+    label: Rasters
+    doc: Output raster files in geotiff format.
+    outputSource: data>loadFromStac.yml@56/rasters
 

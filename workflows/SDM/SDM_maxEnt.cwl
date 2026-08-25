@@ -75,57 +75,12 @@ inputs:
   #################
   # Script inputs #
   #################
-  pipeline@147:
-    type: int?
-    label: Number of folds
-    doc: Number of folds for random k-fold MaxEnt partitioning when partition type = random k-fold. Can be left blank when another method is chosen.
-    default: 10
-
-  pipeline@145:
-    type: string?
-    label: Minimum year or start date
-    doc: >
-      Earliest year for GBIF records. Accepts YYYY or YYYY-MM-DD; if a full date is supplied, only the year is used.
-      
-      It is recommended to use an early start date (e.g. 1980) to maximize the number of occurrence records for a given species.
-    default: '1980'
-
-  pipeline@146:
-    type: string?
-    label: Maximum year or end date
-    doc: Latest year for GBIF records. Accepts YYYY or YYYY-MM-DD; if a full date is supplied, only the year is used.
-    default: '2024'
-
   pipeline@121:
     type: string[]?
     label: Taxa list
     doc: Comma-separated list of [taxa](https://en.wikipedia.org/wiki/Taxon). Each value could be a species name, order, class, genus, kingdom or family, as long as it is an exact match with the GBIF taxonomic backbone. Individual species can be looked up [on the GBIF website](https://www.gbif.org/species/).
     default:
     - Acer saccharum
-
-  data>loadFromStac.yml@144|study_area:
-    type: File?
-    label: Study area
-    doc: Polygon of the study area, in geopackage format. To use a custom study area, input the path to the file in userdata (e.g. /userdata/study_area_polygon.gpkg) and it will crop the area to the shape of the polygon. Leave blank to use bounding box and CRS chosen above.
-
-  SDM>selectBackground.yml@40|method_background:
-    type:
-      type: enum
-      symbols:
-        - random
-        - inclusion_buffer
-        - weighted_raster
-        - unweighted_raster
-        - thickening
-    label: Method background
-    doc: >
-      Background points are generated using one of the five available methods. Choosing the right method can help correct for sampling bias in the GBIF data.
-      - `random`: background points are randomly sampled throughout the whole study extent. Good choice if your occurrence data has little spatial bias toward human activity/accessibility (e.g., roads, cities, well-surveyed areas).
-      - `weighted_raster`: background points are sampled in proportion to the number of observations in the observation-density heatmap of the selected taxonomic group. Recommended for heavily biased data, or when occurrences are missing due to gaps in survey/study coverage. This is the more extreme correction of the two raster-based methods (weighted and unweighted).
-      - `unweighted_raster`: background points are sampled only in cells where there are observations from a target group. Also addresses sampling bias and survey gaps, but more conservatively than weighted_raster. Recommended as the default of the two (weighted and unweighted).
-      - `inclusion_buffer`: background points are sampled within a buffer around observations. Useful if you don't think your species is well represented by the target taxonomic group. 
-      - `thickening`: background points are sampled in proportion to the local density of observations, within a buffer around each observation. Also useful when the target taxon group doesn't represent your species well, as an alternative to inclusion_buffer.
-    default: random
 
   data>GBIFHeatmapFromSTAC.yml@139|taxa:
     type:
@@ -141,77 +96,6 @@ inputs:
     label: Taxonomic group
     doc: Broad taxonomic group used to retrieve the GBIF observation-density heatmap for background-point sampling. Choose the group that best matches the modeled taxa, or all for all GBIF observations.
     default: plants
-
-  SDM>runMaxent.yml@108|partition_type:
-    type:
-      type: enum
-      symbols:
-        - randomkfold
-        - jackknife
-        - block
-        - checkerboard1
-        - checkerboard2
-    label: Partition type
-    doc: >
-      This option controls how ENMeval partitions presence and background data while tuning MaxEnt parameters.
-      
-      It is recommended to start with random k-fold. If you suspect overfitting or spatial autocorrelation, switch to block or checkerboard because these partition data geographically rather than randomly, which makes evaluation more robust to spatial autocorrelation between nearby points. If you don't have enough occurrence points for spatial partitioning, use jackknife.
-      
-         - Random k-fold \- partitions groups randomly into a user-specified (K) number of bins, and runs the model k times, with each bin used once as testing. Recommended to start with 10 folds.
-        - Block \- partitions the bounding box into four equally sized quadrants and assigns groups by quadrant. Because each fold is a large, contiguous geographic region, this tests how well the model transfers to broad, spatially distinct areas. This is a stricter test of spatial autocorrelation than checkerboard.
-        - Checkerboard 1 \- generates a checkerboard grid from the study area and assigns groups based on which square the points fall in. Folds are smaller and spatially interspersed (alternating across the study area) rather than large contiguous blocks, so it tests spatial independence at a finer scale than block.
-        - Checkerboard 2 \- Similar to checkerboard 1 but performs this separately for occurrence and background points
-        - Jackknife \- Does not partition the background points into testing and training (uses them all), performs leave one out cross validation. Recommended for small datasets only.
-    default: randomkfold
-
-  data>loadFromStac.yml@144|collections_items:
-    type: string[]?
-    label: STAC collection items
-    doc: >
-      To pull a specific collection item, input the collection name followed by | followed by the item ID (e.g. "chelsa-clim|bio1").
-      
-      To extract a whole collection, type the collection name only (e.g. "chelsa-clim").
-      
-      If pulling a layer that is tiled (e.g. https://stac.geobon.org/viewer/gfw-lossyear/_80N_180W), enter the collection name (e.g. gfw-lossyear) and a bounding box, and the script will assemble the tiles into a continuous layer automatically.
-    default:
-    - chelsa-clim|bio1
-    - chelsa-clim|bio2
-
-  pipeline@128:
-    type: float?
-    label: Spatial resolution
-    doc: >
-      Target spatial resolution for the predictor rasters and GBIF heatmap. Units must match the selected CRS, for example meters for projected CRS or degrees for latitude-longitude CRS.
-      
-      Choosing a coarser resolution reduces computation time, but at the cost of fine-scale predictor detail. Variables like land cover and elevation may lose relevance at coarse scales, while broader-scale variables such as climate become comparatively more informative.
-    default: 1000
-
-  data>loadFromStac.yml@144|temporal_res:
-    type: string?
-    label: Temporal resolution
-    doc: >
-      Temporal resolution to use when querying STAC items by date, in the format ("P", time interval, and time unit, e.g. "P1Y" is yearly, "P1M" is monthly, and "P1D" is daily). 
-      
-      If there is no temporal option all items will be extracted. If the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated using the 'first' method.
-    default: P1Y
-
-  SDM>runMaxent.yml@108|rm:
-    type: float[]?
-    label: Regularization multiplier
-    doc: Regularization multiplier values to evaluate for MaxEnt model tuning. The regularization multiplier controls how strongly MaxEnt penalizes model complexity. Lower values allow a more flexible model that may fit local patterns closely. Higher values produce smoother, more generalized predictions and reduce overfitting risk. 
-    default:
-    - 0.5
-    - 1
-    - 2
-
-  SDM>runMaxent.yml@108|fc:
-    type: string[]?
-    label: Feature classes
-    doc: MaxEnt feature classes control the shapes of relationships the model can learn between species occurrence and environmental predictors. Simpler classes, such as L or LQ, fit smoother, more constrained responses and are often safer for small datasets. More complex combinations, such as LQH or LQHP, can capture more flexible ecological responses but may overfit when occurrence records are limited. This pipeline tests all values provided here and selects the best-performing combination using the parameter selection method configured in the MaxEnt step. Accepted values are combinations of L (linear), Q (quadratic), P (product), H (hinge) or T (threshold).
-    default:
-    - L
-    - LQ
-    - LQHP
 
   pipeline@140:
     label: Bounding box and CRS
@@ -247,38 +131,62 @@ inputs:
       - name: bbox
         type: float[]
 
-  SDM>runMaxent.yml@108|crs:
-    label: CRS
-    doc: Object containing CRS.
-    type:
-      type: record
-      name: CRS
-      fields:
-      - name: CRS
-        type:
-          name: CRSDefinition
-          type: record
-          fields:
-          - name: unit
-            type: string?
-          - name: code
-            type: int?
-          - name: authority
-            type: string?
-          - name: name
-            type: string?
-          - name: CRSBboxWGS84
-            type: float[]?
-          - name: proj4Def
-            type: string?
-          - name: wktDef
-            type: string?
+  data>loadFromStac.yml@144|study_area:
+    type: File?
+    label: Study area
+    doc: Polygon of the study area, in geopackage format. To use a custom study area, input the path to the file in userdata (e.g. /userdata/study_area_polygon.gpkg) and it will crop the area to the shape of the polygon. Leave blank to use bounding box and CRS chosen above.
+
+  pipeline@128:
+    type: float?
+    label: Spatial resolution
+    doc: >
+      Target spatial resolution for the predictor rasters and GBIF heatmap. Units must match the selected CRS, for example meters for projected CRS or degrees for latitude-longitude CRS.
+      
+      Choosing a coarser resolution reduces computation time, but at the cost of fine-scale predictor detail. Variables like land cover and elevation may lose relevance at coarse scales, while broader-scale variables such as climate become comparatively more informative.
+    default: 1000
 
   data>loadFromStac.yml@144|stac_url:
     type: string?
     label: STAC URL
     doc: URL of the STAC catalog used to retrieve environmental predictor layers.
     default: https://stac.geobon.org/
+
+  data>loadFromStac.yml@144|collections_items:
+    type: string[]?
+    label: STAC collection items
+    doc: >
+      To pull a specific collection item, input the collection name followed by | followed by the item ID (e.g. "chelsa-clim|bio1").
+      
+      To extract a whole collection, type the collection name only (e.g. "chelsa-clim").
+      
+      If pulling a layer that is tiled (e.g. https://stac.geobon.org/viewer/gfw-lossyear/_80N_180W), enter the collection name (e.g. gfw-lossyear) and a bounding box, and the script will assemble the tiles into a continuous layer automatically.
+    default:
+    - chelsa-clim|bio1
+    - chelsa-clim|bio2
+
+  pipeline@145:
+    type: string?
+    label: Minimum year or start date
+    doc: >
+      Earliest year for GBIF records. Accepts YYYY or YYYY-MM-DD; if a full date is supplied, only the year is used.
+      
+      It is recommended to use an early start date (e.g. 1980) to maximize the number of occurrence records for a given species.
+    default: '1980'
+
+  pipeline@146:
+    type: string?
+    label: Maximum year or end date
+    doc: Latest year for GBIF records. Accepts YYYY or YYYY-MM-DD; if a full date is supplied, only the year is used.
+    default: '2024'
+
+  data>loadFromStac.yml@144|temporal_res:
+    type: string?
+    label: Temporal resolution
+    doc: >
+      Temporal resolution to use when querying STAC items by date, in the format ("P", time interval, and time unit, e.g. "P1Y" is yearly, "P1M" is monthly, and "P1D" is daily). 
+      
+      If there is no temporal option all items will be extracted. If the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated using the 'first' method.
+    default: P1Y
 
   SDM>selectBackground.yml@40|n_background:
     type: int?
@@ -289,11 +197,76 @@ inputs:
       Typically it is recommended to start with 10000 points. If you have a very large study area you can increase this amount to fully capture the available environmental space. If you have a very small study area (i.e. fewer than 10000 pixels) you can reduce the number of background points.
     default: 10000
 
+  SDM>selectBackground.yml@40|method_background:
+    type:
+      type: enum
+      symbols:
+        - random
+        - inclusion_buffer
+        - weighted_raster
+        - unweighted_raster
+        - thickening
+    label: Method background
+    doc: >
+      Background points are generated using one of the five available methods. Choosing the right method can help correct for sampling bias in the GBIF data.
+      - `random`: background points are randomly sampled throughout the whole study extent. Good choice if your occurrence data has little spatial bias toward human activity/accessibility (e.g., roads, cities, well-surveyed areas).
+      - `weighted_raster`: background points are sampled in proportion to the number of observations in the observation-density heatmap of the selected taxonomic group. Recommended for heavily biased data, or when occurrences are missing due to gaps in survey/study coverage. This is the more extreme correction of the two raster-based methods (weighted and unweighted).
+      - `unweighted_raster`: background points are sampled only in cells where there are observations from a target group. Also addresses sampling bias and survey gaps, but more conservatively than weighted_raster. Recommended as the default of the two (weighted and unweighted).
+      - `inclusion_buffer`: background points are sampled within a buffer around observations. Useful if you don't think your species is well represented by the target taxonomic group. 
+      - `thickening`: background points are sampled in proportion to the local density of observations, within a buffer around each observation. Also useful when the target taxon group doesn't represent your species well, as an alternative to inclusion_buffer.
+    default: random
+
   pipeline@46:
     type: int?
     label: Number of runs
     doc: Number of bootstrap or cross-validation runs used when preparing SDM training and testing data.
     default: 2
+
+  SDM>runMaxent.yml@108|fc:
+    type: string[]?
+    label: Feature classes
+    doc: MaxEnt feature classes control the shapes of relationships the model can learn between species occurrence and environmental predictors. Simpler classes, such as L or LQ, fit smoother, more constrained responses and are often safer for small datasets. More complex combinations, such as LQH or LQHP, can capture more flexible ecological responses but may overfit when occurrence records are limited. This pipeline tests all values provided here and selects the best-performing combination using the parameter selection method configured in the MaxEnt step. Accepted values are combinations of L (linear), Q (quadratic), P (product), H (hinge) or T (threshold).
+    default:
+    - L
+    - LQ
+    - LQHP
+
+  SDM>runMaxent.yml@108|rm:
+    type: float[]?
+    label: Regularization multiplier
+    doc: Regularization multiplier values to evaluate for MaxEnt model tuning. The regularization multiplier controls how strongly MaxEnt penalizes model complexity. Lower values allow a more flexible model that may fit local patterns closely. Higher values produce smoother, more generalized predictions and reduce overfitting risk. 
+    default:
+    - 0.5
+    - 1
+    - 2
+
+  SDM>runMaxent.yml@108|partition_type:
+    type:
+      type: enum
+      symbols:
+        - randomkfold
+        - jackknife
+        - block
+        - checkerboard1
+        - checkerboard2
+    label: Partition type
+    doc: >
+      This option controls how ENMeval partitions presence and background data while tuning MaxEnt parameters.
+      
+      It is recommended to start with random k-fold. If you suspect overfitting or spatial autocorrelation, switch to block or checkerboard because these partition data geographically rather than randomly, which makes evaluation more robust to spatial autocorrelation between nearby points. If you don't have enough occurrence points for spatial partitioning, use jackknife.
+      
+         - Random k-fold \- partitions groups randomly into a user-specified (K) number of bins, and runs the model k times, with each bin used once as testing. Recommended to start with 10 folds.
+        - Block \- partitions the bounding box into four equally sized quadrants and assigns groups by quadrant. Because each fold is a large, contiguous geographic region, this tests how well the model transfers to broad, spatially distinct areas. This is a stricter test of spatial autocorrelation than checkerboard.
+        - Checkerboard 1 \- generates a checkerboard grid from the study area and assigns groups based on which square the points fall in. Folds are smaller and spatially interspersed (alternating across the study area) rather than large contiguous blocks, so it tests spatial independence at a finer scale than block.
+        - Checkerboard 2 \- Similar to checkerboard 1 but performs this separately for occurrence and background points
+        - Jackknife \- Does not partition the background points into testing and training (uses them all), performs leave one out cross validation. Recommended for small datasets only.
+    default: randomkfold
+
+  pipeline@147:
+    type: int?
+    label: Number of folds
+    doc: Number of folds for random k-fold MaxEnt partitioning when partition type = random k-fold. Can be left blank when another method is chosen.
+    default: 10
 
 
 
@@ -388,7 +361,7 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
           bash -c 'getPackedEnv "filtering__cleanCoordinates" "channels: [conda-forge, r]
           dependencies: [r-terra, r-rjson, r-raster, r-dplyr, r-CoordinateCleaner, r-gdalcubes]
           name: filtering__cleanCoordinates
@@ -468,8 +441,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/filtering__cleanCoordinates/34' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/filtering__cleanCoordinates/34' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -491,8 +464,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__selectBackground/40' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__selectBackground/40' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -515,8 +488,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__setupDataSdm/44' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__setupDataSdm/44' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -533,8 +506,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__rangePredictions/68' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__rangePredictions/68' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -556,8 +529,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__removeCollinearity/97' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__removeCollinearity/97' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -572,8 +545,8 @@ steps:
       method: { default: bbox }
       width_buffer: { default: 0 }
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__studyExtent/104' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__studyExtent/104' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -589,7 +562,7 @@ steps:
       rm: SDM>runMaxent.yml@108|rm
       partition_type: SDM>runMaxent.yml@108|partition_type
       orientation_block: { default: lat_lon }
-      crs: SDM>runMaxent.yml@108|crs
+      crs: pipeline@140
       n_folds: pipeline@147
       method_select_params: { default: AUC }
       envFolder:
@@ -598,8 +571,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__runMaxent/108' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__runMaxent/108' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -613,8 +586,8 @@ steps:
       bbox_crs: pipeline@140
       spatial_res: pipeline@128
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__GBIFHeatmapFromSTAC/139' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__GBIFHeatmapFromSTAC/139' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -634,8 +607,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getGBIFObservations__getGBIFObservations/142' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getGBIFObservations__getGBIFObservations/142' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -661,8 +634,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/144' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/144' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -670,11 +643,17 @@ steps:
 
 
 outputs:
-  data>getGBIFObservations>getGBIFObservations.yml@142|gbif_doi:
-    type: string
-    label: DOI of GBIF download
-    doc: A permanent DOI assigned to this specific GBIF data download. Must be cited in any publication using these data — see [GBIF's citation guidelines](https://www.gbif.org/citation-guidelines).
-    outputSource: data>getGBIFObservations>getGBIFObservations.yml@142/gbif_doi
+  filtering>cleanCoordinates.yml@34|clean_presence:
+    type: File
+    label: Presences
+    doc: Cleaned GBIF occurrence records that passed the selected coordinate-cleaning tests. These records are used as presence points in the SDM workflow.
+    outputSource: filtering>cleanCoordinates.yml@34/clean_presence
+
+  SDM>removeCollinearity.yml@97|rasters_selected:
+    type: File[]
+    label: Environmental predictors
+    doc: GeoTIFF predictor rasters retained after collinearity filtering. These are the environmental variables used to fit and project the MaxEnt model.
+    outputSource: SDM>removeCollinearity.yml@97/rasters_selected
 
   SDM>runMaxent.yml@108|sdm_pred:
     type: File
@@ -688,21 +667,15 @@ outputs:
     doc: The variability of the 95% confidence of each prediction can be viewed on a map to show uncertainty.
     outputSource: SDM>rangePredictions.yml@68/range_predictions
 
-  SDM>removeCollinearity.yml@97|rasters_selected:
-    type: File[]
-    label: Environmental predictors
-    doc: GeoTIFF predictor rasters retained after collinearity filtering. These are the environmental variables used to fit and project the MaxEnt model.
-    outputSource: SDM>removeCollinearity.yml@97/rasters_selected
-
   pipeline@121|default_output:
     type: string[]
     label: Taxa list
     doc: Taxa supplied to the pipeline and used for GBIF occurrence retrieval and model fitting.
     outputSource: pipeline@121
 
-  filtering>cleanCoordinates.yml@34|clean_presence:
-    type: File
-    label: Presences
-    doc: Cleaned GBIF occurrence records that passed the selected coordinate-cleaning tests. These records are used as presence points in the SDM workflow.
-    outputSource: filtering>cleanCoordinates.yml@34/clean_presence
+  data>getGBIFObservations>getGBIFObservations.yml@142|gbif_doi:
+    type: string
+    label: DOI of GBIF download
+    doc: A permanent DOI assigned to this specific GBIF data download. Must be cited in any publication using these data — see [GBIF's citation guidelines](https://www.gbif.org/citation-guidelines).
+    outputSource: data>getGBIFObservations>getGBIFObservations.yml@142/gbif_doi
 

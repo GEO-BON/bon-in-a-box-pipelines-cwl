@@ -36,17 +36,17 @@ inputs:
   #################
   # Script inputs #
   #################
-  GFS_IndicatorsTool>get_TCY.yml@23|res:
-    type: float?
-    label: Resolution of tree cover map
-    doc: Desired resolution for tree cover map, will be obtained via resampling. To be specified in decimal degrees (0.01 ~ 1 km). Minimal value 0.001 (~100m).
-    default: 0.01
-
   GFS_IndicatorsTool>get_TCY.yml@23|population_polygons:
     type: File?
     label: Polygons of populations
     doc: Path to geojson file storing polygons of populations.
     default: /userdata/populations.geojson
+
+  GFS_IndicatorsTool>get_TCY.yml@23|res:
+    type: float?
+    label: Resolution of tree cover map
+    doc: Desired resolution for tree cover map, will be obtained via resampling. To be specified in decimal degrees (0.01 ~ 1 km). Minimal value 0.001 (~100m).
+    default: 0.01
 
   GFS_IndicatorsTool>get_TCY.yml@23|yoi:
     type: int[]?
@@ -152,7 +152,7 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
 
           
       inputs:
@@ -183,8 +183,8 @@ steps:
       res: GFS_IndicatorsTool>get_TCY.yml@23|res
       yoi: GFS_IndicatorsTool>get_TCY.yml@23|yoi
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/GFS_IndicatorsTool__get_TCY/23' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/GFS_IndicatorsTool__get_TCY/23' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root

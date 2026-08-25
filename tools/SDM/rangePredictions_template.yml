@@ -5,7 +5,8 @@ scriptPath: SDM/rangePredictions.R  # default value of type 'string'.
 runFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-predictions: /output/runSDM/modRunSDM_R/a2cb00aa7fb8278599666812601a9c76/sdm_pred.tif  # array of type 'File' (optional)
+predictions: 
+    /output/runSDM/modRunSDM_R/a2cb00aa7fb8278599666812601a9c76/sdm_pred.tif  # array of type 'File' (optional)
 environment:  # type 'File' (optional)
     class: File
     path: a/file/path
@@ -13,4 +14,5 @@ envFolderWritable: true  # default value of type 'boolean'.
 envFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-condaPackURL: https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
+condaPackURL: 
+    https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.

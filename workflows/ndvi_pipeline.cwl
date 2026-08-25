@@ -107,6 +107,12 @@ inputs:
     doc: Start date for summarizing vegetation index
     default: '2024-01-01'
 
+  NDVI>calculateNDVI.yml@199|end_date:
+    type: string?
+    label: End date
+    doc: End date for summarizing vegetation index
+    default: '2024-01-31'
+
   NDVI>calculateNDVI.yml@199|spatial_resolution:
     type: float?
     label: Spatial resolution
@@ -127,12 +133,6 @@ inputs:
     label: Summary statistic
     doc: Statistic to summarize layers over time for summarised raster layer and space for plot of ndvi means over time
     default: mean
-
-  NDVI>calculateNDVI.yml@199|end_date:
-    type: string?
-    label: End date
-    doc: End date for summarizing vegetation index
-    default: '2024-01-31'
 
 
 
@@ -227,7 +227,7 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
           bash -c 'getPackedEnv "NDVI__calculateNDVI" "channels: [conda-forge]
           dependencies: [openeo, pandas, geopandas, pyproj, shapely, pandas, matplotlib]
           name: NDVI__calculateNDVI
@@ -276,8 +276,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/NDVI__calculateNDVI/199' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/NDVI__calculateNDVI/199' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -296,8 +296,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/211' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/211' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -305,11 +305,12 @@ steps:
 
 
 outputs:
-  NDVI>calculateNDVI.yml@199|timeseries_plot:
-    type: File
-    label: NDVI time series plot
-    doc: Plot of NDVI values over time
-    outputSource: NDVI>calculateNDVI.yml@199/timeseries_plot
+  NDVI>calculateNDVI.yml@199|rasters:
+    type: File[]
+    label: Vegetation index rasters
+    doc: >
+      Raster of the NDVI values summarised by the input statistic (mean, max, min, median) for each pixel within the time span choosen. If multiple indices were chosen, each band corresponds to a different vegetation index
+    outputSource: NDVI>calculateNDVI.yml@199/rasters
 
   NDVI>calculateNDVI.yml@199|timeseries:
     type: File
@@ -317,12 +318,11 @@ outputs:
     doc: Time series of NDVI values for every date where there is data in the specified time period.
     outputSource: NDVI>calculateNDVI.yml@199/timeseries
 
-  NDVI>calculateNDVI.yml@199|rasters:
-    type: File[]
-    label: Vegetation index rasters
-    doc: >
-      Raster of the NDVI values summarised by the input statistic (mean, max, min, median) for each pixel within the time span choosen. If multiple indices were chosen, each band corresponds to a different vegetation index
-    outputSource: NDVI>calculateNDVI.yml@199/rasters
+  NDVI>calculateNDVI.yml@199|timeseries_plot:
+    type: File
+    label: NDVI time series plot
+    doc: Plot of NDVI values over time
+    outputSource: NDVI>calculateNDVI.yml@199/timeseries_plot
 
   data>load_polygons.yml@211|polygon:
     type: File

@@ -44,19 +44,6 @@ inputs:
   #################
   # Script inputs #
   #################
-  pipeline@77:
-    type:
-      type: enum
-      symbols:
-        - MOL
-        - IUCN
-        - QC
-    label: Source of expert range map
-    doc: >
-      Source of the expert range map for the species. The options are:
-      Map of Life (MOL), International union for conservation of nature (IUCN) and range maps from the Ministère de l’Environnement du Québec (QC).
-    default: IUCN
-
   pipeline@76:
     type: string[]?
     label: Species
@@ -64,36 +51,6 @@ inputs:
     default:
     - Myrmecophaga tridactyla
     - Ateles fusciceps
-
-  pipeline@112:
-    type: File?
-    label: Study area
-    doc: Path to the study area file. This file should be a polygon with a .gpkg extension or .shp (in this case do not foget to add the projection file to the folder). This input is optional and can be used if the user wants to provide a custom study area.
-
-  data>getAreaOfHabitat.yml@80|r_range_map:
-    type: File[]?
-    label: Range map (raster)
-    doc: Raster with expected area for the species if choosing option "Raster"
-    default:
-    - null
-
-  SHI>habitatChange_GFW.yml@96|t_0:
-    type: int?
-    label: Initial time
-    doc: Year where the analysis should start. Starts in 2000, check the time interval available for the [Global Forest Watch data](https://stac.geobon.org/collections/gfw-lossyear).
-    default: 2000
-
-  SHI>habitatChange_GFW.yml@96|t_n:
-    type: int?
-    label: Final time
-    doc: Year where the analysis should end (it should be later than Initial time). It should be inside the time interval for the [Global Forest Watch data](https://stac.geobon.org/collections/gfw-lossyear).
-    default: 2020
-
-  data>getAreaOfHabitat.yml@80|buff_size:
-    type: int?
-    label: Buffer for study area
-    doc: Size of the buffer around the study area. If it is not defined it will be estimated as half of the total width of the study area.
-    default: 0
 
   pipeline@118:
     label: Bounding box and CRS
@@ -148,12 +105,100 @@ inputs:
           - name: bboxWGS84
             type: float[]?
 
+  pipeline@112:
+    type: File?
+    label: Study area
+    doc: Path to the study area file. This file should be a polygon with a .gpkg extension or .shp (in this case do not foget to add the projection file to the folder). This input is optional and can be used if the user wants to provide a custom study area.
+
+  data>getAreaOfHabitat.yml@80|buff_size:
+    type: int?
+    label: Buffer for study area
+    doc: Size of the buffer around the study area. If it is not defined it will be estimated as half of the total width of the study area.
+    default: 0
+
+  data>getAreaOfHabitat.yml@80|range_map_type:
+    type:
+      type: enum
+      symbols:
+        - Polygon
+        - Raster
+        - Both
+    label: Type of range map
+    doc: Select type of range map according to the type of the source file: 1) polygon, 2) raster, 3) an intersection between the raster and polygon files.
+    default: Polygon
+
+  pipeline@77:
+    type:
+      type: enum
+      symbols:
+        - MOL
+        - IUCN
+        - QC
+    label: Source of expert range map
+    doc: >
+      Source of the expert range map for the species. The options are:
+      Map of Life (MOL), International union for conservation of nature (IUCN) and range maps from the Ministère de l’Environnement du Québec (QC).
+    default: IUCN
+
+  data>getAreaOfHabitat.yml@80|r_range_map:
+    type: File[]?
+    label: Range map (raster)
+    doc: Raster with expected area for the species if choosing option "Raster"
+    default:
+    - null
+
+  SHI>habitatChange_GFW.yml@96|min_forest:
+    type: int[]?
+    label: Min forest
+    doc: Minimum tree cover percentage required for each species, based on suitable habitat of the species. Acts as a filter for the Global Forest Watch Data. If not available, use Map of Life Values (e.g. [https://mol.org/species/range/Myrmecophaga-tridactyla]). For multiple species, input in the same order as input in species and separate with a comma.
+    default:
+    - 0
+
   SHI>habitatChange_GFW.yml@96|max_forest:
     type: int[]?
     label: Max forest
     doc: Maximum tree cover percentage required for each species, based on suitable habitat of the species. Acts as a filter for the Global Forest Watch Data. If not available, use Map of Life Values (e.g. [https://mol.org/species/range/Myrmecophaga-tridactyla]). For multiple species, input in the same order as input in species and separate with a comma.
     default:
     - 100
+
+  SHI>habitatChange_GFW.yml@96|t_0:
+    type: int?
+    label: Initial time
+    doc: Year where the analysis should start. Starts in 2000, check the time interval available for the [Global Forest Watch data](https://stac.geobon.org/collections/gfw-lossyear).
+    default: 2000
+
+  SHI>habitatChange_GFW.yml@96|t_n:
+    type: int?
+    label: Final time
+    doc: Year where the analysis should end (it should be later than Initial time). It should be inside the time interval for the [Global Forest Watch data](https://stac.geobon.org/collections/gfw-lossyear).
+    default: 2020
+
+  SHI>habitatChange_GFW.yml@96|time_step:
+    type: int?
+    label: Time step
+    doc: Temporal resolution for analysis given in number of years. To get values for the end year, time step should fit evenly into the given analysis range.
+    default: 10
+
+  pipeline@79:
+    type: int?
+    label: Output spatial resolution
+    doc: >
+      Integer, spatial resolution of the rasters in the same units as the coordinate reference system (meters for projected reference systems and degrees for reference systems in lat long). 
+      
+      If this is left blank it will use the native resolution of the rasters. 
+      
+      If the spatial resolution is coarser than the native resolution of the rasters, the layers will be resampled with the resampling method chosen below.
+    default: 1000
+
+  data>getAreaOfHabitat.yml@80|elevation_filter:
+    type:
+      type: enum
+      symbols:
+        - Yes
+        - No
+    label: Filter by elevation
+    doc: If 'yes' an elevation filter using IUCN information is applied, if 'no' the range map is taken as the area of habitat.
+    default: 'Yes'
 
   data>getAreaOfHabitat.yml@80|elev_buffer:
     type: int?
@@ -183,40 +228,6 @@ inputs:
     doc: Resampling method used when rescaling the raster layers. See [gdalwarp](https://gdal.org/en/latest/programs/gdalwarp.html) for description.
     default: near
 
-  data>getAreaOfHabitat.yml@80|elevation_filter:
-    type:
-      type: enum
-      symbols:
-        - Yes
-        - No
-    label: Filter by elevation
-    doc: If 'yes' an elevation filter using IUCN information is applied, if 'no' the range map is taken as the area of habitat.
-    default: 'Yes'
-
-  SHI>habitatChange_GFW.yml@96|time_step:
-    type: int?
-    label: Time step
-    doc: Temporal resolution for analysis given in number of years. To get values for the end year, time step should fit evenly into the given analysis range.
-    default: 10
-
-  data>getAreaOfHabitat.yml@80|range_map_type:
-    type:
-      type: enum
-      symbols:
-        - Polygon
-        - Raster
-        - Both
-    label: Type of range map
-    doc: Select type of range map according to the type of the source file: 1) polygon, 2) raster, 3) an intersection between the raster and polygon files.
-    default: Polygon
-
-  SHI>habitatChange_GFW.yml@96|min_forest:
-    type: int[]?
-    label: Min forest
-    doc: Minimum tree cover percentage required for each species, based on suitable habitat of the species. Acts as a filter for the Global Forest Watch Data. If not available, use Map of Life Values (e.g. [https://mol.org/species/range/Myrmecophaga-tridactyla]). For multiple species, input in the same order as input in species and separate with a comma.
-    default:
-    - 0
-
   data>loadFromStac.yml@107|aggregation:
     type:
       type: enum
@@ -229,17 +240,6 @@ inputs:
     label: Aggregation method
     doc: Method used to aggregate items that overlay each other
     default: first
-
-  pipeline@79:
-    type: int?
-    label: Output spatial resolution
-    doc: >
-      Integer, spatial resolution of the rasters in the same units as the coordinate reference system (meters for projected reference systems and degrees for reference systems in lat long). 
-      
-      If this is left blank it will use the native resolution of the rasters. 
-      
-      If the spatial resolution is coarser than the native resolution of the rasters, the layers will be resampled with the resampling method chosen below.
-    default: 1000
 
 
 
@@ -334,7 +334,7 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
           bash -c 'getPackedEnv "data__getRangeMap" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-dplyr, r-tidyr, r-purrr, r-sf, r-stringr]
           name: data__getRangeMap
@@ -403,8 +403,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getRangeMap/65' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getRangeMap/65' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -422,8 +422,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SHI__calculateSHI/68' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SHI__calculateSHI/68' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -451,8 +451,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getAreaOfHabitat/80' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getAreaOfHabitat/80' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -478,8 +478,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SHI__habitatChange_GFW/96' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SHI__habitatChange_GFW/96' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -505,8 +505,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/107' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/107' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -523,8 +523,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getCountryPolygon/114' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getCountryPolygon/114' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -537,6 +537,18 @@ outputs:
     label: Species
     doc: Scientific name of the species. Multiple species names can be specified, separated with a comma.
     outputSource: pipeline@76
+
+  data>getRangeMap.yml@65|sf_range_map:
+    type: File[]
+    label: Expert range map
+    doc: Polygon with expected area for the species.
+    outputSource: data>getRangeMap.yml@65/sf_range_map
+
+  SHI>habitatChange_GFW.yml@96|r_habitat_by_tstep:
+    type: File[]
+    label: Habitat by time step
+    doc: Raster of habitat by time step.
+    outputSource: SHI>habitatChange_GFW.yml@96/r_habitat_by_tstep
 
   SHI>habitatChange_GFW.yml@96|habitat_change_map:
     type: File[]
@@ -562,24 +574,6 @@ outputs:
     doc: Figure showing a time series of SHS values per time step for each species.
     outputSource: SHI>habitatChange_GFW.yml@96/img_shs_timeseries
 
-  SHI>calculateSHI.yml@68|img_w_shi_timeseries:
-    type: File
-    label: Steward’s SHI time series
-    doc: Figure showing a time series of Steward’s SHI values for each time step. This is weighted by the proportion between the area of habitat for the study area and the total range map of the species. The reference year will start at the proportion of area of habitat in the study area. For example, if half of the species habitat is covered by the study area, the reference year’s value will be 50%.
-    outputSource: SHI>calculateSHI.yml@68/img_w_shi_timeseries
-
-  SHI>habitatChange_GFW.yml@96|r_habitat_by_tstep:
-    type: File[]
-    label: Habitat by time step
-    doc: Raster of habitat by time step.
-    outputSource: SHI>habitatChange_GFW.yml@96/r_habitat_by_tstep
-
-  data>getRangeMap.yml@65|sf_range_map:
-    type: File[]
-    label: Expert range map
-    doc: Polygon with expected area for the species.
-    outputSource: data>getRangeMap.yml@65/sf_range_map
-
   SHI>calculateSHI.yml@68|df_shi:
     type: File
     label: SHI table
@@ -591,4 +585,10 @@ outputs:
     label: SHI time series
     doc: Figure showing a time series of SHI values for each time step, 100% being equal to the reference year.
     outputSource: SHI>calculateSHI.yml@68/img_shi_timeseries
+
+  SHI>calculateSHI.yml@68|img_w_shi_timeseries:
+    type: File
+    label: Steward’s SHI time series
+    doc: Figure showing a time series of Steward’s SHI values for each time step. This is weighted by the proportion between the area of habitat for the study area and the total range map of the species. The reference year will start at the proportion of area of habitat in the study area. For example, if half of the species habitat is covered by the study area, the reference year’s value will be 50%.
+    outputSource: SHI>calculateSHI.yml@68/img_w_shi_timeseries
 

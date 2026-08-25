@@ -31,72 +31,12 @@ inputs:
   #################
   # Script inputs #
   #################
-  data>loadFromStac.yml@140|stac_url:
-    type: string?
-    label: STAC URL
-    doc: URL of the STAC catalog to pull predictor layers.
-    default: https://stac.geobon.org/
-
-  data>loadFromStac.yml@140|collections_items:
-    type: string[]?
-    label: STAC collection items
-    doc: Collection name of STAC layers followed by '|' followed by item id
-    default:
-    - chelsa-clim|bio5
-    - earthenv_landcover|class_1
-    - earthenv_landcover|class_7
-    - earthenv_landcover|class_3
-
-  data>GBIFHeatmapFromSTAC.yml@145|taxa:
-    type:
-      type: enum
-      symbols:
-        - reptiles
-        - plants
-        - mammals
-        - birds
-        - arthropods
-        - amphibians
-        - all
-    label: Taxa
-    doc: taxonomic group for which to retrieve GBIF heatmap
-    default: plants
-
   pipeline@121:
     type: string[]?
     label: Taxa list
     doc: Array of taxa values
     default:
     - Acer saccharum
-
-  data>loadFromStac.yml@140|study_area:
-    type: File?
-    label: Study area
-    doc: Polygon of study area used to crop output layers
-
-  SDM>selectBackground.yml@40|method_background:
-    type:
-      type: enum
-      symbols:
-        - random
-        - inclusion_buffer
-        - weighted_raster
-        - unweighted_raster
-    label: Method background
-    doc: Method used to sample background points
-    default: weighted_raster
-
-  SDM>selectBackground.yml@40|n_background:
-    type: int?
-    label: Number of background points
-    doc: Number of background points
-    default: 100000
-
-  data>getGBIFObservations>getGBIFObservations.yml@139|min_year:
-    type: int?
-    label: minimum year
-    doc: Min year observations wanted
-    default: 2010
 
   pipeline@149:
     label: Bounding and CRS
@@ -151,11 +91,44 @@ inputs:
           - name: bboxWGS84
             type: float[]?
 
-  data>getGBIFObservations>getGBIFObservations.yml@139|max_year:
+  SDM>selectBackground.yml@40|method_background:
+    type:
+      type: enum
+      symbols:
+        - random
+        - inclusion_buffer
+        - weighted_raster
+        - unweighted_raster
+    label: Method background
+    doc: Method used to sample background points
+    default: weighted_raster
+
+  SDM>selectBackground.yml@40|n_background:
     type: int?
-    label: maximum year
-    doc: Max year observations wanted
-    default: 2024
+    label: Number of background points
+    doc: Number of background points
+    default: 100000
+
+  data>loadFromStac.yml@140|stac_url:
+    type: string?
+    label: STAC URL
+    doc: URL of the STAC catalog to pull predictor layers.
+    default: https://stac.geobon.org/
+
+  data>loadFromStac.yml@140|collections_items:
+    type: string[]?
+    label: STAC collection items
+    doc: Collection name of STAC layers followed by '|' followed by item id
+    default:
+    - chelsa-clim|bio5
+    - earthenv_landcover|class_1
+    - earthenv_landcover|class_7
+    - earthenv_landcover|class_3
+
+  data>loadFromStac.yml@140|study_area:
+    type: File?
+    label: Study area
+    doc: Polygon of study area used to crop output layers
 
   pipeline@46:
     type: int?
@@ -173,6 +146,33 @@ inputs:
       
       If the spatial resolution is coarser than the native resolution of the rasters, the layers will be resampled with the resampling method chosen below.
     default: 1000
+
+  data>getGBIFObservations>getGBIFObservations.yml@139|min_year:
+    type: int?
+    label: minimum year
+    doc: Min year observations wanted
+    default: 2010
+
+  data>getGBIFObservations>getGBIFObservations.yml@139|max_year:
+    type: int?
+    label: maximum year
+    doc: Max year observations wanted
+    default: 2024
+
+  data>GBIFHeatmapFromSTAC.yml@145|taxa:
+    type:
+      type: enum
+      symbols:
+        - reptiles
+        - plants
+        - mammals
+        - birds
+        - arthropods
+        - amphibians
+        - all
+    label: Taxa
+    doc: taxonomic group for which to retrieve GBIF heatmap
+    default: plants
 
 
 
@@ -267,7 +267,7 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
           bash -c 'getPackedEnv "filtering__cleanCoordinates" "channels: [conda-forge, r]
           dependencies: [r-terra, r-rjson, r-raster, r-dplyr, r-CoordinateCleaner, r-gdalcubes]
           name: filtering__cleanCoordinates
@@ -340,8 +340,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/filtering__cleanCoordinates/34' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/filtering__cleanCoordinates/34' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -363,8 +363,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__selectBackground/40' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__selectBackground/40' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -387,8 +387,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__setupDataSdm/44' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__setupDataSdm/44' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -410,8 +410,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__removeCollinearity/97' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__removeCollinearity/97' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -426,8 +426,8 @@ steps:
       method: { default: bbox }
       width_buffer: { default: 0 }
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__studyExtent/104' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__studyExtent/104' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -447,8 +447,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getGBIFObservations__getGBIFObservations/139' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getGBIFObservations__getGBIFObservations/139' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -474,8 +474,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/140' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/140' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -489,8 +489,8 @@ steps:
       bbox_crs: pipeline@149
       spatial_res: pipeline@128
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__GBIFHeatmapFromSTAC/145' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__GBIFHeatmapFromSTAC/145' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -512,8 +512,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__runewlgcp/151' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__runewlgcp/151' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -521,11 +521,35 @@ steps:
 
 
 outputs:
-  SDM>runewlgcp.yml@151|sdm_dmesh:
+  pipeline@121|default_output:
+    type: string[]
+    label: Species name
+    doc: Species for which distribution is being modeled
+    outputSource: pipeline@121
+
+  SDM>removeCollinearity.yml@97|rasters_selected:
+    type: File[]
+    label: Environmental predictors
+    doc: Environmental layers used as predictors in species distribution modeling
+    outputSource: SDM>removeCollinearity.yml@97/rasters_selected
+
+  data>getGBIFObservations>getGBIFObservations.yml@139|gbif_doi:
+    type: string
+    label: DOI of GBIF download
+    doc: DOI of GBIF download. Used for citing downloaded data.
+    outputSource: data>getGBIFObservations>getGBIFObservations.yml@139/gbif_doi
+
+  data>loadFromStac.yml@140|rasters:
+    type: File[]
+    label: Rasters
+    doc: array of output raster paths
+    outputSource: data>loadFromStac.yml@140/rasters
+
+  SDM>runewlgcp.yml@151|sdm_pred:
     type: File
-    label: dmesh
-    doc: dual mesh used by the sdm model
-    outputSource: SDM>runewlgcp.yml@151/sdm_dmesh
+    label: predictions
+    doc: model predictions while trained on the whole dataset
+    outputSource: SDM>runewlgcp.yml@151/sdm_pred
 
   SDM>runewlgcp.yml@151|sdm_unc:
     type: File
@@ -539,45 +563,21 @@ outputs:
     doc: difference between the upper and the lower CI bound
     outputSource: SDM>runewlgcp.yml@151/sdm_ci
 
-  SDM>runewlgcp.yml@151|sdm_bg:
-    type: File
-    label: background
-    doc: background points used for the sdm model
-    outputSource: SDM>runewlgcp.yml@151/sdm_bg
-
-  data>getGBIFObservations>getGBIFObservations.yml@139|gbif_doi:
-    type: string
-    label: DOI of GBIF download
-    doc: DOI of GBIF download. Used for citing downloaded data.
-    outputSource: data>getGBIFObservations>getGBIFObservations.yml@139/gbif_doi
-
   SDM>runewlgcp.yml@151|sdm_obs:
     type: File
     label: observations
     doc: GBIF observations used for the sdm model
     outputSource: SDM>runewlgcp.yml@151/sdm_obs
 
-  SDM>removeCollinearity.yml@97|rasters_selected:
-    type: File[]
-    label: Environmental predictors
-    doc: Environmental layers used as predictors in species distribution modeling
-    outputSource: SDM>removeCollinearity.yml@97/rasters_selected
-
-  SDM>runewlgcp.yml@151|sdm_pred:
+  SDM>runewlgcp.yml@151|sdm_bg:
     type: File
-    label: predictions
-    doc: model predictions while trained on the whole dataset
-    outputSource: SDM>runewlgcp.yml@151/sdm_pred
+    label: background
+    doc: background points used for the sdm model
+    outputSource: SDM>runewlgcp.yml@151/sdm_bg
 
-  pipeline@121|default_output:
-    type: string[]
-    label: Species name
-    doc: Species for which distribution is being modeled
-    outputSource: pipeline@121
-
-  data>loadFromStac.yml@140|rasters:
-    type: File[]
-    label: Rasters
-    doc: array of output raster paths
-    outputSource: data>loadFromStac.yml@140/rasters
+  SDM>runewlgcp.yml@151|sdm_dmesh:
+    type: File
+    label: dmesh
+    doc: dual mesh used by the sdm model
+    outputSource: SDM>runewlgcp.yml@151/sdm_dmesh
 

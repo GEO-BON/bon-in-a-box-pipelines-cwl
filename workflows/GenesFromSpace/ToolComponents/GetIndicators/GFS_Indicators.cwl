@@ -33,6 +33,12 @@ inputs:
   #################
   # Script inputs #
   #################
+  pipeline@100:
+    type: File?
+    label: Polygons of populations
+    doc: Path to geojson file storing polygons of populations.
+    default: /userdata/population_polygons.geojson
+
   pipeline@101:
     type: File?
     label: Binary map of habitat presence/absence
@@ -69,12 +75,6 @@ inputs:
     - y2022
     - y2023
 
-  pipeline@100:
-    type: File?
-    label: Polygons of populations
-    doc: Path to geojson file storing polygons of populations.
-    default: /userdata/population_polygons.geojson
-
   GFS_IndicatorsTool>get_Indicators.yml@127|ne_nc:
     type: float[]?
     label: Ne:Nc ratio estimate
@@ -82,12 +82,6 @@ inputs:
     default:
     - 0.1
     - 0.2
-
-  GFS_IndicatorsTool>get_Indicators.yml@127|runtitle:
-    type: string?
-    label: Title of the run
-    doc: Set a name for the pipeline run.
-    default: Quercus sartorii, Mexico, Habitat decline by tree cover loss, 2000-2023
 
   GFS_IndicatorsTool>get_Indicators.yml@127|pop_density:
     type: float[]?
@@ -97,6 +91,12 @@ inputs:
     - 50
     - 100
     - 1000
+
+  GFS_IndicatorsTool>get_Indicators.yml@127|runtitle:
+    type: string?
+    label: Title of the run
+    doc: Set a name for the pipeline run.
+    default: Quercus sartorii, Mexico, Habitat decline by tree cover loss, 2000-2023
 
 
 
@@ -191,7 +191,7 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
           bash -c 'getPackedEnv "GFS_IndicatorsTool__get_Indicators" "channels: [conda-forge, r]
           dependencies: [r-devtools, r-rjson, r-terra, r-sf, r-rnaturalearth, r-teachingdemos,
             r-dplyr, r-plotly, r-geojsonsf, r-colorspace, r-lwgeom]
@@ -226,8 +226,8 @@ steps:
       habitat_map: pipeline@101
       time_points: pipeline@102
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/GFS_IndicatorsTool__pop_area_by_habitat/99' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/GFS_IndicatorsTool__pop_area_by_habitat/99' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -249,8 +249,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/GFS_IndicatorsTool__get_Indicators/127' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/GFS_IndicatorsTool__get_Indicators/127' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -270,15 +270,15 @@ outputs:
     doc: Estimated proportion of mantained populations, comparing earliest and latest time point.
     outputSource: GFS_IndicatorsTool>get_Indicators.yml@127/pm
 
-  GFS_IndicatorsTool>get_Indicators.yml@127|ne500:
-    type: float
-    label: Ne>500 indicator
-    doc: Estimated proportion of populations with Ne>500 at latest time point.
-    outputSource: GFS_IndicatorsTool>get_Indicators.yml@127/ne500
-
   GFS_IndicatorsTool>get_Indicators.yml@127|interactive_plot:
     type: File
     label: Interactive plot
     doc: An interactive interface to explore indicators trends across geographical space and time.
     outputSource: GFS_IndicatorsTool>get_Indicators.yml@127/interactive_plot
+
+  GFS_IndicatorsTool>get_Indicators.yml@127|ne500:
+    type: float
+    label: Ne>500 indicator
+    doc: Estimated proportion of populations with Ne>500 at latest time point.
+    outputSource: GFS_IndicatorsTool>get_Indicators.yml@127/ne500
 

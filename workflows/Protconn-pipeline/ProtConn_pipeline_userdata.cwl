@@ -73,78 +73,6 @@ inputs:
   #################
   # Script inputs #
   #################
-  protconn_analysis>protconn_analysis.yml@8|include_na_dates:
-    type: boolean?
-    label: Include missing values for date
-    doc: How missing values for date should be handled in the time series analysis. If the box is checked, protected areas with missing values for establishment date will be included in the time series analysis and assigned to the chosen value for start year. If not checked, these protected areas will be omitted from the time series analysis (note they will still be included in the main analysis).
-    default: true
-
-  protconn_analysis>protconn_analysis.yml@8|date_column_name:
-    type: string?
-    label: Date column name (optional)
-    doc: Name of the column in the user provided protected area file that specifies when the PA was created. Leave blank if your protected area file does not have a date column.
-
-  protconn_analysis>protconn_analysis.yml@8|pa_size_threshold:
-    type: float?
-    label: PA size threshold
-    doc: Size threshold for PAs, in meters squared. Protected areas smaller than this area will be removed. A threshold of 1km2 was used in Saura et al. 2017 because at larger scales, protected areas less than 1km2 (1000 m2) do not have a large impact on ProtConn values. Removing small protected areas significantly speeds up calculation and is recommended for large areas. Input a value of 0 to keep all protected areas.
-    default: 1000
-
-  pipeline@32:
-    type: int[]?
-    label: Distance analysis threshold
-    doc: >
-      Refers to the threshold distance (in meters) used to estimate if the areas are connected in a spatial analysis. This threshold represents the median dispersal probability (i.e. where the dispersal probability between patches is 0.5). Dispersal probability is calculated with an exponential decay function with increasing distance.
-      
-      Common dispersal distances that encompass a large majority of terrestrial species are 1000 meters (1km), 3000 meters (3km), 10,000 meters (10 km), and 100,000 meters (100 km; Saura et al. 2017).
-      
-      Note that the more distances included, the longer the pipeline will take to run and the more memory it will require. Additionally, larger dispersal distances will be more computationally intensive. 
-    default:
-    - 1000
-    - 10000
-
-  protconn_analysis>protconn_analysis.yml@8|year_int:
-    type: int?
-    label: Year interval (optional)
-    doc: Year interval for the time series plot of ProtConn values (e.g. an input of 10 will calculate ProtConn for every 10 years). This input will only be used if the time series input is selected.
-    default: 20
-
-  pipeline@31:
-    type: File[]?
-    label: Polygon of study area (optional)
-    doc: Polygon of the study area, in geopackage format. To use a custom study area, input the path to the file in userdata (e.g. /userdata/study_area_polygon.gpkg) and it will override the country polygon from the "Get country polygon" script. Leave blank to use country or region polygons pulled from the "Get country polygon" script. Protected areas outside of the country polygon will be cropped out.
-    default: []
-
-  protconn_analysis>protconn_analysis.yml@8|buffer:
-    type: float?
-    label: Transboundary buffer
-    doc: Buffer for pulling transboundary protected areas (WDPA data only). The buffer will pull protected areas within that distance of the country border or bounding box in the unit of the coordinate reference system (meters or degrees). If pulling WDPA data with a custom bounding box, the buffer will not be applied.
-    default: 0
-
-  protconn_analysis>protconn_analysis.yml@8|time_series:
-    type: boolean?
-    label: Time series
-    doc: Toggle on to calculate a time series ProtConn values based on date of PA establishment
-    default: true
-
-  protconn_analysis>protconn_analysis.yml@8|start_year:
-    type: int?
-    label: Start year (optional)
-    doc: Year to start the time series. This input will only be used if the time series input is selected.
-    default: 1980
-
-  pipeline@29:
-    type: File[]?
-    label: Polygon of protected areas
-    doc: The protected areas of interest, in geopackage format. Add the path to the custom geopackage here (e.g. /userdata/my_protected_areas.gpkg). If you want to use World Database of Protected Areas (WDPA) data or a combination of WDPA data with custom data, use the "ProtConn analysis with WDPA" pipeline.
-    default: []
-
-  protconn_analysis>protconn_analysis.yml@8|years:
-    type: int?
-    label: Year for cutoff
-    doc: Year for which you want ProtConn calculated (e.g. an input of 2000 will calculate ProtConn for only PAs that were designated before the year 2000). Leave blank if your protected area file does not have a date column. 
-    default: 2025
-
   pipeline@36:
     label: Bounding box and CRS
     doc: >
@@ -200,6 +128,78 @@ inputs:
             type: string?
           - name: bboxWGS84
             type: float[]?
+
+  pipeline@31:
+    type: File[]?
+    label: Polygon of study area (optional)
+    doc: Polygon of the study area, in geopackage format. To use a custom study area, input the path to the file in userdata (e.g. /userdata/study_area_polygon.gpkg) and it will override the country polygon from the "Get country polygon" script. Leave blank to use country or region polygons pulled from the "Get country polygon" script. Protected areas outside of the country polygon will be cropped out.
+    default: []
+
+  pipeline@29:
+    type: File[]?
+    label: Polygon of protected areas
+    doc: The protected areas of interest, in geopackage format. Add the path to the custom geopackage here (e.g. /userdata/my_protected_areas.gpkg). If you want to use World Database of Protected Areas (WDPA) data or a combination of WDPA data with custom data, use the "ProtConn analysis with WDPA" pipeline.
+    default: []
+
+  protconn_analysis>protconn_analysis.yml@8|date_column_name:
+    type: string?
+    label: Date column name (optional)
+    doc: Name of the column in the user provided protected area file that specifies when the PA was created. Leave blank if your protected area file does not have a date column.
+
+  pipeline@32:
+    type: int[]?
+    label: Distance analysis threshold
+    doc: >
+      Refers to the threshold distance (in meters) used to estimate if the areas are connected in a spatial analysis. This threshold represents the median dispersal probability (i.e. where the dispersal probability between patches is 0.5). Dispersal probability is calculated with an exponential decay function with increasing distance.
+      
+      Common dispersal distances that encompass a large majority of terrestrial species are 1000 meters (1km), 3000 meters (3km), 10,000 meters (10 km), and 100,000 meters (100 km; Saura et al. 2017).
+      
+      Note that the more distances included, the longer the pipeline will take to run and the more memory it will require. Additionally, larger dispersal distances will be more computationally intensive. 
+    default:
+    - 1000
+    - 10000
+
+  protconn_analysis>protconn_analysis.yml@8|time_series:
+    type: boolean?
+    label: Time series
+    doc: Toggle on to calculate a time series ProtConn values based on date of PA establishment
+    default: true
+
+  protconn_analysis>protconn_analysis.yml@8|start_year:
+    type: int?
+    label: Start year (optional)
+    doc: Year to start the time series. This input will only be used if the time series input is selected.
+    default: 1980
+
+  protconn_analysis>protconn_analysis.yml@8|years:
+    type: int?
+    label: Year for cutoff
+    doc: Year for which you want ProtConn calculated (e.g. an input of 2000 will calculate ProtConn for only PAs that were designated before the year 2000). Leave blank if your protected area file does not have a date column. 
+    default: 2025
+
+  protconn_analysis>protconn_analysis.yml@8|year_int:
+    type: int?
+    label: Year interval (optional)
+    doc: Year interval for the time series plot of ProtConn values (e.g. an input of 10 will calculate ProtConn for every 10 years). This input will only be used if the time series input is selected.
+    default: 20
+
+  protconn_analysis>protconn_analysis.yml@8|pa_size_threshold:
+    type: float?
+    label: PA size threshold
+    doc: Size threshold for PAs, in meters squared. Protected areas smaller than this area will be removed. A threshold of 1km2 was used in Saura et al. 2017 because at larger scales, protected areas less than 1km2 (1000 m2) do not have a large impact on ProtConn values. Removing small protected areas significantly speeds up calculation and is recommended for large areas. Input a value of 0 to keep all protected areas.
+    default: 1000
+
+  protconn_analysis>protconn_analysis.yml@8|buffer:
+    type: float?
+    label: Transboundary buffer
+    doc: Buffer for pulling transboundary protected areas (WDPA data only). The buffer will pull protected areas within that distance of the country border or bounding box in the unit of the coordinate reference system (meters or degrees). If pulling WDPA data with a custom bounding box, the buffer will not be applied.
+    default: 0
+
+  protconn_analysis>protconn_analysis.yml@8|include_na_dates:
+    type: boolean?
+    label: Include missing values for date
+    doc: How missing values for date should be handled in the time series analysis. If the box is checked, protected areas with missing values for establishment date will be included in the time series analysis and assigned to the chosen value for start year. If not checked, these protected areas will be omitted from the time series analysis (note they will still be included in the main analysis).
+    default: true
 
 
 
@@ -294,7 +294,7 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
           bash -c 'getPackedEnv "data__load_polygons" "channels: [conda-forge]
           dependencies: [r-rjson, r-dbplyr=2.5.2, r-dplyr=1.2.1, r-duckdb=1.4.4, r-fs=2.1.0,
             r-arrow=24.0.0, r-nanoarrow=0.8.0, r-geoarrow=0.4.2, r-sf=1.1-0, r-stringi=1.8.7,
@@ -341,8 +341,8 @@ steps:
       start_year: protconn_analysis>protconn_analysis.yml@8|start_year
       year_int: protconn_analysis>protconn_analysis.yml@8|year_int
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/protconn_analysis__protconn_analysis/8' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/protconn_analysis__protconn_analysis/8' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -361,8 +361,8 @@ steps:
       envFolderWritable:
         default: false
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/37' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/37' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -370,29 +370,11 @@ steps:
 
 
 outputs:
-  protconn_analysis>protconn_analysis.yml@8|result_yrs_plot:
-    type: File[]
-    label: ProtConn time series plot
-    doc: Change in the percentage area that is protected and the percentage that is protected and connected over time, at the chosen time interval, compared to the Kunming-Montreal GBF goals.
-    outputSource: protconn_analysis>protconn_analysis.yml@8/result_yrs_plot
-
-  protconn_analysis>protconn_analysis.yml@8|result_yrs:
-    type: File
-    label: ProtConn time series results
-    doc: Table of the time series of ProtConn and ProtUnconn values, calculated at the time interval that is specified.
-    outputSource: protconn_analysis>protconn_analysis.yml@8/result_yrs
-
   protconn_analysis>protconn_analysis.yml@8|protected_areas:
     type: File[]
     label: Protected areas
     doc: Protected areas polygons for the ProtConn calculation. Overlapping protected areas have been merged to speed up calculation.
     outputSource: protconn_analysis>protconn_analysis.yml@8/protected_areas
-
-  protconn_analysis>protconn_analysis.yml@8|result_plot:
-    type: File
-    label: ProtConn result plot
-    doc: Donut plot of the percentage of total area that is unprotected, protected and connected, and protected and unconnected for each input dispersal distance (in meters).
-    outputSource: protconn_analysis>protconn_analysis.yml@8/result_plot
 
   protconn_analysis>protconn_analysis.yml@8|protconn_result:
     type: File
@@ -405,4 +387,22 @@ outputs:
             coming from within the protected area, without species having to traverse unprotected land. "ProtConn Contig"
             is the proportion connected through direct physical adjascency, capturing the value of neighboring or touching PAs.
     outputSource: protconn_analysis>protconn_analysis.yml@8/protconn_result
+
+  protconn_analysis>protconn_analysis.yml@8|result_plot:
+    type: File
+    label: ProtConn result plot
+    doc: Donut plot of the percentage of total area that is unprotected, protected and connected, and protected and unconnected for each input dispersal distance (in meters).
+    outputSource: protconn_analysis>protconn_analysis.yml@8/result_plot
+
+  protconn_analysis>protconn_analysis.yml@8|result_yrs:
+    type: File
+    label: ProtConn time series results
+    doc: Table of the time series of ProtConn and ProtUnconn values, calculated at the time interval that is specified.
+    outputSource: protconn_analysis>protconn_analysis.yml@8/result_yrs
+
+  protconn_analysis>protconn_analysis.yml@8|result_yrs_plot:
+    type: File[]
+    label: ProtConn time series plot
+    doc: Change in the percentage area that is protected and the percentage that is protected and connected over time, at the chosen time interval, compared to the Kunming-Montreal GBF goals.
+    outputSource: protconn_analysis>protconn_analysis.yml@8/result_yrs_plot
 

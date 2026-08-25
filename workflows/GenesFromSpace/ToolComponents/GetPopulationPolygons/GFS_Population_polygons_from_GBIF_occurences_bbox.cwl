@@ -49,6 +49,18 @@ inputs:
     - '-92'
     - '29'
 
+  pipeline@14:
+    type: int?
+    label: Start year
+    doc: Integer, 4 digit year, start date to retrieve occurrences
+    default: 1980
+
+  pipeline@15:
+    type: int?
+    label: End year
+    doc: Integer, 4 digit year, end date to retrieve occurrences
+    default: 2000
+
   GFS_IndicatorsTool>get_pop_poly.yml@5|buffer_size:
     type: float?
     label: Size of buffer
@@ -60,18 +72,6 @@ inputs:
     label: Distance between populations
     doc: Distance [in km] to separate species observations in different populations.
     default: 50
-
-  pipeline@15:
-    type: int?
-    label: End year
-    doc: Integer, 4 digit year, end date to retrieve occurrences
-    default: 2000
-
-  pipeline@14:
-    type: int?
-    label: Start year
-    doc: Integer, 4 digit year, start date to retrieve occurrences
-    default: 1980
 
 
 
@@ -166,7 +166,7 @@ steps:
             echo "Done."
           }
           export -f getPackedEnv
-          
+
 
           
       inputs:
@@ -198,8 +198,8 @@ steps:
       pop_distance: GFS_IndicatorsTool>get_pop_poly.yml@5|pop_distance
       countries: { default: [] }
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/GFS_IndicatorsTool__get_pop_poly/5' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/GFS_IndicatorsTool__get_pop_poly/5' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
@@ -219,8 +219,8 @@ steps:
       limit: { default: 2000 }
       bbox_buffer: { default: 0 }
       runFolder:
-          source: runFolder
-          valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getObservations/10' } : null)" 
+        source: runFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getObservations/10' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
