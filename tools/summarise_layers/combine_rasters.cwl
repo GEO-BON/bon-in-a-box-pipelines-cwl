@@ -81,7 +81,7 @@ requirements:
 
 
   DockerRequirement:
-    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:cwl-poc
+    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
     #     $include: ../runners/cwl/conda-cwl.dockerfile
@@ -114,10 +114,8 @@ arguments:
     echo "Inputs:" | tee -a $log
     cat $OUTPUT_LOCATION/input.json | tee -a $log
 
-    source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "summarise_layers__combine_rasters" \
-    "channels: [conda-forge, r]
-    name: summarise_layers__combine_rasters
-    " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
+    source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "rbase" \
+    "" /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
 
     Rscript \
       $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \
@@ -132,7 +130,7 @@ arguments:
       cp -a "$OUTPUT_LOCATION"/. "$(runtime.outdir)"/
     fi
 
-    source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh summarise_layers__combine_rasters /conda-envs >> "$log" 2>&1
+    source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh rbase /conda-envs >> "$log" 2>&1
 
     exit "$scriptExitCode"
 

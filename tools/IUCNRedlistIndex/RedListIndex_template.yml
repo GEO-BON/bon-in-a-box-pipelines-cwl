@@ -14,8 +14,7 @@ scriptPath: IUCNRedlistIndex/RedListIndex.R  # default value of type 'string'.
 runFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-history_assessment_data: 
-    scripts/RedListIndex/input/iucn_history_assessment_data.csv  # default value of type 'File'. (optional)
+history_assessment_data: scripts/RedListIndex/input/iucn_history_assessment_data.csv  # default value of type 'File'. (optional)
 environment:  # type 'File' (optional)
     class: File
     path: a/file/path

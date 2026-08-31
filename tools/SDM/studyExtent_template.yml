@@ -6,8 +6,7 @@ scriptPath: SDM/studyExtent.R  # default value of type 'string'.
 runFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-presence: 
-    /output/cleanCoordinates/modCleanCoordinates_R/bb4400dd0e2bfec94745f1ab67e5a4a0/clean_presence.tsv  # default value of type 'File'. (optional)
+presence: /output/cleanCoordinates/modCleanCoordinates_R/bb4400dd0e2bfec94745f1ab67e5a4a0/clean_presence.tsv  # default value of type 'File'. (optional)
 method: mcp  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/SDM/studyExtent.cwl#method/box", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/SDM/studyExtent.cwl#method/mcp", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/SDM/studyExtent.cwl#method/buffer", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/SDM/studyExtent.cwl#method/bbox"
 environment:  # type 'File' (optional)
     class: File

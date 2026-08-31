@@ -61,8 +61,8 @@ condaPackURL:
     https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
 STAC>createCollection.yml@153|collection_name: biab-collection  # default value of type 'string'. (optional)
 STAC>createCollection.yml@153|collection_license: CC-BY  # default value of type 'string'. (optional)
-STAC>createCollection.yml@153|collection_description: A STAC collection created 
-    from GeoTIFF files.  # default value of type 'string'. (optional)
+STAC>createCollection.yml@153|collection_description: A STAC collection created from
+    GeoTIFF files.  # default value of type 'string'. (optional)
 SDM>selectBackground.yml@40|n_background: 10000  # default value of type 'int'. (optional)
 SDM>selectBackground.yml@40|method_background: random  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/SDM/SDM_maxEnt_multi_STAC.cwl#SDM>selectBackground.yml@40|method_background/random", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/SDM/SDM_maxEnt_multi_STAC.cwl#SDM>selectBackground.yml@40|method_background/inclusion_buffer", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/SDM/SDM_maxEnt_multi_STAC.cwl#SDM>selectBackground.yml@40|method_background/weighted_raster", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/SDM/SDM_maxEnt_multi_STAC.cwl#SDM>selectBackground.yml@40|method_background/unweighted_raster", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/SDM/SDM_maxEnt_multi_STAC.cwl#SDM>selectBackground.yml@40|method_background/thickening"
 SDM>runMaxent.yml@108|rm:  # array of type 'float' (optional)

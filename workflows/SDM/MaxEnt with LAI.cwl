@@ -398,7 +398,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:cwl-poc
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs
@@ -471,18 +471,14 @@ steps:
           name: data__loadFromStac
           "'
           
-          bash -c 'getPackedEnv "..__..__script-stubs__openEO__LAI.udp" "channels: [conda-forge]
+          bash -c 'getPackedEnv "..__..__..__home__jmlord__code__pipeline-engine__script-stubs__openEO__LAI.udp" "channels: [conda-forge]
           dependencies: [openeo, pyyaml]
-          name: ..__..__script-stubs__openEO__LAI.udp
+          name: ..__..__..__home__jmlord__code__pipeline-engine__script-stubs__openEO__LAI.udp
           "'
           
           bash -c 'getPackedEnv "summarise_layers__summarise_layers" "channels: [conda-forge, r]
           dependencies: [r-rjson, r-gdalcubes=0.7.1, r-terra, r-sf]
           name: summarise_layers__summarise_layers
-          "'
-          
-          bash -c 'getPackedEnv "summarise_layers__combine_rasters" "channels: [conda-forge, r]
-          name: summarise_layers__combine_rasters
           "'
           
       inputs:
@@ -721,7 +717,7 @@ steps:
 
 
   LAI.udp@161:
-    run: ../../../script-stubs/openEO/LAI.udp.cwl
+    run: ../../../../home/jean-michel/code/pipeline-engine/script-stubs/openEO/LAI.udp.cwl
     in:
       spatial_extent: pipeline@140
       start_date: pipeline@165
@@ -730,7 +726,7 @@ steps:
       temp_aggregator: { default: max }
       envFolder:
         source: prepareEnvironments/envFolder
-        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/..__..__script-stubs__openEO__LAI.udp' } : null)"
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/..__..__..__home__jmlord__code__pipeline-engine__script-stubs__openEO__LAI.udp' } : null)"
       envFolderWritable:
         default: false
       runFolder:
@@ -773,11 +769,6 @@ steps:
     in:
       rasters1: data>loadFromStac.yml@144/rasters
       rasters2: summarise_layers>summarise_layers.yml@169/rasters
-      envFolder:
-        source: prepareEnvironments/envFolder
-        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/summarise_layers__combine_rasters' } : null)"
-      envFolderWritable:
-        default: false
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/summarise_layers__combine_rasters/171' } : null)"
