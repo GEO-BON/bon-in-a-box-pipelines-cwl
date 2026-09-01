@@ -199,7 +199,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  collections:
+  collections_out:
     type: string[]
     label: Collections
     doc: Name of the items to be pulled from the STAC Catalogue

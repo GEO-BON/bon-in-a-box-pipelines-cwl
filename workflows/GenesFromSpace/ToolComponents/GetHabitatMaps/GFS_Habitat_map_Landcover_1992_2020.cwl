@@ -198,19 +198,19 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [lcyy, time_points]
+    out: [lcyy_out, time_points_out]
 
 
 outputs:
-  GFS_IndicatorsTool>get_LCY.yml@115|lcyy:
+  GFS_IndicatorsTool>get_LCY.yml@115|lcyy_out:
     type: File
     label: Land cover year-by-year
     doc: Tif file showing the year-by-year disrtribution of land cover classes of interest.
-    outputSource: GFS_IndicatorsTool>get_LCY.yml@115/lcyy
+    outputSource: GFS_IndicatorsTool>get_LCY.yml@115/lcyy_out
 
-  GFS_IndicatorsTool>get_LCY.yml@115|time_points:
+  GFS_IndicatorsTool>get_LCY.yml@115|time_points_out:
     type: string[]
     label: Years with land cover information
     doc: List of years for which land cover information is available.
-    outputSource: GFS_IndicatorsTool>get_LCY.yml@115/time_points
+    outputSource: GFS_IndicatorsTool>get_LCY.yml@115/time_points_out
 

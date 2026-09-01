@@ -194,7 +194,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  gpkg_file:
+  gpkg_file_out:
     type: File
     label: GeoPackage file
     doc: GeoPackage file.

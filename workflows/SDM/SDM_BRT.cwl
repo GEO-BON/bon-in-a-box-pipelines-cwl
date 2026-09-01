@@ -296,8 +296,8 @@ steps:
   filtering>cleanCoordinates.yml@34:
     run: ../../tools/filtering/cleanCoordinates.cwl
     in:
-      presence: data>getGBIFObservations>getGBIFObservations.yml@159/observations_file
-      predictors: data>loadFromStac.yml@160/rasters
+      presence: data>getGBIFObservations>getGBIFObservations.yml@159/observations_file_out
+      predictors: data>loadFromStac.yml@160/rasters_out
       tests: { default: [equal, zeros, duplicates, same_pixel, capitals, centroids, gbif, institutions] }
       env_threshold: { default: 0.8 }
       envFolder:
@@ -311,16 +311,16 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [n_presence, n_clean, clean_presence]
+    out: [n_presence_out, n_clean_out, clean_presence_out]
 
 
   SDM>BRT>fitBRT.yml@132:
     run: ../../tools/SDM/BRT/fitBRT.cwl
     in:
-      occurrence: filtering>cleanCoordinates.yml@34/clean_presence
-      predictors: data>loadFromStac.yml@160/rasters
+      occurrence: filtering>cleanCoordinates.yml@34/clean_presence_out
+      predictors: data>loadFromStac.yml@160/rasters_out
       bbox_crs: pipeline@174
-      water_mask: data>loadFromStac.yml@161/rasters
+      water_mask: data>loadFromStac.yml@161/rasters_out
       max_candidate_pseudoabsences: pipeline@153
       pseudoabsence_buffer: pipeline@152
       pa_proportion: pipeline@154
@@ -330,7 +330,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [predicted_sdm, sdm_uncertainty, fit_stats, range, pseudoabsences, env_corners, tuning]
+    out: [predicted_sdm_out, sdm_uncertainty_out, fit_stats_out, range_out, pseudoabsences_out, env_corners_out, tuning_out]
 
 
   data>getGBIFObservations>getGBIFObservations.yml@159:
@@ -351,7 +351,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [observations_file, total_records, gbif_doi]
+    out: [observations_file_out, total_records_out, gbif_doi_out]
 
 
   data>loadFromStac.yml@160:
@@ -378,7 +378,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [rasters]
+    out: [rasters_out]
 
 
   data>loadFromStac.yml@161:
@@ -405,79 +405,79 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [rasters]
+    out: [rasters_out]
 
 
 outputs:
-  pipeline@121|default_output:
+  pipeline@121|default_output_out:
     type: string[]
     label: Species
     doc: Name of species
     outputSource: pipeline@121
 
-  filtering>cleanCoordinates.yml@34|clean_presence:
+  filtering>cleanCoordinates.yml@34|clean_presence_out:
     type: File
     label: Presences
     doc: Occurrences from GBIF after cleaning
-    outputSource: filtering>cleanCoordinates.yml@34/clean_presence
+    outputSource: filtering>cleanCoordinates.yml@34/clean_presence_out
 
-  SDM>BRT>fitBRT.yml@132|pseudoabsences:
+  SDM>BRT>fitBRT.yml@132|pseudoabsences_out:
     type: File
     label: Pseudoabsences
     doc: pseudoabsence coordinates
-    outputSource: SDM>BRT>fitBRT.yml@132/pseudoabsences
+    outputSource: SDM>BRT>fitBRT.yml@132/pseudoabsences_out
 
-  SDM>BRT>fitBRT.yml@132|env_corners:
+  SDM>BRT>fitBRT.yml@132|env_corners_out:
     type: File
     label: Environment Space
     doc: Diagnostic plot of the location of presences (blue) and pseudoabsences (red) in environment space for up to the first 5 predictors.
-    outputSource: SDM>BRT>fitBRT.yml@132/env_corners
+    outputSource: SDM>BRT>fitBRT.yml@132/env_corners_out
 
-  SDM>BRT>fitBRT.yml@132|tuning:
+  SDM>BRT>fitBRT.yml@132|tuning_out:
     type: File
     label: Tuning Curve
     doc: Describes how the Matthew's Correlation Coefficient (MCC) changes as the threshold value changes from 0 to 1.
-    outputSource: SDM>BRT>fitBRT.yml@132/tuning
+    outputSource: SDM>BRT>fitBRT.yml@132/tuning_out
 
-  SDM>BRT>fitBRT.yml@132|fit_stats:
+  SDM>BRT>fitBRT.yml@132|fit_stats_out:
     type: File
     label: Fit Statistics
     doc: JSON of BRT fit statistics and optimal threshold value.
-    outputSource: SDM>BRT>fitBRT.yml@132/fit_stats
+    outputSource: SDM>BRT>fitBRT.yml@132/fit_stats_out
 
-  SDM>BRT>fitBRT.yml@132|predicted_sdm:
+  SDM>BRT>fitBRT.yml@132|predicted_sdm_out:
     type: File
     label: Predicted SDM
     doc: Map of occurrence score between 0 and 1.
-    outputSource: SDM>BRT>fitBRT.yml@132/predicted_sdm
+    outputSource: SDM>BRT>fitBRT.yml@132/predicted_sdm_out
 
-  SDM>BRT>fitBRT.yml@132|range:
+  SDM>BRT>fitBRT.yml@132|range_out:
     type: File
     label: Range
     doc: Range map thresholded at the optimal value.
-    outputSource: SDM>BRT>fitBRT.yml@132/range
+    outputSource: SDM>BRT>fitBRT.yml@132/range_out
 
-  SDM>BRT>fitBRT.yml@132|sdm_uncertainty:
+  SDM>BRT>fitBRT.yml@132|sdm_uncertainty_out:
     type: File
     label: SDM Uncertainty
     doc: Map of the BRT's relative uncertainty for each location.
-    outputSource: SDM>BRT>fitBRT.yml@132/sdm_uncertainty
+    outputSource: SDM>BRT>fitBRT.yml@132/sdm_uncertainty_out
 
-  data>getGBIFObservations>getGBIFObservations.yml@159|gbif_doi:
+  data>getGBIFObservations>getGBIFObservations.yml@159|gbif_doi_out:
     type: string
     label: DOI of GBIF download
     doc: DOI of GBIF download. Used for citing downloaded data.
-    outputSource: data>getGBIFObservations>getGBIFObservations.yml@159/gbif_doi
+    outputSource: data>getGBIFObservations>getGBIFObservations.yml@159/gbif_doi_out
 
-  data>loadFromStac.yml@160|rasters:
+  data>loadFromStac.yml@160|rasters_out:
     type: File[]
     label: Rasters
     doc: array of output raster paths
-    outputSource: data>loadFromStac.yml@160/rasters
+    outputSource: data>loadFromStac.yml@160/rasters_out
 
-  data>loadFromStac.yml@161|rasters:
+  data>loadFromStac.yml@161|rasters_out:
     type: File[]
     label: Rasters
     doc: Output raster files in geotiff format.
-    outputSource: data>loadFromStac.yml@161/rasters
+    outputSource: data>loadFromStac.yml@161/rasters_out
 

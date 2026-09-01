@@ -265,7 +265,7 @@ steps:
     run: ../tools/NDVI/calculateNDVI.cwl
     in:
       bbox_crs: pipeline@210
-      study_area_polygon: data>load_polygons.yml@211/polygon
+      study_area_polygon: data>load_polygons.yml@211/polygon_out
       start_date: NDVI>calculateNDVI.yml@199|start_date
       end_date: NDVI>calculateNDVI.yml@199|end_date
       spatial_resolution: NDVI>calculateNDVI.yml@199|spatial_resolution
@@ -281,7 +281,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [rasters, timeseries, timeseries_plot]
+    out: [rasters_out, timeseries_out, timeseries_plot_out]
 
 
   data>load_polygons.yml@211:
@@ -301,32 +301,32 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [polygon, bbox_crs]
+    out: [polygon_out, bbox_crs_out]
 
 
 outputs:
-  NDVI>calculateNDVI.yml@199|rasters:
+  NDVI>calculateNDVI.yml@199|rasters_out:
     type: File[]
     label: Vegetation index rasters
     doc: >
       Raster of the NDVI values summarised by the input statistic (mean, max, min, median) for each pixel within the time span choosen. If multiple indices were chosen, each band corresponds to a different vegetation index
-    outputSource: NDVI>calculateNDVI.yml@199/rasters
+    outputSource: NDVI>calculateNDVI.yml@199/rasters_out
 
-  NDVI>calculateNDVI.yml@199|timeseries:
+  NDVI>calculateNDVI.yml@199|timeseries_out:
     type: File
     label: Time series of NDVI
     doc: Time series of NDVI values for every date where there is data in the specified time period.
-    outputSource: NDVI>calculateNDVI.yml@199/timeseries
+    outputSource: NDVI>calculateNDVI.yml@199/timeseries_out
 
-  NDVI>calculateNDVI.yml@199|timeseries_plot:
+  NDVI>calculateNDVI.yml@199|timeseries_plot_out:
     type: File
     label: NDVI time series plot
     doc: Plot of NDVI values over time
-    outputSource: NDVI>calculateNDVI.yml@199/timeseries_plot
+    outputSource: NDVI>calculateNDVI.yml@199/timeseries_plot_out
 
-  data>load_polygons.yml@211|polygon:
+  data>load_polygons.yml@211|polygon_out:
     type: File
     label: Polygon
     doc: Polygons of the country, WDPA, EEZs for the country or region of interest
-    outputSource: data>load_polygons.yml@211/polygon
+    outputSource: data>load_polygons.yml@211/polygon_out
 

@@ -237,7 +237,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  ne_table:
+  ne_table_out:
     type: File
     label: Effective population size
     doc: Estimated effective size of every population, based on the latest time point of the habitat cover map.
@@ -251,7 +251,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  pm:
+  pm_out:
     type: float
     label: Population maintained indicator
     doc: Estimated proportion of mantained populations, comparing earliest and latest time point. A value of 1 means that no populations went extinct over the time frame.
@@ -265,7 +265,7 @@ outputs:
           return parseFloat(value);
         }
 
-  interactive_plot:
+  interactive_plot_out:
     type: File
     label: Interactive plot
     doc: An interactive interface to explore indicators trends across geographical space and time.
@@ -279,7 +279,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  ne500:
+  ne500_out:
     type: float
     label: Ne>500 indicator
     doc: Estimated proportion of populations with Ne>500 at latest time point.

@@ -217,7 +217,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  stac_collection:
+  stac_collection_out:
     type: File
     label: STAC Collection
     doc: JSON file representing a STAC collection containing the provided GeoTIFFs

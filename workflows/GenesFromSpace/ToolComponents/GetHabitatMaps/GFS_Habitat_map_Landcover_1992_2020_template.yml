@@ -21,7 +21,8 @@ GFS_IndicatorsTool>get_LCY.yml@115|yoi:  # array of type 'int' (optional)
   - 2020
 
 GFS_IndicatorsTool>get_LCY.yml@115|res: 0.01  # default value of type 'float'. (optional)
-GFS_IndicatorsTool>get_LCY.yml@115|population_polygons: /userdata/population_polygons.geojson  # default value of type 'File'. (optional)
+GFS_IndicatorsTool>get_LCY.yml@115|population_polygons: 
+    /userdata/population_polygons.geojson  # default value of type 'File'. (optional)
 GFS_IndicatorsTool>get_LCY.yml@115|lc_classes:  # array of type 'int' (optional)
   - 130
   - 140

@@ -218,13 +218,13 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [increment, crs_id]
+    out: [increment_out, crs_id_out]
 
 
 outputs:
-  helloWorld>helloPython.yml@0|increment:
+  helloWorld>helloPython.yml@0|increment_out:
     type: int
     label: A number (input++)
     doc: bla bla
-    outputSource: helloWorld>helloPython.yml@0/increment
+    outputSource: helloWorld>helloPython.yml@0/increment_out
 

@@ -301,8 +301,8 @@ steps:
   zonal_statistics>percentage_cover_classes.yml@22:
     run: ../tools/zonal_statistics/percentage_cover_classes.cwl
     in:
-      rasters: data>loadFromStac.yml@42/rasters
-      study_area_polygon: data>load_polygons.yml@44/polygon
+      rasters: data>loadFromStac.yml@42/rasters_out
+      study_area_polygon: data>load_polygons.yml@44/polygon_out
       envFolder:
         source: prepareEnvironments/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/zonal_statistics__percentage_cover_classes' } : null)"
@@ -314,7 +314,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [class_percentage]
+    out: [class_percentage_out]
 
 
   data>loadFromStac.yml@42:
@@ -329,7 +329,7 @@ steps:
       spatial_res: data>loadFromStac.yml@42|spatial_res
       resampling: data>loadFromStac.yml@42|resampling
       aggregation: data>loadFromStac.yml@42|aggregation
-      study_area: data>load_polygons.yml@44/polygon
+      study_area: data>load_polygons.yml@44/polygon_out
       envFolder:
         source: prepareEnvironments/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac' } : null)"
@@ -341,7 +341,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [rasters]
+    out: [rasters_out]
 
 
   data>load_polygons.yml@44:
@@ -361,19 +361,19 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [polygon, bbox_crs]
+    out: [polygon_out, bbox_crs_out]
 
 
 outputs:
-  zonal_statistics>percentage_cover_classes.yml@22|class_percentage:
+  zonal_statistics>percentage_cover_classes.yml@22|class_percentage_out:
     type: File
     label: Percentage of classes
     doc: Percentage of each categorical class in a raster layer over a polygon or bounding box of interest
-    outputSource: zonal_statistics>percentage_cover_classes.yml@22/class_percentage
+    outputSource: zonal_statistics>percentage_cover_classes.yml@22/class_percentage_out
 
-  data>load_polygons.yml@44|polygon:
+  data>load_polygons.yml@44|polygon_out:
     type: File
     label: Polygon
     doc: Polygons of the country, WDPA, EEZs for the country or region of interest
-    outputSource: data>load_polygons.yml@44/polygon
+    outputSource: data>load_polygons.yml@44/polygon_out
 

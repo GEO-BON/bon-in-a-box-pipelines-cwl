@@ -242,7 +242,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  observations_file:
+  observations_file_out:
     type: File
     label: Observations
     doc: Tab-separated file containing all GBIF occurrence records retrieved for the specified taxa, bounding box, and time range. Each row represents one observation. Used as input to subsequent modeling steps.
@@ -256,7 +256,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  total_records:
+  total_records_out:
     type: int
     label: Total number of occurrences
     doc: Count of occurrence records returned by the GBIF query. Use this to gauge data availability before running the model — very low counts (e.g. <20) may produce unreliable results.
@@ -270,7 +270,7 @@ outputs:
           return parseInt(value);
         }
 
-  gbif_doi:
+  gbif_doi_out:
     type: string
     label: DOI of GBIF download
     doc: A permanent DOI assigned to this specific GBIF data download. Must be cited in any publication using these data — see [GBIF's citation guidelines](https://www.gbif.org/citation-guidelines).

@@ -206,7 +206,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  bbox:
+  bbox_out:
     type: float[]
     label: Bounding box
     doc: boundary box around area of interest in the order of xmin, ymin, xmax, ymax

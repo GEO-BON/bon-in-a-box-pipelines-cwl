@@ -305,9 +305,9 @@ steps:
   bilbi_indicators>bilbi_weighted_mean.yml@0:
     run: ../../tools/bilbi_indicators/bilbi_weighted_mean.cwl
     in:
-      bilbi_indicator: data>loadFromStac.yml@1/rasters
-      bilbi_denominator: data>loadFromStac.yml@2/rasters
-      study_area: data>load_polygons.yml@24/polygon
+      bilbi_indicator: data>loadFromStac.yml@1/rasters_out
+      bilbi_denominator: data>loadFromStac.yml@2/rasters_out
+      study_area: data>load_polygons.yml@24/polygon_out
       envFolder:
         source: prepareEnvironments/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/bilbi_indicators__bilbi_weighted_mean' } : null)"
@@ -319,7 +319,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [summarised_values, time_series_plot]
+    out: [summarised_values_out, time_series_plot_out]
 
 
   data>loadFromStac.yml@1:
@@ -334,7 +334,7 @@ steps:
       spatial_res: pipeline@19
       resampling: pipeline@18
       aggregation: pipeline@20
-      study_area: data>load_polygons.yml@24/polygon
+      study_area: data>load_polygons.yml@24/polygon_out
       envFolder:
         source: prepareEnvironments/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac' } : null)"
@@ -346,7 +346,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [rasters]
+    out: [rasters_out]
 
 
   data>loadFromStac.yml@2:
@@ -361,7 +361,7 @@ steps:
       spatial_res: pipeline@19
       resampling: pipeline@18
       aggregation: pipeline@20
-      study_area: data>load_polygons.yml@24/polygon
+      study_area: data>load_polygons.yml@24/polygon_out
       envFolder:
         source: prepareEnvironments/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac' } : null)"
@@ -373,7 +373,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [rasters]
+    out: [rasters_out]
 
 
   data>load_polygons.yml@24:
@@ -393,17 +393,17 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [polygon, bbox_crs]
+    out: [polygon_out, bbox_crs_out]
 
 
 outputs:
-  data>loadFromStac.yml@1|rasters:
+  data>loadFromStac.yml@1|rasters_out:
     type: File[]
     label: Raster indicator layers for each year
     doc: Output raster files in geotiff format.
-    outputSource: data>loadFromStac.yml@1/rasters
+    outputSource: data>loadFromStac.yml@1/rasters_out
 
-  bilbi_indicators>bilbi_weighted_mean.yml@0|summarised_values:
+  bilbi_indicators>bilbi_weighted_mean.yml@0|summarised_values_out:
     type: File
     label: BHI summary
     doc: >
@@ -411,17 +411,17 @@ outputs:
       
       
       A higher value (closer to 1) indicates that a large proportion of the habitat remains in good condition and is well-connected, leading to a high expectation of species persistence. A lower value indicates that a significant proportion of the original habitat has been lost, degraded, or fragmented, which puts biodiversity at risk.
-    outputSource: bilbi_indicators>bilbi_weighted_mean.yml@0/summarised_values
+    outputSource: bilbi_indicators>bilbi_weighted_mean.yml@0/summarised_values_out
 
-  bilbi_indicators>bilbi_weighted_mean.yml@0|time_series_plot:
+  bilbi_indicators>bilbi_weighted_mean.yml@0|time_series_plot_out:
     type: File
     label: Time series plot
     doc: Plot of the geometric mean of the indicator over time in the study area of interest
-    outputSource: bilbi_indicators>bilbi_weighted_mean.yml@0/time_series_plot
+    outputSource: bilbi_indicators>bilbi_weighted_mean.yml@0/time_series_plot_out
 
-  data>load_polygons.yml@24|polygon:
+  data>load_polygons.yml@24|polygon_out:
     type: File
     label: Polygon
     doc: Polygons of the country, WDPA, EEZs for the country or region of interest
-    outputSource: data>load_polygons.yml@24/polygon
+    outputSource: data>load_polygons.yml@24/polygon_out
 

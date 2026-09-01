@@ -9,7 +9,7 @@
                                                                 file:///home/jean-michel/code/cwl/tools/site_selection_BAS/BAS_algorithm.cwl#csv
 ../../cwl/tools/site_selection_BAS/BAS_algorithm.cwl:232:1: checking field 'outputs'
 ../../cwl/tools/site_selection_BAS/BAS_algorithm.cwl:247:3:   checking object
-                                                              '../../cwl/tools/site_selection_BAS/BAS_algorithm.cwl#pts_df'
+                                                              '../../cwl/tools/site_selection_BAS/BAS_algorithm.cwl#pts_df_out'
 ../../cwl/tools/site_selection_BAS/BAS_algorithm.cwl:248:5:     Field 'type' references unknown
                                                                 identifier 'csv', tried
                                                                 file:///home/jean-michel/code/cwl/tools/site_selection_BAS/BAS_algorithm.cwl#csv[0m

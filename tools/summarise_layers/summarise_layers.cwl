@@ -316,7 +316,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  rasters:
+  rasters_out:
     type: File[]
     label: summarised rasters
     doc: >

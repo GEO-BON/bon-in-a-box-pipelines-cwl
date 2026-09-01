@@ -4,14 +4,14 @@
 ../../cwl/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl:390:1: checking field
                                                                                   'outputs'
 ../../cwl/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl:421:3:   checking object
-                                                                                    '../../cwl/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl#site_selection_BAS>BAS_algorithm.yml@26|pts_df'
+                                                                                    '../../cwl/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl#site_selection_BAS>BAS_algorithm.yml@26|pts_df_out'
 ../../cwl/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl:422:5:     Field 'type'
                                                                                       references unknown
                                                                                       identifier 'csv',
                                                                                       tried
                                                                                       file:///home/jean-michel/code/cwl/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl#csv
 ../../cwl/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl:397:3:   checking object
-                                                                                    '../../cwl/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl#site_selection_BAS>Block_creation.yml@0|pca_summary_df'
+                                                                                    '../../cwl/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl#site_selection_BAS>Block_creation.yml@0|pca_summary_df_out'
 ../../cwl/workflows/Site%20Selection%20blocks%20BAS/site_selection_BAS.cwl:398:5:     Field 'type'
                                                                                       references unknown
                                                                                       identifier 'csv',

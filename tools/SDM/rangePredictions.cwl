@@ -195,7 +195,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  range_predictions:
+  range_predictions_out:
     type: File
     label: range of predictions
     doc: range of a 95% confidence interval of a set of predictions

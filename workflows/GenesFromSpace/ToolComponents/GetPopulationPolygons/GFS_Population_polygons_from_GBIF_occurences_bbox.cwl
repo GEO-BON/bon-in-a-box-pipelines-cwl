@@ -193,7 +193,7 @@ steps:
   GFS_IndicatorsTool>get_pop_poly.yml@5:
     run: ../../../../tools/GFS_IndicatorsTool/get_pop_poly.cwl
     in:
-      species_obs: data>getObservations.yml@10/presence
+      species_obs: data>getObservations.yml@10/presence_out
       buffer_size: GFS_IndicatorsTool>get_pop_poly.yml@5|buffer_size
       pop_distance: GFS_IndicatorsTool>get_pop_poly.yml@5|pop_distance
       countries: { default: [] }
@@ -203,7 +203,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [population_polygons]
+    out: [population_polygons_out]
 
 
   data>getObservations.yml@10:
@@ -224,13 +224,13 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [n_presence, presence, bbox]
+    out: [n_presence_out, presence_out, bbox_out]
 
 
 outputs:
-  GFS_IndicatorsTool>get_pop_poly.yml@5|population_polygons:
+  GFS_IndicatorsTool>get_pop_poly.yml@5|population_polygons_out:
     type: File
     label: Polygons of populations
     doc: Path to geojson file storing polygons of populations.
-    outputSource: GFS_IndicatorsTool>get_pop_poly.yml@5/population_polygons
+    outputSource: GFS_IndicatorsTool>get_pop_poly.yml@5/population_polygons_out
 

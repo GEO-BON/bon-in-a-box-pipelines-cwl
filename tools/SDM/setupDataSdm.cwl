@@ -249,7 +249,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  presence_background:
+  presence_background_out:
     type: File
     label: background presence
     doc: Presence-background points with covariates values

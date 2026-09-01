@@ -210,7 +210,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  iucn_country_splist:
+  iucn_country_splist_out:
     type: File
     label: IUCN species list
     doc: Dataset with the list of species for the specified country. It contains the scientific name of the species and their most recent threat categorization according to the IUCN Red List.
@@ -224,7 +224,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  api_citation:
+  api_citation_out:
     type: string
     label: IUCN API citation
     doc: Citation for the data acquired using the IUCN Red List API

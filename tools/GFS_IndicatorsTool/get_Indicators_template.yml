@@ -2,7 +2,8 @@ scripts_root:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
 scriptPath: GFS_IndicatorsTool/get_Indicators.R  # default value of type 'string'.
-runtitle: Quercus sartorii, Mexico, Habitat decline by tree cover loss, 2000-2023  # default value of type 'string'. (optional)
+runtitle: Quercus sartorii, Mexico, Habitat decline by tree cover loss, 
+    2000-2023  # default value of type 'string'. (optional)
 runFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path

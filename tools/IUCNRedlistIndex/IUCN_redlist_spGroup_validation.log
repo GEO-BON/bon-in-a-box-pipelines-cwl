@@ -1,6 +1,5 @@
 [1;30mINFO[0m /home/jean-michel/.local/bin/cwl-runner 3.2.20260413085819
 [1;30mINFO[0m Resolved '/home/jean-michel/code/cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl' to 'file:///home/jean-michel/code/cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl'
-[1;30mWARNING[0m [33m../../cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:145:3: object id '../../cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group' previously defined[0m
 [1;30mERROR[0m [31mTool definition failed validation:
 ../../cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl:2:1:     Object
                                                                  '../../cwl/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl'

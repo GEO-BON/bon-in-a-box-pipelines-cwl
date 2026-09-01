@@ -221,7 +221,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  lcyy:
+  lcyy_out:
     type: File
     label: Land cover year-by-year
     doc: Tif file showing the year-by-year disrtribution of land cover classes of interest.
@@ -235,7 +235,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  time_points:
+  time_points_out:
     type: string[]
     label: Years with land cover information
     doc: List of years for which land cover information is available.

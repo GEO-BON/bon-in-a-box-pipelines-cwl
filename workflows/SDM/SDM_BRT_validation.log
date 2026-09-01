@@ -3,7 +3,7 @@
 [1;30mWARNING[0m [33mWorkflow checker warning:
 ../../cwl/workflows/SDM/SDM_BRT.cwl:34:5:  Source 'pipeline@121' of type ["null", {"type": "array",
                                            "items": "string"}] may be incompatible
-../../cwl/workflows/SDM/SDM_BRT.cwl:413:5:   with sink 'pipeline@121|default_output' of type
+../../cwl/workflows/SDM/SDM_BRT.cwl:413:5:   with sink 'pipeline@121|default_output_out' of type
                                              {"type": "array", "items": "string"}[0m
 [1;30mERROR[0m [31mTool definition failed validation:
 

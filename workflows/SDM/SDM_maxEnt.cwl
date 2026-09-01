@@ -431,8 +431,8 @@ steps:
   filtering>cleanCoordinates.yml@34:
     run: ../../tools/filtering/cleanCoordinates.cwl
     in:
-      presence: data>getGBIFObservations>getGBIFObservations.yml@142/observations_file
-      predictors: SDM>removeCollinearity.yml@97/rasters_selected
+      presence: data>getGBIFObservations>getGBIFObservations.yml@142/observations_file_out
+      predictors: SDM>removeCollinearity.yml@97/rasters_selected_out
       tests: { default: [equal, zeros, duplicates, same_pixel, capitals, centroids, gbif, institutions] }
       env_threshold: { default: 0.8 }
       envFolder:
@@ -446,18 +446,18 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [n_presence, n_clean, clean_presence]
+    out: [n_presence_out, n_clean_out, clean_presence_out]
 
 
   SDM>selectBackground.yml@40:
     run: ../../tools/SDM/selectBackground.cwl
     in:
-      presence: filtering>cleanCoordinates.yml@34/clean_presence
-      extent: SDM>studyExtent.yml@104/study_extent
+      presence: filtering>cleanCoordinates.yml@34/clean_presence_out
+      extent: SDM>studyExtent.yml@104/study_extent_out
       method_background: SDM>selectBackground.yml@40|method_background
       n_background: SDM>selectBackground.yml@40|n_background
-      predictors: SDM>removeCollinearity.yml@97/rasters_selected
-      raster: data>GBIFHeatmapFromSTAC.yml@139/rasters
+      predictors: SDM>removeCollinearity.yml@97/rasters_selected_out
+      raster: data>GBIFHeatmapFromSTAC.yml@139/rasters_out
       envFolder:
         source: prepareEnvironments/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__selectBackground' } : null)"
@@ -469,15 +469,15 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [n_background, background]
+    out: [n_background_out, background_out]
 
 
   SDM>setupDataSdm.yml@44:
     run: ../../tools/SDM/setupDataSdm.cwl
     in:
-      presence: filtering>cleanCoordinates.yml@34/clean_presence
-      background: SDM>selectBackground.yml@40/background
-      predictors: SDM>removeCollinearity.yml@97/rasters_selected
+      presence: filtering>cleanCoordinates.yml@34/clean_presence_out
+      background: SDM>selectBackground.yml@40/background_out
+      predictors: SDM>removeCollinearity.yml@97/rasters_selected_out
       partition_type: { default: bootstrap }
       runs_n: pipeline@46
       boot_proportion: { default: 0.7 }
@@ -493,13 +493,13 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [presence_background]
+    out: [presence_background_out]
 
 
   SDM>rangePredictions.yml@68:
     run: ../../tools/SDM/rangePredictions.cwl
     in:
-      predictions: SDM>runMaxent.yml@108/sdm_runs
+      predictions: SDM>runMaxent.yml@108/sdm_runs_out
       envFolder:
         source: prepareEnvironments/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__rangePredictions' } : null)"
@@ -511,13 +511,13 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [range_predictions]
+    out: [range_predictions_out]
 
 
   SDM>removeCollinearity.yml@97:
     run: ../../tools/SDM/removeCollinearity.cwl
     in:
-      rasters: data>loadFromStac.yml@144/rasters
+      rasters: data>loadFromStac.yml@144/rasters_out
       method: { default: vif.cor }
       method_cor_vif: { default: pearson }
       nb_sample: { default: 5000 }
@@ -534,13 +534,13 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [rasters_selected]
+    out: [rasters_selected_out]
 
 
   SDM>studyExtent.yml@104:
     run: ../../tools/SDM/studyExtent.cwl
     in:
-      presence: filtering>cleanCoordinates.yml@34/clean_presence
+      presence: filtering>cleanCoordinates.yml@34/clean_presence_out
       bbox_crs: pipeline@140
       method: { default: bbox }
       width_buffer: { default: 0 }
@@ -550,14 +550,14 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [area_study_extent, study_extent]
+    out: [area_study_extent_out, study_extent_out]
 
 
   SDM>runMaxent.yml@108:
     run: ../../tools/SDM/runMaxent.cwl
     in:
-      presence_background: SDM>setupDataSdm.yml@44/presence_background
-      predictors: SDM>removeCollinearity.yml@97/rasters_selected
+      presence_background: SDM>setupDataSdm.yml@44/presence_background_out
+      predictors: SDM>removeCollinearity.yml@97/rasters_selected_out
       fc: SDM>runMaxent.yml@108|fc
       rm: SDM>runMaxent.yml@108|rm
       partition_type: SDM>runMaxent.yml@108|partition_type
@@ -576,7 +576,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [sdm_pred, sdm_runs]
+    out: [sdm_pred_out, sdm_runs_out]
 
 
   data>GBIFHeatmapFromSTAC.yml@139:
@@ -591,7 +591,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [rasters]
+    out: [rasters_out]
 
 
   data>getGBIFObservations>getGBIFObservations.yml@142:
@@ -612,7 +612,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [observations_file, total_records, gbif_doi]
+    out: [observations_file_out, total_records_out, gbif_doi_out]
 
 
   data>loadFromStac.yml@144:
@@ -639,43 +639,43 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [rasters]
+    out: [rasters_out]
 
 
 outputs:
-  filtering>cleanCoordinates.yml@34|clean_presence:
+  filtering>cleanCoordinates.yml@34|clean_presence_out:
     type: File
     label: Presences
     doc: Cleaned GBIF occurrence records that passed the selected coordinate-cleaning tests. These records are used as presence points in the SDM workflow.
-    outputSource: filtering>cleanCoordinates.yml@34/clean_presence
+    outputSource: filtering>cleanCoordinates.yml@34/clean_presence_out
 
-  SDM>removeCollinearity.yml@97|rasters_selected:
+  SDM>removeCollinearity.yml@97|rasters_selected_out:
     type: File[]
     label: Environmental predictors
     doc: GeoTIFF predictor rasters retained after collinearity filtering. These are the environmental variables used to fit and project the MaxEnt model.
-    outputSource: SDM>removeCollinearity.yml@97/rasters_selected
+    outputSource: SDM>removeCollinearity.yml@97/rasters_selected_out
 
-  SDM>runMaxent.yml@108|sdm_pred:
+  SDM>runMaxent.yml@108|sdm_pred_out:
     type: File
     label: Predictions
     doc: MaxEnt habitat suitability prediction raster fitted using the selected model settings.
-    outputSource: SDM>runMaxent.yml@108/sdm_pred
+    outputSource: SDM>runMaxent.yml@108/sdm_pred_out
 
-  SDM>rangePredictions.yml@68|range_predictions:
+  SDM>rangePredictions.yml@68|range_predictions_out:
     type: File
     label: Variability of predictions
     doc: The variability of the 95% confidence of each prediction can be viewed on a map to show uncertainty.
-    outputSource: SDM>rangePredictions.yml@68/range_predictions
+    outputSource: SDM>rangePredictions.yml@68/range_predictions_out
 
-  pipeline@121|default_output:
+  pipeline@121|default_output_out:
     type: string[]
     label: Taxa list
     doc: Taxa supplied to the pipeline and used for GBIF occurrence retrieval and model fitting.
     outputSource: pipeline@121
 
-  data>getGBIFObservations>getGBIFObservations.yml@142|gbif_doi:
+  data>getGBIFObservations>getGBIFObservations.yml@142|gbif_doi_out:
     type: string
     label: DOI of GBIF download
     doc: A permanent DOI assigned to this specific GBIF data download. Must be cited in any publication using these data — see [GBIF's citation guidelines](https://www.gbif.org/citation-guidelines).
-    outputSource: data>getGBIFObservations>getGBIFObservations.yml@142/gbif_doi
+    outputSource: data>getGBIFObservations>getGBIFObservations.yml@142/gbif_doi_out
 

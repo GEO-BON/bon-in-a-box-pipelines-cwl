@@ -205,7 +205,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  class_percentage:
+  class_percentage_out:
     type: File
     label: Percentage of classes
     doc: Percentage of each categorical class in a raster layer over a polygon or bounding box of interest

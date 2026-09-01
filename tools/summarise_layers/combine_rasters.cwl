@@ -197,7 +197,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  combined_rasters:
+  combined_rasters_out:
     type: File[]
     label: combined_rasters
     doc: Path to the combined raster layers. The layers will be in GeoTIFF format.

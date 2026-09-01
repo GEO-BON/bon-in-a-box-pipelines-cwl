@@ -311,7 +311,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  sdm_pred:
+  sdm_pred_out:
     type: File
     label: predictions
     doc: model predictions while trained on the whole dataset
@@ -325,7 +325,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  sdm_runs:
+  sdm_runs_out:
     type: File[]
     label: runs predictions
     doc: model predictions among the several runs (if boostrapping or kfolds performed)

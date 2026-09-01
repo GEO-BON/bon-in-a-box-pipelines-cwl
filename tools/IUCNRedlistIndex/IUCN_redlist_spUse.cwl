@@ -218,7 +218,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  iucn_use_splist:
+  iucn_use_splist_out:
     type: File
     label: IUCN species list
     doc: Dataset with the list of species for the specified species use. It contains the scientific name of the species and their most recent threat categorization according to the IUCN Red List.
@@ -232,7 +232,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  species_use:
+  species_use_out:
     type: string[]
     label: Species use
     doc: Species use for IUCN red list assessment
@@ -249,7 +249,7 @@ outputs:
           });
         }
 
-  api_citation:
+  api_citation_out:
     type: string
     label: IUCN API citation
     doc: Citation for the data acquired using the IUCN Red List API

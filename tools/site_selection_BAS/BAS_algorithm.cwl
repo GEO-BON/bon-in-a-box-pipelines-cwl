@@ -230,7 +230,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  maps_output:
+  maps_output_out:
     type: File
     label: Maps output
     doc: maps of selected points
@@ -244,7 +244,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  pts_df:
+  pts_df_out:
     type: csv
     label: Selected points
     doc: dataframe of selected points
@@ -257,7 +257,7 @@ outputs:
           return value;
         }
 
-  points_shape:
+  points_shape_out:
     type: File
     label: selected points shapefile
     doc: Vector shapefile of selected points

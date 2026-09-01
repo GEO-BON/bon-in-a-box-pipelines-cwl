@@ -196,7 +196,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  population_trend_percent:
+  population_trend_percent_out:
     type: File
     label: Data on population trends
     doc: Percentage of RLI listed species that have population trends that are improving, stable, declining, or unknown according to the IUCN red list.

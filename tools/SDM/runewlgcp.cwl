@@ -296,7 +296,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  sdm_pred:
+  sdm_pred_out:
     type: File
     label: predictions
     doc: model predictions while trained on the whole dataset
@@ -310,7 +310,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  sdm_unc:
+  sdm_unc_out:
     type: File
     label: uncertainty
     doc: model uncertainty metrics
@@ -324,7 +324,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  sdm_ci:
+  sdm_ci_out:
     type: File[]
     label: CI range
     doc: difference between the upper and the lower CI bound
@@ -342,7 +342,7 @@ outputs:
           });
         }
 
-  sdm_obs:
+  sdm_obs_out:
     type: File
     label: observations
     doc: GBIF observations used for the sdm model
@@ -356,7 +356,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  sdm_bg:
+  sdm_bg_out:
     type: File
     label: background
     doc: background points used for the sdm model
@@ -370,7 +370,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  sdm_dmesh:
+  sdm_dmesh_out:
     type: File
     label: dmesh
     doc: dual mesh used by the sdm model

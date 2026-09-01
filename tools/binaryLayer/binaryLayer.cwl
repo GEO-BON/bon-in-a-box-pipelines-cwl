@@ -215,7 +215,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  output_binary:
+  output_binary_out:
     type: File[]
     label: binary layer output
     doc: land cover raster classes, where 1 is above threshold and 0 below threshold.

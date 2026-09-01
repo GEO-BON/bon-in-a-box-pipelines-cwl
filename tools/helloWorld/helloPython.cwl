@@ -247,7 +247,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  increment:
+  increment_out:
     type: int
     label: A number (input++)
     doc: bla bla
@@ -261,7 +261,7 @@ outputs:
           return parseInt(value);
         }
 
-  crs_id:
+  crs_id_out:
     type: string
     label: CRS ID
     doc: ID of CRS obtained from bounding box selector

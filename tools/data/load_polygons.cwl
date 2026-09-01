@@ -266,7 +266,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  polygon:
+  polygon_out:
     type: File
     label: Polygon
     doc: Polygons of the country, WDPA, EEZs for the country or region of interest
@@ -280,7 +280,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  bbox_crs:
+  bbox_crs_out:
     label: Bounding box and crs of polygon
     doc: Bounding box and coordinate reference system of output polygon
     type:

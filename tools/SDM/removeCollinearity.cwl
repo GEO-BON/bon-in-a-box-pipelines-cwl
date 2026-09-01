@@ -242,7 +242,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  rasters_selected:
+  rasters_selected_out:
     type: File[]
     label: rasters_selected
     doc: Array of output raster paths. Subset of input raster paths retained after removing highly collinear predictors. These rasters represent the environmental variables selected for downstream modeling.

@@ -338,7 +338,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  protected_areas:
+  protected_areas_out:
     type: File[]
     label: Protected areas
     doc: Protected areas on which ProtConn has been calculated. Overlapping protected areas have been merged into one to speed up calculation. Protected areas less than the threshold size were also removed.
@@ -356,7 +356,7 @@ outputs:
           });
         }
 
-  study_area_km2:
+  study_area_km2_out:
     type: string
     label: Area of study area
     doc: Area of the study area in square kilometers
@@ -369,7 +369,7 @@ outputs:
           return value;
         }
 
-  protected_area_km2:
+  protected_area_km2_out:
     type: string
     label: Area of protected areas
     doc: Total area of the protected areas in square kilometers
@@ -382,7 +382,7 @@ outputs:
           return value;
         }
 
-  protconn_result:
+  protconn_result_out:
     type: File
     label: ProtConn results
     doc: >
@@ -397,7 +397,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  result_plot:
+  result_plot_out:
     type: File
     label: ProtConn result plot
     doc: >
@@ -412,7 +412,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  result_yrs_plot:
+  result_yrs_plot_out:
     type: File[]
     label: ProtConn time series plot
     doc: Change in the percentage area that is protected and the percentage that is protected and connected over time, at the chosen time interval, compared to the Kunming-Montreal GBF goals.
@@ -430,7 +430,7 @@ outputs:
           });
         }
 
-  result_yrs:
+  result_yrs_out:
     type: File
     label: ProtConn time series results
     doc: Table of the time series of ProtConn and ProtUnconn values, calculated at the time interval that is specified

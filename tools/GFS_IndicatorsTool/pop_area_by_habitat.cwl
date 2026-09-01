@@ -231,7 +231,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  pop_area:
+  pop_area_out:
     type: File
     label: Table of habitat area by population
     doc: Table of estimated habitat area by population (rows). If available, time points are displayed as columns.

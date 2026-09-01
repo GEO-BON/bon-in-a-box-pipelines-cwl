@@ -216,7 +216,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  population_polygons:
+  population_polygons_out:
     type: File
     label: Polygons of populations
     doc: Path to geojson file storing polygons of populations.

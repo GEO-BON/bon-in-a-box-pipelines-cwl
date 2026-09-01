@@ -232,7 +232,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  iucn_splist:
+  iucn_splist_out:
     type: File
     label: IUCN species list
     doc: Dataset with the list of species for the specified country for the specified filters. It contains the scientific name of the species and their most recent threat categorization according to the IUCN Red List.
@@ -246,7 +246,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  number_species:
+  number_species_out:
     type: int
     label: Number of species
     doc: Number of species in that country, filtered by taxon, threat, and use categories.

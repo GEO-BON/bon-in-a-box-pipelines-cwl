@@ -218,7 +218,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  summarised_values:
+  summarised_values_out:
     type: File
     label: Indicator summary
     doc: Weighted geometric mean of the indicator over the time period of interest in the study area
@@ -232,7 +232,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  time_series_plot:
+  time_series_plot_out:
     type: File
     label: Time series plot
     doc: Plot of the geometric mean of the indicator over time in the study area of interest

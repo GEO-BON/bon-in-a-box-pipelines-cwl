@@ -202,7 +202,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  stac_catalog:
+  stac_catalog_out:
     type: File
     label: STAC Catalog
     doc: >

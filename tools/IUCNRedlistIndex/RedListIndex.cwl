@@ -264,7 +264,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  redlist_trend_plot:
+  redlist_trend_plot_out:
     type: File
     label: Red List trend
     doc: The Red List Index of species for the chosen taxonomy group over time. An RLI of 1.0 indicates that all species have a status of Least Concerned, while 0.0 indicates Extinct. If the RLI value is constant over time, the overall extinction risk remains unchanged. An upward trend shows a reduction in the rate of biodiversity loss.
@@ -278,7 +278,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  redlist_data:
+  redlist_data_out:
     type: File
     label: Red List data
     doc: Dataset containing the results of the Red List Index (RLI) calculation.
@@ -292,7 +292,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  redlist_matrix:
+  redlist_matrix_out:
     type: File
     label: Red List matrix
     doc: Matrix showing the distribution of threat categories over time for the group of species.

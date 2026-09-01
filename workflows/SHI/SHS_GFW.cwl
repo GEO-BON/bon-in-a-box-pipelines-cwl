@@ -387,7 +387,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [sf_range_map]
+    out: [sf_range_map_out]
 
 
   SHI>habitatChange_GFW.yml@67:
@@ -396,8 +396,8 @@ steps:
       spat_res: pipeline@79
       crs: pipeline@93
       species: pipeline@76
-      r_area_of_habitat: data>getAreaOfHabitat.yml@80/r_area_of_habitat
-      sf_bbox: data>getAreaOfHabitat.yml@80/sf_bbox
+      r_area_of_habitat: data>getAreaOfHabitat.yml@80/r_area_of_habitat_out
+      sf_bbox: data>getAreaOfHabitat.yml@80/sf_bbox_out
       min_forest: SHI>habitatChange_GFW.yml@67|min_forest
       max_forest: SHI>habitatChange_GFW.yml@67|max_forest
       t_0: SHI>habitatChange_GFW.yml@67|t_0
@@ -414,7 +414,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [img_shs_map, r_habitat_by_tstep, img_shs_timeseries, df_shs, df_shs_tidy, habitat_change_map]
+    out: [img_shs_map_out, r_habitat_by_tstep_out, img_shs_timeseries_out, df_shs_out, df_shs_tidy_out, habitat_change_map_out]
 
 
   data>getAreaOfHabitat.yml@80:
@@ -423,15 +423,15 @@ steps:
       spat_res: pipeline@79
       crs: pipeline@93
       study_area: pipeline@90
-      country_region_polygon: data>getCountryPolygon.yml@92/country_region_polygon
+      country_region_polygon: data>getCountryPolygon.yml@92/country_region_polygon_out
       buff_size: data>getAreaOfHabitat.yml@80|buff_size
       species: pipeline@76
       range_map_type: data>getAreaOfHabitat.yml@80|range_map_type
-      sf_range_map: data>getRangeMap.yml@65/sf_range_map
+      sf_range_map: data>getRangeMap.yml@65/sf_range_map_out
       r_range_map: data>getAreaOfHabitat.yml@80|r_range_map
       elevation_filter: data>getAreaOfHabitat.yml@80|elevation_filter
       elev_buffer: data>getAreaOfHabitat.yml@80|elev_buffer
-      rasters: data>loadFromStac.yml@84/rasters
+      rasters: data>loadFromStac.yml@84/rasters_out
       envFolder:
         source: prepareEnvironments/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getAreaOfHabitat' } : null)"
@@ -443,7 +443,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [r_area_of_habitat, sf_bbox, df_aoh_areas]
+    out: [r_area_of_habitat_out, sf_bbox_out, df_aoh_areas_out]
 
 
   data>loadFromStac.yml@84:
@@ -470,7 +470,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [rasters]
+    out: [rasters_out]
 
 
   data>getCountryPolygon.yml@92:
@@ -488,37 +488,37 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [country, region, country_region_polygon]
+    out: [country_out, region_out, country_region_polygon_out]
 
 
 outputs:
-  SHI>habitatChange_GFW.yml@67|img_shs_map:
+  SHI>habitatChange_GFW.yml@67|img_shs_map_out:
     type: File[]
     label: SHS map
     doc: Figure showing a map with changes in the habitat for the time range for each species.
-    outputSource: SHI>habitatChange_GFW.yml@67/img_shs_map
+    outputSource: SHI>habitatChange_GFW.yml@67/img_shs_map_out
 
-  SHI>habitatChange_GFW.yml@67|df_shs:
+  SHI>habitatChange_GFW.yml@67|df_shs_out:
     type: File[]
     label: SHS table
     doc: A TSV (Tab Separated Values) file containing Area Score, Connectivity Score and SHS by time step for each species. Percentage of change, 100% being equal to the reference year.
-    outputSource: SHI>habitatChange_GFW.yml@67/df_shs
+    outputSource: SHI>habitatChange_GFW.yml@67/df_shs_out
 
-  SHI>habitatChange_GFW.yml@67|img_shs_timeseries:
+  SHI>habitatChange_GFW.yml@67|img_shs_timeseries_out:
     type: File[]
     label: SHS time series
     doc: Figure showing a time series of SHS values per time step for each species.
-    outputSource: SHI>habitatChange_GFW.yml@67/img_shs_timeseries
+    outputSource: SHI>habitatChange_GFW.yml@67/img_shs_timeseries_out
 
-  SHI>habitatChange_GFW.yml@67|habitat_change_map:
+  SHI>habitatChange_GFW.yml@67|habitat_change_map_out:
     type: File[]
     label: SHS Map (raster)
     doc: Figure showing a map with changes in the habitat for the time range for each species (raster).
-    outputSource: SHI>habitatChange_GFW.yml@67/habitat_change_map
+    outputSource: SHI>habitatChange_GFW.yml@67/habitat_change_map_out
 
-  SHI>habitatChange_GFW.yml@67|r_habitat_by_tstep:
+  SHI>habitatChange_GFW.yml@67|r_habitat_by_tstep_out:
     type: File[]
     label: Habitat by time step
     doc: Raster of habitat by time step.
-    outputSource: SHI>habitatChange_GFW.yml@67/r_habitat_by_tstep
+    outputSource: SHI>habitatChange_GFW.yml@67/r_habitat_by_tstep_out
 

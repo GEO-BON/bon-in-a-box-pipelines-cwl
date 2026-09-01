@@ -278,7 +278,7 @@ steps:
   BII>BIIChange.yml@14:
     run: ../../tools/BII/BIIChange.cwl
     in:
-      rasters: data>loadFromStac.yml@56/rasters
+      rasters: data>loadFromStac.yml@56/rasters_out
       start_year: pipeline@63
       end_year: pipeline@64
       runFolder:
@@ -287,15 +287,15 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [bii_change]
+    out: [bii_change_out]
 
 
   zonal_statistics>zonal_stats.yml@25:
     run: ../../tools/zonal_statistics/zonal_stats.cwl
     in:
-      rasters: data>loadFromStac.yml@56/rasters
+      rasters: data>loadFromStac.yml@56/rasters_out
       bbox_crs: pipeline@67
-      study_area_polygon: data>load_polygons.yml@68/polygon
+      study_area_polygon: data>load_polygons.yml@68/polygon_out
       summary_statistic: zonal_statistics>zonal_stats.yml@25|summary_statistic
       envFolder:
         source: prepareEnvironments/envFolder
@@ -308,13 +308,13 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [zonal_stats]
+    out: [zonal_stats_out]
 
 
   data>loadFromStac.yml@56:
     run: ../../tools/data/loadFromStac.cwl
     in:
-      bbox_crs: data>load_polygons.yml@68/bbox_crs
+      bbox_crs: data>load_polygons.yml@68/bbox_crs_out
       stac_url: { default: https://stac.geobon.org/ }
       collections_items: { default: [bii_nhm] }
       t0: pipeline@63
@@ -323,7 +323,7 @@ steps:
       spatial_res: data>loadFromStac.yml@56|spatial_res
       resampling: { default: near }
       aggregation: { default: first }
-      study_area: data>load_polygons.yml@68/polygon
+      study_area: data>load_polygons.yml@68/polygon_out
       envFolder:
         source: prepareEnvironments/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac' } : null)"
@@ -335,7 +335,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [rasters]
+    out: [rasters_out]
 
 
   data>load_polygons.yml@68:
@@ -355,31 +355,31 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [polygon, bbox_crs]
+    out: [polygon_out, bbox_crs_out]
 
 
 outputs:
-  zonal_statistics>zonal_stats.yml@25|zonal_stats:
+  zonal_statistics>zonal_stats.yml@25|zonal_stats_out:
     type: File
     label: Summary statistic
     doc: Summary statistic over the polygon
-    outputSource: zonal_statistics>zonal_stats.yml@25/zonal_stats
+    outputSource: zonal_statistics>zonal_stats.yml@25/zonal_stats_out
 
-  BII>BIIChange.yml@14|bii_change:
+  BII>BIIChange.yml@14|bii_change_out:
     type: File[]
     label: Change in BII
     doc: Raster plot of change in BII. Higher numbers indicate greater BII loss.
-    outputSource: BII>BIIChange.yml@14/bii_change
+    outputSource: BII>BIIChange.yml@14/bii_change_out
 
-  data>load_polygons.yml@68|polygon:
+  data>load_polygons.yml@68|polygon_out:
     type: File
     label: Polygon
     doc: Polygons of the country, WDPA, EEZs for the country or region of interest
-    outputSource: data>load_polygons.yml@68/polygon
+    outputSource: data>load_polygons.yml@68/polygon_out
 
-  data>loadFromStac.yml@56|rasters:
+  data>loadFromStac.yml@56|rasters_out:
     type: File[]
     label: Rasters
     doc: Output raster files in geotiff format.
-    outputSource: data>loadFromStac.yml@56/rasters
+    outputSource: data>loadFromStac.yml@56/rasters_out
 

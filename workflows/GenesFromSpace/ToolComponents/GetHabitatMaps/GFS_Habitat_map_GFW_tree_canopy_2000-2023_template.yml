@@ -26,4 +26,5 @@ GFS_IndicatorsTool>get_TCY.yml@23|yoi:  # array of type 'int' (optional)
   ###################
 
 GFS_IndicatorsTool>get_TCY.yml@23|res: 0.01  # default value of type 'float'. (optional)
-GFS_IndicatorsTool>get_TCY.yml@23|population_polygons: /userdata/populations.geojson  # default value of type 'File'. (optional)
+GFS_IndicatorsTool>get_TCY.yml@23|population_polygons: 
+    /userdata/populations.geojson  # default value of type 'File'. (optional)

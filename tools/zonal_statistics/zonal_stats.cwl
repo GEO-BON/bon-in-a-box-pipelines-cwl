@@ -278,7 +278,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  zonal_stats:
+  zonal_stats_out:
     type: File
     label: Summary statistic
     doc: Summary statistic over the polygon

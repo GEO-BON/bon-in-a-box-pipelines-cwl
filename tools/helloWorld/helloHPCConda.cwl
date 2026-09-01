@@ -212,7 +212,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  target:
+  target_out:
     type: int
     label: Target seconds
     doc: >
@@ -229,7 +229,7 @@ outputs:
           return parseInt(value);
         }
 
-  length:
+  length_out:
     type: int
     label: Content length
     doc: The length of the input content, printed at the end of the script. This will not be printed if job times out.

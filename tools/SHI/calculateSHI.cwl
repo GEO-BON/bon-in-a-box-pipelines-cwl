@@ -216,7 +216,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  df_shi:
+  df_shi_out:
     type: File
     label: SHI table
     doc: Table with SHI and Steward’s SHI values for the complete area of study.
@@ -230,7 +230,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  img_shi_timeseries:
+  img_shi_timeseries_out:
     type: File
     label: SHI time series
     doc: Figure showing a time series of SHI values for each time step, 100% being equal to the reference year.
@@ -244,7 +244,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  img_w_shi_timeseries:
+  img_w_shi_timeseries_out:
     type: File
     label: Steward’s SHI time series
     doc: Figure showing a time series of Steward’s SHI values for each time step. This is weighted by the proportion between the area of habitat for the study area and the total range map of the species. The reference year will start at the proportion of area of habitat in the study area. For example, if half of the species habitat is covered by the study area, the reference year’s value will be 50%.

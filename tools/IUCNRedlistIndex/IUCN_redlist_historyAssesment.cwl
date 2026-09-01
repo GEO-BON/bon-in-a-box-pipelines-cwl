@@ -205,7 +205,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  iucn_history_assessment_data:
+  iucn_history_assessment_data_out:
     type: File
     label: History assessment data
     doc: Dataset that contains the historical IUCN threat category assessments, organized by year, for the listed species.
@@ -219,7 +219,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  api_citation:
+  api_citation_out:
     type: string
     label: IUCN API citation
     doc: Citation for the data acquired using the IUCN Red List API

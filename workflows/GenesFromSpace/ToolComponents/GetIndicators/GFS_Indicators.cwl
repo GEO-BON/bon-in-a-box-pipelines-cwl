@@ -231,7 +231,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [pop_area]
+    out: [pop_area_out]
 
 
   GFS_IndicatorsTool>get_Indicators.yml@127:
@@ -239,7 +239,7 @@ steps:
     in:
       population_polygons: pipeline@100
       habitat_map: pipeline@101
-      pop_area: GFS_IndicatorsTool>pop_area_by_habitat.yml@99/pop_area
+      pop_area: GFS_IndicatorsTool>pop_area_by_habitat.yml@99/pop_area_out
       ne_nc: GFS_IndicatorsTool>get_Indicators.yml@127|ne_nc
       pop_density: GFS_IndicatorsTool>get_Indicators.yml@127|pop_density
       runtitle: GFS_IndicatorsTool>get_Indicators.yml@127|runtitle
@@ -254,31 +254,31 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [ne_table, pm, interactive_plot, ne500]
+    out: [ne_table_out, pm_out, interactive_plot_out, ne500_out]
 
 
 outputs:
-  GFS_IndicatorsTool>get_Indicators.yml@127|ne_table:
+  GFS_IndicatorsTool>get_Indicators.yml@127|ne_table_out:
     type: File
     label: Effective population size
     doc: Estimated effective size of every population, based on the latest time point of the habitat cover map.
-    outputSource: GFS_IndicatorsTool>get_Indicators.yml@127/ne_table
+    outputSource: GFS_IndicatorsTool>get_Indicators.yml@127/ne_table_out
 
-  GFS_IndicatorsTool>get_Indicators.yml@127|pm:
+  GFS_IndicatorsTool>get_Indicators.yml@127|pm_out:
     type: float
     label: Population maintained indicator
     doc: Estimated proportion of mantained populations, comparing earliest and latest time point.
-    outputSource: GFS_IndicatorsTool>get_Indicators.yml@127/pm
+    outputSource: GFS_IndicatorsTool>get_Indicators.yml@127/pm_out
 
-  GFS_IndicatorsTool>get_Indicators.yml@127|interactive_plot:
+  GFS_IndicatorsTool>get_Indicators.yml@127|interactive_plot_out:
     type: File
     label: Interactive plot
     doc: An interactive interface to explore indicators trends across geographical space and time.
-    outputSource: GFS_IndicatorsTool>get_Indicators.yml@127/interactive_plot
+    outputSource: GFS_IndicatorsTool>get_Indicators.yml@127/interactive_plot_out
 
-  GFS_IndicatorsTool>get_Indicators.yml@127|ne500:
+  GFS_IndicatorsTool>get_Indicators.yml@127|ne500_out:
     type: float
     label: Ne>500 indicator
     doc: Estimated proportion of populations with Ne>500 at latest time point.
-    outputSource: GFS_IndicatorsTool>get_Indicators.yml@127/ne500
+    outputSource: GFS_IndicatorsTool>get_Indicators.yml@127/ne500_out
 

@@ -259,7 +259,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  n_presence:
+  n_presence_out:
     type: int
     label: number of presence points
     doc: Integer, number of presence points retrieved
@@ -273,7 +273,7 @@ outputs:
           return parseInt(value);
         }
 
-  presence:
+  presence_out:
     type: File
     label: presence
     doc: Table, observations retrieved from GBIF database
@@ -287,7 +287,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  bbox:
+  bbox_out:
     type: float[]
     label: bbox
     doc: Vector of float, bbox coordinates of the extent in the order xmin, ymin, xmax, ymax

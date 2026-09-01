@@ -9,7 +9,8 @@ runFolder:  # type 'Directory' (optional)
 pseudoabsence_buffer: 10.0  # default value of type 'float'. (optional)
 predictors: /output/foo/bar  # array of type 'File' (optional)
 pa_proportion: 2.4  # default value of type 'float'. (optional)
-occurrence: /output/data/getObservations/9f7d1cc148464cd0517e01c67af0ab5b/obs_data.tsv  # default value of type 'File'. (optional)
+occurrence: 
+    /output/data/getObservations/9f7d1cc148464cd0517e01c67af0ab5b/obs_data.tsv  # default value of type 'File'. (optional)
 max_candidate_pseudoabsences: 100000  # default value of type 'int'. (optional)
 environment:  # type 'File' (optional)
     class: File

@@ -317,7 +317,7 @@ steps:
     run: ../../tools/phenology/summarise_phenology.cwl
     in:
       bbox_crs: pipeline@68
-      study_area_polygon: data>load_polygons.yml@69/polygon
+      study_area_polygon: data>load_polygons.yml@69/polygon_out
       start_year: pipeline@44
       end_year: pipeline@45
       season: phenology>summarise_phenology.yml@37|season
@@ -335,23 +335,23 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [rasters, timeseries]
+    out: [rasters_out, timeseries_out]
 
 
   phenology>phenology_difference.yml@48:
     run: ../../tools/phenology/phenology_difference.cwl
     in:
-      rasters: phenology>summarise_phenology.yml@37/rasters
+      rasters: phenology>summarise_phenology.yml@37/rasters_out
       start_year: pipeline@44
       end_year: pipeline@45
-      timeseries: phenology>summarise_phenology.yml@37/timeseries
+      timeseries: phenology>summarise_phenology.yml@37/timeseries_out
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/phenology__phenology_difference/48' } : null)"
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [phenology_change, phenology_change_plot]
+    out: [phenology_change_out, phenology_change_plot_out]
 
 
   data>load_polygons.yml@69:
@@ -371,39 +371,39 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [polygon, bbox_crs]
+    out: [polygon_out, bbox_crs_out]
 
 
 outputs:
-  phenology>summarise_phenology.yml@37|rasters:
+  phenology>summarise_phenology.yml@37|rasters_out:
     type: File[]
     label: Phenology rasters
     doc: >
       Rasters of phenology layers, with one raster per year in the input time range. Will either be the raw raster layers or resampled to the spatial resolution and CRS input by the user.
-    outputSource: phenology>summarise_phenology.yml@37/rasters
+    outputSource: phenology>summarise_phenology.yml@37/rasters_out
 
-  phenology>phenology_difference.yml@48|phenology_change:
+  phenology>phenology_difference.yml@48|phenology_change_out:
     type: File[]
     label: Change in phenology metrics
     doc: >
       Raster plot of change in phenology from the start year to the end year. The end year is subtracted from the start year, so larger values indicate a greater decrease in the given value over time.
-    outputSource: phenology>phenology_difference.yml@48/phenology_change
+    outputSource: phenology>phenology_difference.yml@48/phenology_change_out
 
-  phenology>phenology_difference.yml@48|phenology_change_plot:
+  phenology>phenology_difference.yml@48|phenology_change_plot_out:
     type: File
     label: Plot of phenology change
     doc: Plot of the summarised phenology values over time for the bands of interest
-    outputSource: phenology>phenology_difference.yml@48/phenology_change_plot
+    outputSource: phenology>phenology_difference.yml@48/phenology_change_plot_out
 
-  phenology>summarise_phenology.yml@37|timeseries:
+  phenology>summarise_phenology.yml@37|timeseries_out:
     type: File
     label: Zonal statistics
     doc: Summarised values over the polygon of interest (mean, minimum, or maximum) for each year for each band of interest
-    outputSource: phenology>summarise_phenology.yml@37/timeseries
+    outputSource: phenology>summarise_phenology.yml@37/timeseries_out
 
-  data>load_polygons.yml@69|polygon:
+  data>load_polygons.yml@69|polygon_out:
     type: File
     label: Polygon
     doc: Polygons of the country, WDPA, EEZs for the country or region of interest
-    outputSource: data>load_polygons.yml@69/polygon
+    outputSource: data>load_polygons.yml@69/polygon_out
 

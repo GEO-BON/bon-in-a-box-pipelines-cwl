@@ -251,7 +251,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  iucn_taxon_splist:
+  iucn_taxon_splist_out:
     type: File
     label: IUCN species list
     doc: Dataset with the list of species for the specified taxonomic group. It contains the scientific name of the species and their most recent threat categorization according to the IUCN Red List.
@@ -265,7 +265,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  taxonomic_group:
+  taxonomic_group_out:
     type: string[]
     label: Taxonomic group
     doc: Taxonomic group of interest
@@ -282,7 +282,7 @@ outputs:
           });
         }
 
-  api_citation:
+  api_citation_out:
     type: string
     label: IUCN API citation
     doc: Citation for the data acquired using the IUCN Red List API

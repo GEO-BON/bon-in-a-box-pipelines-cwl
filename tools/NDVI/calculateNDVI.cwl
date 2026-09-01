@@ -286,7 +286,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  rasters:
+  rasters_out:
     type: File[]
     label: Vegetation index rasters
     doc: >
@@ -305,7 +305,7 @@ outputs:
           });
         }
 
-  timeseries:
+  timeseries_out:
     type: File
     label: Time series of NDVI
     doc: Time series of NDVI values for every date where there is data in the specified time period.
@@ -319,7 +319,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  timeseries_plot:
+  timeseries_plot_out:
     type: File
     label: NDVI time series plot
     doc: Plot of NDVI values over time

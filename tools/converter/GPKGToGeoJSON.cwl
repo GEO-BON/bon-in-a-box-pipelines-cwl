@@ -194,7 +194,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  geojson_file:
+  geojson_file_out:
     type: File
     label: GeoJSON file
     doc: GeoJSON file.

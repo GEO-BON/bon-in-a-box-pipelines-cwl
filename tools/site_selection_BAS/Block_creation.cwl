@@ -226,7 +226,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  rast_blocks:
+  rast_blocks_out:
     type: File[]
     label: environmental blocks raster
     doc: environmental blocks raster
@@ -244,7 +244,7 @@ outputs:
           });
         }
 
-  blocks_plot:
+  blocks_plot_out:
     type: File
     label: blocks and map plots
     doc: env space and map of blocks
@@ -258,7 +258,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  pca_summary_df:
+  pca_summary_df_out:
     type: csv
     label: summary of PCA
     doc: summary of PCA
@@ -271,7 +271,7 @@ outputs:
           return value;
         }
 
-  colors_vect:
+  colors_vect_out:
     type: csv
     label: Color vector
     doc: vector of random colors for plotting

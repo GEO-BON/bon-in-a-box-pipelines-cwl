@@ -1,11 +1,10 @@
 [1;30mINFO[0m /home/jean-michel/.local/bin/cwl-runner 3.2.20260413085819
 [1;30mINFO[0m Resolved '/home/jean-michel/code/cwl/workflows/SDM/SDM_ewlgcp.cwl' to 'file:///home/jean-michel/code/cwl/workflows/SDM/SDM_ewlgcp.cwl'
-[1;30mWARNING[0m [33m../../cwl/tools/SDM/selectBackground.cwl:176:3: object id '../../cwl/tools/SDM/selectBackground.cwl#n_background' previously defined[0m
 [1;30mWARNING[0m [33mWorkflow checker warning:
 ../../cwl/workflows/SDM/SDM_ewlgcp.cwl:35:5:  Source 'pipeline@121' of type ["null", {"type":
                                               "array", "items": "string"}] may be incompatible
-../../cwl/workflows/SDM/SDM_ewlgcp.cwl:525:5:   with sink 'pipeline@121|default_output' of type
-                                                {"type": "array", "items": "string"}[0m
+../../cwl/workflows/SDM/SDM_ewlgcp.cwl:525:5:   with sink 'pipeline@121|default_output_out' of
+                                                type {"type": "array", "items": "string"}[0m
 [1;30mERROR[0m [31mTool definition failed validation:
 
 ../../cwl/workflows/SDM/SDM_ewlgcp.cwl:157:5: Source

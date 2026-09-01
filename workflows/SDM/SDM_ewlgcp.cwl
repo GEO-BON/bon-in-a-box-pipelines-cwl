@@ -330,8 +330,8 @@ steps:
   filtering>cleanCoordinates.yml@34:
     run: ../../tools/filtering/cleanCoordinates.cwl
     in:
-      presence: data>getGBIFObservations>getGBIFObservations.yml@139/observations_file
-      predictors: SDM>removeCollinearity.yml@97/rasters_selected
+      presence: data>getGBIFObservations>getGBIFObservations.yml@139/observations_file_out
+      predictors: SDM>removeCollinearity.yml@97/rasters_selected_out
       tests: { default: [equal, zeros, duplicates, same_pixel, capitals, centroids, gbif, institutions] }
       env_threshold: { default: 0.8 }
       envFolder:
@@ -345,18 +345,18 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [n_presence, n_clean, clean_presence]
+    out: [n_presence_out, n_clean_out, clean_presence_out]
 
 
   SDM>selectBackground.yml@40:
     run: ../../tools/SDM/selectBackground.cwl
     in:
-      presence: filtering>cleanCoordinates.yml@34/clean_presence
-      extent: SDM>studyExtent.yml@104/study_extent
+      presence: filtering>cleanCoordinates.yml@34/clean_presence_out
+      extent: SDM>studyExtent.yml@104/study_extent_out
       method_background: SDM>selectBackground.yml@40|method_background
       n_background: SDM>selectBackground.yml@40|n_background
-      predictors: SDM>removeCollinearity.yml@97/rasters_selected
-      raster: data>GBIFHeatmapFromSTAC.yml@145/rasters
+      predictors: SDM>removeCollinearity.yml@97/rasters_selected_out
+      raster: data>GBIFHeatmapFromSTAC.yml@145/rasters_out
       envFolder:
         source: prepareEnvironments/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SDM__selectBackground' } : null)"
@@ -368,15 +368,15 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [n_background, background]
+    out: [n_background_out, background_out]
 
 
   SDM>setupDataSdm.yml@44:
     run: ../../tools/SDM/setupDataSdm.cwl
     in:
-      presence: filtering>cleanCoordinates.yml@34/clean_presence
-      background: SDM>selectBackground.yml@40/background
-      predictors: SDM>removeCollinearity.yml@97/rasters_selected
+      presence: filtering>cleanCoordinates.yml@34/clean_presence_out
+      background: SDM>selectBackground.yml@40/background_out
+      predictors: SDM>removeCollinearity.yml@97/rasters_selected_out
       partition_type: { default: bootstrap }
       runs_n: pipeline@46
       boot_proportion: { default: 0.7 }
@@ -392,13 +392,13 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [presence_background]
+    out: [presence_background_out]
 
 
   SDM>removeCollinearity.yml@97:
     run: ../../tools/SDM/removeCollinearity.cwl
     in:
-      rasters: data>loadFromStac.yml@140/rasters
+      rasters: data>loadFromStac.yml@140/rasters_out
       method: { default: vif.cor }
       method_cor_vif: { default: pearson }
       nb_sample: { default: 5000 }
@@ -415,13 +415,13 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [rasters_selected]
+    out: [rasters_selected_out]
 
 
   SDM>studyExtent.yml@104:
     run: ../../tools/SDM/studyExtent.cwl
     in:
-      presence: filtering>cleanCoordinates.yml@34/clean_presence
+      presence: filtering>cleanCoordinates.yml@34/clean_presence_out
       bbox_crs: pipeline@149
       method: { default: bbox }
       width_buffer: { default: 0 }
@@ -431,7 +431,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [area_study_extent, study_extent]
+    out: [area_study_extent_out, study_extent_out]
 
 
   data>getGBIFObservations>getGBIFObservations.yml@139:
@@ -452,7 +452,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [observations_file, total_records, gbif_doi]
+    out: [observations_file_out, total_records_out, gbif_doi_out]
 
 
   data>loadFromStac.yml@140:
@@ -479,7 +479,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [rasters]
+    out: [rasters_out]
 
 
   data>GBIFHeatmapFromSTAC.yml@145:
@@ -494,14 +494,14 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [rasters]
+    out: [rasters_out]
 
 
   SDM>runewlgcp.yml@151:
     run: ../../tools/SDM/runewlgcp.cwl
     in:
-      presence_background: SDM>setupDataSdm.yml@44/presence_background
-      predictors: SDM>removeCollinearity.yml@97/rasters_selected
+      presence_background: SDM>setupDataSdm.yml@44/presence_background_out
+      predictors: SDM>removeCollinearity.yml@97/rasters_selected_out
       orientation_block: { default: lat_lon }
       crs: pipeline@149
       n_folds: pipeline@46
@@ -517,67 +517,67 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [sdm_pred, sdm_unc, sdm_ci, sdm_obs, sdm_bg, sdm_dmesh]
+    out: [sdm_pred_out, sdm_unc_out, sdm_ci_out, sdm_obs_out, sdm_bg_out, sdm_dmesh_out]
 
 
 outputs:
-  pipeline@121|default_output:
+  pipeline@121|default_output_out:
     type: string[]
     label: Species name
     doc: Species for which distribution is being modeled
     outputSource: pipeline@121
 
-  SDM>removeCollinearity.yml@97|rasters_selected:
+  SDM>removeCollinearity.yml@97|rasters_selected_out:
     type: File[]
     label: Environmental predictors
     doc: Environmental layers used as predictors in species distribution modeling
-    outputSource: SDM>removeCollinearity.yml@97/rasters_selected
+    outputSource: SDM>removeCollinearity.yml@97/rasters_selected_out
 
-  data>getGBIFObservations>getGBIFObservations.yml@139|gbif_doi:
+  data>getGBIFObservations>getGBIFObservations.yml@139|gbif_doi_out:
     type: string
     label: DOI of GBIF download
     doc: DOI of GBIF download. Used for citing downloaded data.
-    outputSource: data>getGBIFObservations>getGBIFObservations.yml@139/gbif_doi
+    outputSource: data>getGBIFObservations>getGBIFObservations.yml@139/gbif_doi_out
 
-  data>loadFromStac.yml@140|rasters:
+  data>loadFromStac.yml@140|rasters_out:
     type: File[]
     label: Rasters
     doc: array of output raster paths
-    outputSource: data>loadFromStac.yml@140/rasters
+    outputSource: data>loadFromStac.yml@140/rasters_out
 
-  SDM>runewlgcp.yml@151|sdm_pred:
+  SDM>runewlgcp.yml@151|sdm_pred_out:
     type: File
     label: predictions
     doc: model predictions while trained on the whole dataset
-    outputSource: SDM>runewlgcp.yml@151/sdm_pred
+    outputSource: SDM>runewlgcp.yml@151/sdm_pred_out
 
-  SDM>runewlgcp.yml@151|sdm_unc:
+  SDM>runewlgcp.yml@151|sdm_unc_out:
     type: File
     label: uncertainty
     doc: model uncertainty metrics
-    outputSource: SDM>runewlgcp.yml@151/sdm_unc
+    outputSource: SDM>runewlgcp.yml@151/sdm_unc_out
 
-  SDM>runewlgcp.yml@151|sdm_ci:
+  SDM>runewlgcp.yml@151|sdm_ci_out:
     type: File[]
     label: CI range
     doc: difference between the upper and the lower CI bound
-    outputSource: SDM>runewlgcp.yml@151/sdm_ci
+    outputSource: SDM>runewlgcp.yml@151/sdm_ci_out
 
-  SDM>runewlgcp.yml@151|sdm_obs:
+  SDM>runewlgcp.yml@151|sdm_obs_out:
     type: File
     label: observations
     doc: GBIF observations used for the sdm model
-    outputSource: SDM>runewlgcp.yml@151/sdm_obs
+    outputSource: SDM>runewlgcp.yml@151/sdm_obs_out
 
-  SDM>runewlgcp.yml@151|sdm_bg:
+  SDM>runewlgcp.yml@151|sdm_bg_out:
     type: File
     label: background
     doc: background points used for the sdm model
-    outputSource: SDM>runewlgcp.yml@151/sdm_bg
+    outputSource: SDM>runewlgcp.yml@151/sdm_bg_out
 
-  SDM>runewlgcp.yml@151|sdm_dmesh:
+  SDM>runewlgcp.yml@151|sdm_dmesh_out:
     type: File
     label: dmesh
     doc: dual mesh used by the sdm model
-    outputSource: SDM>runewlgcp.yml@151/sdm_dmesh
+    outputSource: SDM>runewlgcp.yml@151/sdm_dmesh_out
 

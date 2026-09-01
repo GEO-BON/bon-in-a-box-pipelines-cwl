@@ -3,12 +3,12 @@
 [1;30mERROR[0m [31mTool definition failed validation:
 ../../cwl/tools/site_selection_BAS/Block_creation.cwl:228:1: checking field 'outputs'
 ../../cwl/tools/site_selection_BAS/Block_creation.cwl:274:3:   checking object
-                                                               '../../cwl/tools/site_selection_BAS/Block_creation.cwl#colors_vect'
+                                                               '../../cwl/tools/site_selection_BAS/Block_creation.cwl#colors_vect_out'
 ../../cwl/tools/site_selection_BAS/Block_creation.cwl:275:5:     Field 'type' references unknown
                                                                  identifier 'csv', tried
                                                                  file:///home/jean-michel/code/cwl/tools/site_selection_BAS/Block_creation.cwl#csv
 ../../cwl/tools/site_selection_BAS/Block_creation.cwl:261:3:   checking object
-                                                               '../../cwl/tools/site_selection_BAS/Block_creation.cwl#pca_summary_df'
+                                                               '../../cwl/tools/site_selection_BAS/Block_creation.cwl#pca_summary_df_out'
 ../../cwl/tools/site_selection_BAS/Block_creation.cwl:262:5:     Field 'type' references unknown
                                                                  identifier 'csv', tried
                                                                  file:///home/jean-michel/code/cwl/tools/site_selection_BAS/Block_creation.cwl#csv[0m

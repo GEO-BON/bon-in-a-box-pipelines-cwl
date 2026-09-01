@@ -1,7 +1,5 @@
 [1;30mINFO[0m /home/jean-michel/.local/bin/cwl-runner 3.2.20260413085819
 [1;30mINFO[0m Resolved '/home/jean-michel/code/cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl' to 'file:///home/jean-michel/code/cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl'
-[1;30mWARNING[0m [33m../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:110:3: object id '../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl#IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82|taxonomic_group' previously defined[0m
-[1;30mWARNING[0m [33m../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:170:3: object id '../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl#IUCNRedlistIndex>IUCN_redlist_spUse.yml@77|species_use' previously defined[0m
 [1;30mERROR[0m [31mTool definition failed validation:
 ../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:1:1:     Object
                                                               '../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl'

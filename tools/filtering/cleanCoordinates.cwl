@@ -243,7 +243,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  n_presence:
+  n_presence_out:
     type: int
     label: n presence
     doc: Number of occurrence records entering the cleaning pipeline. Compare with `n_clean` to assess how many records were removed and whether the cleaning settings are appropriate for your dataset.
@@ -257,7 +257,7 @@ outputs:
           return parseInt(value);
         }
 
-  n_clean:
+  n_clean_out:
     type: int
     label: n clean presence
     doc: Number of occurrence records remaining after all selected cleaning tests have been applied. A large drop relative to `n_presence` may indicate overly aggressive settings or systematic issues in the input data. Very low counts (<20) may produce unreliable SDM results.
@@ -271,7 +271,7 @@ outputs:
           return parseInt(value);
         }
 
-  clean_presence:
+  clean_presence_out:
     type: File
     label: clean presences
     doc: Tab-separated table of occurrence records that passed all selected cleaning tests. This is the recommended input for downstream species distribution modeling steps.

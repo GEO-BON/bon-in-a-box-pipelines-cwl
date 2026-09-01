@@ -321,7 +321,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  img_shs_map:
+  img_shs_map_out:
     type: File[]
     label: SHS map (png)
     doc: Figure showing a map with changes in the habitat for the time range for each species (png).
@@ -339,7 +339,7 @@ outputs:
           });
         }
 
-  r_habitat_by_tstep:
+  r_habitat_by_tstep_out:
     type: File[]
     label: Habitat by time step
     doc: Raster of habitat by time step.
@@ -357,7 +357,7 @@ outputs:
           });
         }
 
-  img_shs_timeseries:
+  img_shs_timeseries_out:
     type: File[]
     label: SHS time series
     doc: Figure showing a time series of SHS values per time step for each species.
@@ -375,7 +375,7 @@ outputs:
           });
         }
 
-  df_shs:
+  df_shs_out:
     type: File[]
     label: SHS table
     doc: A TSV (Tab Separated Values) file containing Area Score, Connectivity Score and SHS by time step for each species. Percentage of change, 100% being equal to the reference year.
@@ -393,7 +393,7 @@ outputs:
           });
         }
 
-  df_shs_tidy:
+  df_shs_tidy_out:
     type: File[]
     label: SHS table (long format)
     doc: A TSV (Tab Separated Values) file in long format containing Area Score (AS), Connectivity Score (CS) and Species Habitat Score (SHS) by time step for each species. The SHS is the mean value between the AS and CS. Percentage of change, 100% being equal to the reference year.
@@ -411,7 +411,7 @@ outputs:
           });
         }
 
-  habitat_change_map:
+  habitat_change_map_out:
     type: File[]
     label: SHS Map (raster)
     doc: Figure showing a map with changes in the habitat for the time range for each species (raster).

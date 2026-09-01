@@ -213,7 +213,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  phenology_change:
+  phenology_change_out:
     type: File[]
     label: Change in phenology metrics
     doc: >
@@ -233,7 +233,7 @@ outputs:
           });
         }
 
-  phenology_change_plot:
+  phenology_change_plot_out:
     type: File
     label: Plot of phenology change
     doc: Plot of the summarised phenology values over time for the bands of interest

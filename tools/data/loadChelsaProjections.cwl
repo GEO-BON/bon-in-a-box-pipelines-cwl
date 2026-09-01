@@ -295,7 +295,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  future_climate:
+  future_climate_out:
     type: File[]
     label: Future climate
     doc: Raster of CHELSA climate projections

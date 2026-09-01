@@ -381,7 +381,7 @@ steps:
   IUCNRedlistIndex>IUCN_redlist_historyAssesment.yml@55:
     run: ../../tools/IUCNRedlistIndex/IUCN_redlist_historyAssesment.cwl
     in:
-      species_data: IUCNRedlistIndex>IUCN_redlist_spList.yml@58/iucn_splist
+      species_data: IUCNRedlistIndex>IUCN_redlist_spList.yml@58/iucn_splist_out
       sp_col: { default: scientific_name }
       envFolder:
         source: prepareEnvironments/envFolder
@@ -394,19 +394,19 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [iucn_history_assessment_data, api_citation]
+    out: [iucn_history_assessment_data_out, api_citation_out]
 
 
   IUCNRedlistIndex>IUCN_redlist_spList.yml@58:
     run: ../../tools/IUCNRedlistIndex/IUCN_redlist_spList.cwl
     in:
-      splist_taxon: IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82/iucn_taxon_splist
-      splist_country: IUCNRedlistIndex>IUCN_redlist_spCountry.yml@96/iucn_country_splist
-      splist_use: IUCNRedlistIndex>IUCN_redlist_spUse.yml@77/iucn_use_splist
-      splist_threat: IUCNRedlistIndex>IUCN_redlist_spThreats.yml@92/iucn_threats_splist
-      taxonomic_group: IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82/taxonomic_group
-      species_use: IUCNRedlistIndex>IUCN_redlist_spUse.yml@77/species_use
-      threat: IUCNRedlistIndex>IUCN_redlist_spThreats.yml@92/threat_category
+      splist_taxon: IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82/iucn_taxon_splist_out
+      splist_country: IUCNRedlistIndex>IUCN_redlist_spCountry.yml@96/iucn_country_splist_out
+      splist_use: IUCNRedlistIndex>IUCN_redlist_spUse.yml@77/iucn_use_splist_out
+      splist_threat: IUCNRedlistIndex>IUCN_redlist_spThreats.yml@92/iucn_threats_splist_out
+      taxonomic_group: IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82/taxonomic_group_out
+      species_use: IUCNRedlistIndex>IUCN_redlist_spUse.yml@77/species_use_out
+      threat: IUCNRedlistIndex>IUCN_redlist_spThreats.yml@92/threat_category_out
       envFolder:
         source: prepareEnvironments/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spList' } : null)"
@@ -418,17 +418,17 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [iucn_splist, number_species]
+    out: [iucn_splist_out, number_species_out]
 
 
   IUCNRedlistIndex>RedListIndex.yml@59:
     run: ../../tools/IUCNRedlistIndex/RedListIndex.cwl
     in:
-      history_assessment_data: IUCNRedlistIndex>IUCN_redlist_historyAssesment.yml@55/iucn_history_assessment_data
+      history_assessment_data: IUCNRedlistIndex>IUCN_redlist_historyAssesment.yml@55/iucn_history_assessment_data_out
       country: pipeline@95
-      taxonomic_group: IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82/taxonomic_group
-      species_use: IUCNRedlistIndex>IUCN_redlist_spUse.yml@77/species_use
-      threat: IUCNRedlistIndex>IUCN_redlist_spThreats.yml@92/threat_category
+      taxonomic_group: IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82/taxonomic_group_out
+      species_use: IUCNRedlistIndex>IUCN_redlist_spUse.yml@77/species_use_out
+      threat: IUCNRedlistIndex>IUCN_redlist_spThreats.yml@92/threat_category_out
       sp_col: { default: scientific_name }
       time_col: { default: assess_year }
       threat_category_code_column: { default: code }
@@ -443,7 +443,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [redlist_trend_plot, redlist_data, redlist_matrix]
+    out: [redlist_trend_plot_out, redlist_data_out, redlist_matrix_out]
 
 
   IUCNRedlistIndex>IUCN_redlist_spUse.yml@77:
@@ -461,7 +461,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [iucn_use_splist, species_use, api_citation]
+    out: [iucn_use_splist_out, species_use_out, api_citation_out]
 
 
   IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82:
@@ -479,7 +479,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [iucn_taxon_splist, taxonomic_group, api_citation]
+    out: [iucn_taxon_splist_out, taxonomic_group_out, api_citation_out]
 
 
   IUCNRedlistIndex>IUCN_redlist_spThreats.yml@92:
@@ -497,7 +497,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [threat_category, threats_list, iucn_threats_splist, api_citation]
+    out: [threat_category_out, threats_list_out, iucn_threats_splist_out, api_citation_out]
 
 
   IUCNRedlistIndex>IUCN_redlist_spCountry.yml@96:
@@ -515,55 +515,55 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [iucn_country_splist, api_citation]
+    out: [iucn_country_splist_out, api_citation_out]
 
 
 outputs:
-  IUCNRedlistIndex>RedListIndex.yml@59|redlist_data:
+  IUCNRedlistIndex>RedListIndex.yml@59|redlist_data_out:
     type: File
     label: Red List data
     doc: Dataset containing the results of the Red List Index (RLI) calculation.
-    outputSource: IUCNRedlistIndex>RedListIndex.yml@59/redlist_data
+    outputSource: IUCNRedlistIndex>RedListIndex.yml@59/redlist_data_out
 
-  IUCNRedlistIndex>RedListIndex.yml@59|redlist_trend_plot:
+  IUCNRedlistIndex>RedListIndex.yml@59|redlist_trend_plot_out:
     type: File
     label: Red List trend
     doc: The Red List Index of species for the chosen taxonomy group over time. An RLI of 1.0 indicates that all species have a status of Least Concerned, while 0.0 indicates Extinct. If the RLI value is constant over time, the overall extinction risk remains unchanged. An upward trend shows a reduction in the rate of biodiversity loss.
-    outputSource: IUCNRedlistIndex>RedListIndex.yml@59/redlist_trend_plot
+    outputSource: IUCNRedlistIndex>RedListIndex.yml@59/redlist_trend_plot_out
 
-  IUCNRedlistIndex>RedListIndex.yml@59|redlist_matrix:
+  IUCNRedlistIndex>RedListIndex.yml@59|redlist_matrix_out:
     type: File
     label: Red List matrix
     doc: Matrix showing the distribution of threat categories over time for the group of species.
-    outputSource: IUCNRedlistIndex>RedListIndex.yml@59/redlist_matrix
+    outputSource: IUCNRedlistIndex>RedListIndex.yml@59/redlist_matrix_out
 
-  IUCNRedlistIndex>IUCN_redlist_spList.yml@58|number_species:
+  IUCNRedlistIndex>IUCN_redlist_spList.yml@58|number_species_out:
     type: int
     label: Number of species
     doc: Number of species in that country, filtered by taxon, threat, and use categories.
-    outputSource: IUCNRedlistIndex>IUCN_redlist_spList.yml@58/number_species
+    outputSource: IUCNRedlistIndex>IUCN_redlist_spList.yml@58/number_species_out
 
-  IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82|taxonomic_group:
+  IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82|taxonomic_group_out:
     type: File
     label: Taxonomic group(s)
     doc: The taxonomic group(s) of interest.
-    outputSource: IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82/taxonomic_group
+    outputSource: IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82/taxonomic_group_out
 
-  IUCNRedlistIndex>IUCN_redlist_spThreats.yml@92|threat_category:
+  IUCNRedlistIndex>IUCN_redlist_spThreats.yml@92|threat_category_out:
     type: string[]
     label: Species threat(s)
     doc: IUCN threat category
-    outputSource: IUCNRedlistIndex>IUCN_redlist_spThreats.yml@92/threat_category
+    outputSource: IUCNRedlistIndex>IUCN_redlist_spThreats.yml@92/threat_category_out
 
-  IUCNRedlistIndex>IUCN_redlist_spUse.yml@77|species_use:
+  IUCNRedlistIndex>IUCN_redlist_spUse.yml@77|species_use_out:
     type: string[]
     label: Species use(s)
     doc: The species use(s) or trade(s) selected.
-    outputSource: IUCNRedlistIndex>IUCN_redlist_spUse.yml@77/species_use
+    outputSource: IUCNRedlistIndex>IUCN_redlist_spUse.yml@77/species_use_out
 
-  IUCNRedlistIndex>IUCN_redlist_historyAssesment.yml@55|api_citation:
+  IUCNRedlistIndex>IUCN_redlist_historyAssesment.yml@55|api_citation_out:
     type: File
     label: IUCN API citation
     doc: Citation for the data acquired using the IUCN Red List API.
-    outputSource: IUCNRedlistIndex>IUCN_redlist_historyAssesment.yml@55/api_citation
+    outputSource: IUCNRedlistIndex>IUCN_redlist_historyAssesment.yml@55/api_citation_out
 

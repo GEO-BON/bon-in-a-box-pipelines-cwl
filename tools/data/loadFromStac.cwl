@@ -304,7 +304,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  rasters:
+  rasters_out:
     type: File[]
     label: Rasters
     doc: Output raster files in geotiff format.

@@ -402,10 +402,10 @@ steps:
     run: ../../tools/protconn_analysis/protconn_analysis.cwl
     in:
       study_area_polygon:
-        source: [pipeline@41, data>cleanWDPA.yml@48/study_area_clean]
+        source: [pipeline@41, data>cleanWDPA.yml@48/study_area_clean_out]
         linkMerge: merge_flattened
       protected_area_polygon:
-        source: [pipeline@29, data>cleanWDPA.yml@48/protected_areas_clean]
+        source: [pipeline@29, data>cleanWDPA.yml@48/protected_areas_clean_out]
         linkMerge: merge_flattened
       buffer: pipeline@69
       date_column_name: protconn_analysis>protconn_analysis.yml@42|date_column_name
@@ -423,14 +423,14 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [protected_areas, study_area_km2, protected_area_km2, protconn_result, result_plot, result_yrs_plot, result_yrs]
+    out: [protected_areas_out, study_area_km2_out, protected_area_km2_out, protconn_result_out, result_plot_out, result_yrs_plot_out, result_yrs_out]
 
 
   data>cleanWDPA.yml@48:
     run: ../../tools/data/cleanWDPA.cwl
     in:
-      study_area_polygon: data>load_polygons.yml@61/polygon
-      protected_area_file: data>load_polygons.yml@64/polygon
+      study_area_polygon: data>load_polygons.yml@61/polygon_out
+      protected_area_file: data>load_polygons.yml@64/polygon_out
       crs: pipeline@60
       status_type: pipeline@68
       include_unesco: data>cleanWDPA.yml@48|include_unesco
@@ -448,7 +448,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [study_area_clean, protected_areas_clean]
+    out: [study_area_clean_out, protected_areas_clean_out]
 
 
   data>load_polygons.yml@61:
@@ -468,7 +468,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [polygon, bbox_crs]
+    out: [polygon_out, bbox_crs_out]
 
 
   data>load_polygons.yml@64:
@@ -488,17 +488,17 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [polygon, bbox_crs]
+    out: [polygon_out, bbox_crs_out]
 
 
 outputs:
-  protconn_analysis>protconn_analysis.yml@42|protected_areas:
+  protconn_analysis>protconn_analysis.yml@42|protected_areas_out:
     type: File[]
     label: Protected areas
     doc: Protected areas polygons for the ProtConn calculation. Overlapping protected areas have been merged to speed up calculation.
-    outputSource: protconn_analysis>protconn_analysis.yml@42/protected_areas
+    outputSource: protconn_analysis>protconn_analysis.yml@42/protected_areas_out
 
-  protconn_analysis>protconn_analysis.yml@42|protconn_result:
+  protconn_analysis>protconn_analysis.yml@42|protconn_result_out:
     type: File
     label: ProtConn results
     doc: >
@@ -508,29 +508,29 @@ outputs:
             of the landscape that is connected within a single protected area, i.e. the contribution to overall connectivity
             coming from within the protected area, without species having to traverse unprotected land. "ProtConn Contig"
             is the proportion connected through direct physical adjascency, capturing the value of neighboring or touching PAs. 
-    outputSource: protconn_analysis>protconn_analysis.yml@42/protconn_result
+    outputSource: protconn_analysis>protconn_analysis.yml@42/protconn_result_out
 
-  protconn_analysis>protconn_analysis.yml@42|result_plot:
+  protconn_analysis>protconn_analysis.yml@42|result_plot_out:
     type: File
     label: ProtConn result plot
     doc: Donut plot of the percentage of total area that is unprotected, protected and connected, and protected and unconnected for each input dispersal distance (in meters).
-    outputSource: protconn_analysis>protconn_analysis.yml@42/result_plot
+    outputSource: protconn_analysis>protconn_analysis.yml@42/result_plot_out
 
-  protconn_analysis>protconn_analysis.yml@42|result_yrs:
+  protconn_analysis>protconn_analysis.yml@42|result_yrs_out:
     type: File
     label: ProtConn time series results
     doc: Table of the time series of ProtConn and ProtUnconn values, calculated at the time interval that is specified.
-    outputSource: protconn_analysis>protconn_analysis.yml@42/result_yrs
+    outputSource: protconn_analysis>protconn_analysis.yml@42/result_yrs_out
 
-  protconn_analysis>protconn_analysis.yml@42|result_yrs_plot:
+  protconn_analysis>protconn_analysis.yml@42|result_yrs_plot_out:
     type: File[]
     label: ProtConn time series plot
     doc: Change in the percentage area that is protected and the percentage that is protected and connected over time, at the chosen time interval, compared to the Kunming-Montreal GBF goals.
-    outputSource: protconn_analysis>protconn_analysis.yml@42/result_yrs_plot
+    outputSource: protconn_analysis>protconn_analysis.yml@42/result_yrs_plot_out
 
-  data>load_polygons.yml@61|polygon:
+  data>load_polygons.yml@61|polygon_out:
     type: File
     label: Study area polygon
     doc: Polygon of the study area
-    outputSource: data>load_polygons.yml@61/polygon
+    outputSource: data>load_polygons.yml@61/polygon_out
 

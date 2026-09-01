@@ -188,19 +188,19 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [tcyy, time_points]
+    out: [tcyy_out, time_points_out]
 
 
 outputs:
-  GFS_IndicatorsTool>get_TCY.yml@23|tcyy:
+  GFS_IndicatorsTool>get_TCY.yml@23|tcyy_out:
     type: File
     label: Tree cover year-by-year
     doc: Tif file of year-by-year tree cover, cropped to bbox extent
-    outputSource: GFS_IndicatorsTool>get_TCY.yml@23/tcyy
+    outputSource: GFS_IndicatorsTool>get_TCY.yml@23/tcyy_out
 
-  GFS_IndicatorsTool>get_TCY.yml@23|time_points:
+  GFS_IndicatorsTool>get_TCY.yml@23|time_points_out:
     type: string[]
     label: Years with tree cover information
     doc: List of years for which tree cover information is available.
-    outputSource: GFS_IndicatorsTool>get_TCY.yml@23/time_points
+    outputSource: GFS_IndicatorsTool>get_TCY.yml@23/time_points_out
 

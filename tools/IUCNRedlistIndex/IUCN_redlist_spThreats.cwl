@@ -213,7 +213,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  threat_category:
+  threat_category_out:
     type: string[]
     label: Threat category
     doc: IUCN threat category
@@ -230,7 +230,7 @@ outputs:
           });
         }
 
-  threats_list:
+  threats_list_out:
     type: File
     label: List of IUCN threats
     doc: IUCN list of threats
@@ -244,7 +244,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  iucn_threats_splist:
+  iucn_threats_splist_out:
     type: File
     label: Species list filtered by threat
     doc: List of species that are threatened by a chosen threat
@@ -258,7 +258,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  api_citation:
+  api_citation_out:
     type: string
     label: IUCN API citation
     doc: Citation for the data acquired using the IUCN Red List API

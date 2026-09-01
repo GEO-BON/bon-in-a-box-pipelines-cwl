@@ -223,7 +223,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  observations_file:
+  observations_file_out:
     type: File
     label: Observations
     doc: Output file with observations
@@ -237,7 +237,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  total_records:
+  total_records_out:
     type: int
     label: Total number of occurrences
     doc: Total number of occurrences in csv file
@@ -251,7 +251,7 @@ outputs:
           return parseInt(value);
         }
 
-  database_date:
+  database_date_out:
     type: string
     label: Date of database update
     doc: Date at which the database was last updated

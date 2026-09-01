@@ -408,14 +408,14 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [sf_range_map]
+    out: [sf_range_map_out]
 
 
   SHI>calculateSHI.yml@68:
     run: ../../tools/SHI/calculateSHI.cwl
     in:
-      df_shs_tidy: SHI>habitatChange_GFW.yml@96/df_shs_tidy
-      df_aoh_areas: data>getAreaOfHabitat.yml@80/df_aoh_areas
+      df_shs_tidy: SHI>habitatChange_GFW.yml@96/df_shs_tidy_out
+      df_aoh_areas: data>getAreaOfHabitat.yml@80/df_aoh_areas_out
       envFolder:
         source: prepareEnvironments/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/SHI__calculateSHI' } : null)"
@@ -427,7 +427,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [df_shi, img_shi_timeseries, img_w_shi_timeseries]
+    out: [df_shi_out, img_shi_timeseries_out, img_w_shi_timeseries_out]
 
 
   data>getAreaOfHabitat.yml@80:
@@ -436,15 +436,15 @@ steps:
       spat_res: pipeline@79
       crs: pipeline@118
       study_area: pipeline@112
-      country_region_polygon: data>getCountryPolygon.yml@114/country_region_polygon
+      country_region_polygon: data>getCountryPolygon.yml@114/country_region_polygon_out
       buff_size: data>getAreaOfHabitat.yml@80|buff_size
       species: pipeline@76
       range_map_type: data>getAreaOfHabitat.yml@80|range_map_type
-      sf_range_map: data>getRangeMap.yml@65/sf_range_map
+      sf_range_map: data>getRangeMap.yml@65/sf_range_map_out
       r_range_map: data>getAreaOfHabitat.yml@80|r_range_map
       elevation_filter: data>getAreaOfHabitat.yml@80|elevation_filter
       elev_buffer: data>getAreaOfHabitat.yml@80|elev_buffer
-      rasters: data>loadFromStac.yml@107/rasters
+      rasters: data>loadFromStac.yml@107/rasters_out
       envFolder:
         source: prepareEnvironments/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__getAreaOfHabitat' } : null)"
@@ -456,7 +456,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [r_area_of_habitat, sf_bbox, df_aoh_areas]
+    out: [r_area_of_habitat_out, sf_bbox_out, df_aoh_areas_out]
 
 
   SHI>habitatChange_GFW.yml@96:
@@ -465,8 +465,8 @@ steps:
       spat_res: pipeline@79
       crs: pipeline@118
       species: pipeline@76
-      r_area_of_habitat: data>getAreaOfHabitat.yml@80/r_area_of_habitat
-      sf_bbox: data>getAreaOfHabitat.yml@80/sf_bbox
+      r_area_of_habitat: data>getAreaOfHabitat.yml@80/r_area_of_habitat_out
+      sf_bbox: data>getAreaOfHabitat.yml@80/sf_bbox_out
       min_forest: SHI>habitatChange_GFW.yml@96|min_forest
       max_forest: SHI>habitatChange_GFW.yml@96|max_forest
       t_0: SHI>habitatChange_GFW.yml@96|t_0
@@ -483,7 +483,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [img_shs_map, r_habitat_by_tstep, img_shs_timeseries, df_shs, df_shs_tidy, habitat_change_map]
+    out: [img_shs_map_out, r_habitat_by_tstep_out, img_shs_timeseries_out, df_shs_out, df_shs_tidy_out, habitat_change_map_out]
 
 
   data>loadFromStac.yml@107:
@@ -510,7 +510,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [rasters]
+    out: [rasters_out]
 
 
   data>getCountryPolygon.yml@114:
@@ -528,67 +528,67 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [country, region, country_region_polygon]
+    out: [country_out, region_out, country_region_polygon_out]
 
 
 outputs:
-  pipeline@76|default_output:
+  pipeline@76|default_output_out:
     type: string[]
     label: Species
     doc: Scientific name of the species. Multiple species names can be specified, separated with a comma.
     outputSource: pipeline@76
 
-  data>getRangeMap.yml@65|sf_range_map:
+  data>getRangeMap.yml@65|sf_range_map_out:
     type: File[]
     label: Expert range map
     doc: Polygon with expected area for the species.
-    outputSource: data>getRangeMap.yml@65/sf_range_map
+    outputSource: data>getRangeMap.yml@65/sf_range_map_out
 
-  SHI>habitatChange_GFW.yml@96|r_habitat_by_tstep:
+  SHI>habitatChange_GFW.yml@96|r_habitat_by_tstep_out:
     type: File[]
     label: Habitat by time step
     doc: Raster of habitat by time step.
-    outputSource: SHI>habitatChange_GFW.yml@96/r_habitat_by_tstep
+    outputSource: SHI>habitatChange_GFW.yml@96/r_habitat_by_tstep_out
 
-  SHI>habitatChange_GFW.yml@96|habitat_change_map:
+  SHI>habitatChange_GFW.yml@96|habitat_change_map_out:
     type: File[]
     label: Raster plot of forest change
     doc: Figure showing a map with changes in the habitat for the time range for each species.
-    outputSource: SHI>habitatChange_GFW.yml@96/habitat_change_map
+    outputSource: SHI>habitatChange_GFW.yml@96/habitat_change_map_out
 
-  SHI>habitatChange_GFW.yml@96|df_shs:
+  SHI>habitatChange_GFW.yml@96|df_shs_out:
     type: File[]
     label: SHS table
     doc: A TSV (Tab Separated Values) file containing Area Score, Connectivity Score and SHS by time step for each species. Percentage of change, 100% being equal to the reference year.
-    outputSource: SHI>habitatChange_GFW.yml@96/df_shs
+    outputSource: SHI>habitatChange_GFW.yml@96/df_shs_out
 
-  SHI>habitatChange_GFW.yml@96|img_shs_map:
+  SHI>habitatChange_GFW.yml@96|img_shs_map_out:
     type: File[]
     label: SHS map
     doc: Figure showing a map with changes in the habitat for the time range for each species.
-    outputSource: SHI>habitatChange_GFW.yml@96/img_shs_map
+    outputSource: SHI>habitatChange_GFW.yml@96/img_shs_map_out
 
-  SHI>habitatChange_GFW.yml@96|img_shs_timeseries:
+  SHI>habitatChange_GFW.yml@96|img_shs_timeseries_out:
     type: File[]
     label: SHS time series
     doc: Figure showing a time series of SHS values per time step for each species.
-    outputSource: SHI>habitatChange_GFW.yml@96/img_shs_timeseries
+    outputSource: SHI>habitatChange_GFW.yml@96/img_shs_timeseries_out
 
-  SHI>calculateSHI.yml@68|df_shi:
+  SHI>calculateSHI.yml@68|df_shi_out:
     type: File
     label: SHI table
     doc: Table with SHI and Steward’s SHI values for the complete area of study.
-    outputSource: SHI>calculateSHI.yml@68/df_shi
+    outputSource: SHI>calculateSHI.yml@68/df_shi_out
 
-  SHI>calculateSHI.yml@68|img_shi_timeseries:
+  SHI>calculateSHI.yml@68|img_shi_timeseries_out:
     type: File
     label: SHI time series
     doc: Figure showing a time series of SHI values for each time step, 100% being equal to the reference year.
-    outputSource: SHI>calculateSHI.yml@68/img_shi_timeseries
+    outputSource: SHI>calculateSHI.yml@68/img_shi_timeseries_out
 
-  SHI>calculateSHI.yml@68|img_w_shi_timeseries:
+  SHI>calculateSHI.yml@68|img_w_shi_timeseries_out:
     type: File
     label: Steward’s SHI time series
     doc: Figure showing a time series of Steward’s SHI values for each time step. This is weighted by the proportion between the area of habitat for the study area and the total range map of the species. The reference year will start at the proportion of area of habitat in the study area. For example, if half of the species habitat is covered by the study area, the reference year’s value will be 50%.
-    outputSource: SHI>calculateSHI.yml@68/img_w_shi_timeseries
+    outputSource: SHI>calculateSHI.yml@68/img_w_shi_timeseries_out
 

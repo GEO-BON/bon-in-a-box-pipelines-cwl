@@ -344,7 +344,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  r_area_of_habitat:
+  r_area_of_habitat_out:
     type: File[]
     label: area of habitat
     doc: Raster file with the area of habitat.
@@ -362,7 +362,7 @@ outputs:
           });
         }
 
-  sf_bbox:
+  sf_bbox_out:
     type: File[]
     label: bounding box
     doc: Bounding box for the area of habitat.
@@ -380,7 +380,7 @@ outputs:
           });
         }
 
-  df_aoh_areas:
+  df_aoh_areas_out:
     type: File
     label: table with size of areas of reference.
     doc: A TSV (Tab Separated Values) file containing the area of the range map loaded (area_range_map), the size of the study area (area_study_a), the area of the bounding box for the analysis (area_bbox_analysis), size of the buffer used to create the bounding box for the analysis, the size of the area of habitat(area_aoh).

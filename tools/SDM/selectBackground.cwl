@@ -240,7 +240,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  n_background:
+  n_background_out:
     type: int
     label: nb background
     doc: number of background points selected
@@ -254,7 +254,7 @@ outputs:
           return parseInt(value);
         }
 
-  background:
+  background_out:
     type: File
     label: background
     doc: TSV file containing a table with background points.

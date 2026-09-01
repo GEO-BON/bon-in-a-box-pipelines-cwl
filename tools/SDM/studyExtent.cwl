@@ -243,7 +243,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  area_study_extent:
+  area_study_extent_out:
     type: float
     label: study extent area
     doc: Area of the study extent
@@ -257,7 +257,7 @@ outputs:
           return parseFloat(value);
         }
 
-  study_extent:
+  study_extent_out:
     type: File
     label: study extent
     doc: Geopackage representing the study extent

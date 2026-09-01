@@ -187,7 +187,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  a_number:
+  a_number_out:
     type: int
     label: A number
     doc: bla bla

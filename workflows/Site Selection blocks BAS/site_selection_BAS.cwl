@@ -300,10 +300,10 @@ steps:
   site_selection_BAS>Block_creation.yml@0:
     run: ../../tools/site_selection_BAS/Block_creation.cwl
     in:
-      country_polygon: data>load_polygons.yml@61/polygon
+      country_polygon: data>load_polygons.yml@61/polygon_out
       n_rows: site_selection_BAS>Block_creation.yml@0|n_rows
       n_cols: site_selection_BAS>Block_creation.yml@0|n_cols
-      rasters: data>loadFromStac.yml@2/rasters
+      rasters: data>loadFromStac.yml@2/rasters_out
       envFolder:
         source: prepareEnvironments/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/site_selection_BAS__Block_creation' } : null)"
@@ -315,7 +315,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [rast_blocks, blocks_plot, pca_summary_df, colors_vect]
+    out: [rast_blocks_out, blocks_plot_out, pca_summary_df_out, colors_vect_out]
 
 
   data>loadFromStac.yml@2:
@@ -330,7 +330,7 @@ steps:
       spatial_res: { default: 1000.0 }
       resampling: { default: near }
       aggregation: { default: first }
-      study_area: data>load_polygons.yml@61/polygon
+      study_area: data>load_polygons.yml@61/polygon_out
       envFolder:
         source: prepareEnvironments/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac' } : null)"
@@ -342,15 +342,15 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [rasters]
+    out: [rasters_out]
 
 
   site_selection_BAS>BAS_algorithm.yml@26:
     run: ../../tools/site_selection_BAS/BAS_algorithm.cwl
     in:
-      colors_vect: site_selection_BAS>Block_creation.yml@0/colors_vect
-      country_polygon: data>load_polygons.yml@61/polygon
-      rast_blocks: site_selection_BAS>Block_creation.yml@0/rast_blocks
+      colors_vect: site_selection_BAS>Block_creation.yml@0/colors_vect_out
+      country_polygon: data>load_polygons.yml@61/polygon_out
+      rast_blocks: site_selection_BAS>Block_creation.yml@0/rast_blocks_out
       ndesign: site_selection_BAS>BAS_algorithm.yml@26|ndesign
       options_bas: site_selection_BAS>BAS_algorithm.yml@26|options_bas
       envFolder:
@@ -364,7 +364,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [maps_output, pts_df, points_shape]
+    out: [maps_output_out, pts_df_out, points_shape_out]
 
 
   data>load_polygons.yml@61:
@@ -384,49 +384,49 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [polygon, bbox_crs]
+    out: [polygon_out, bbox_crs_out]
 
 
 outputs:
-  site_selection_BAS>Block_creation.yml@0|rast_blocks:
+  site_selection_BAS>Block_creation.yml@0|rast_blocks_out:
     type: File[]
     label: Environmental blocks raster
     doc: Raster file of the study area with the environmental blocks as categorical classes  
-    outputSource: site_selection_BAS>Block_creation.yml@0/rast_blocks
+    outputSource: site_selection_BAS>Block_creation.yml@0/rast_blocks_out
 
-  site_selection_BAS>Block_creation.yml@0|pca_summary_df:
+  site_selection_BAS>Block_creation.yml@0|pca_summary_df_out:
     type: csv
     label: Summary of PCA
     doc: Principal component analysis summary for the environmental variables included in the analysis
-    outputSource: site_selection_BAS>Block_creation.yml@0/pca_summary_df
+    outputSource: site_selection_BAS>Block_creation.yml@0/pca_summary_df_out
 
-  site_selection_BAS>Block_creation.yml@0|blocks_plot:
+  site_selection_BAS>Block_creation.yml@0|blocks_plot_out:
     type: File
     label: Blocks and map plots
     doc: Blocks showing the PCA 1 and 2 result and the predefined blocks dividing the environmental space and the map of the environmental blocks in geographic space
-    outputSource: site_selection_BAS>Block_creation.yml@0/blocks_plot
+    outputSource: site_selection_BAS>Block_creation.yml@0/blocks_plot_out
 
-  site_selection_BAS>BAS_algorithm.yml@26|maps_output:
+  site_selection_BAS>BAS_algorithm.yml@26|maps_output_out:
     type: File
     label: Maps output
     doc: Maps of study area with selected sampling points only (no environmental blocks) and also including the environmental blocks.
-    outputSource: site_selection_BAS>BAS_algorithm.yml@26/maps_output
+    outputSource: site_selection_BAS>BAS_algorithm.yml@26/maps_output_out
 
-  data>loadFromStac.yml@2|rasters:
+  data>loadFromStac.yml@2|rasters_out:
     type: File[]
     label: Environmental Rasters
     doc: Array of environmental rasters (for exploration only)
-    outputSource: data>loadFromStac.yml@2/rasters
+    outputSource: data>loadFromStac.yml@2/rasters_out
 
-  site_selection_BAS>BAS_algorithm.yml@26|pts_df:
+  site_selection_BAS>BAS_algorithm.yml@26|pts_df_out:
     type: csv
     label: Selected points
     doc: dataframe of selected points
-    outputSource: site_selection_BAS>BAS_algorithm.yml@26/pts_df
+    outputSource: site_selection_BAS>BAS_algorithm.yml@26/pts_df_out
 
-  site_selection_BAS>BAS_algorithm.yml@26|points_shape:
+  site_selection_BAS>BAS_algorithm.yml@26|points_shape_out:
     type: File
     label: selected points shapefile
     doc: Vector shapefile of selected points
-    outputSource: site_selection_BAS>BAS_algorithm.yml@26/points_shape
+    outputSource: site_selection_BAS>BAS_algorithm.yml@26/points_shape_out
 

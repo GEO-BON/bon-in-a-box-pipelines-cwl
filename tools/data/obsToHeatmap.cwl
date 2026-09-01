@@ -203,7 +203,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  heatmap:
+  heatmap_out:
     type: File
     label: heatmap
     doc: raster, heatmap of occurrences

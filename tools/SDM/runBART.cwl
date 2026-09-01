@@ -220,7 +220,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  sdm_pred:
+  sdm_pred_out:
     type: File
     label: predictions
     doc: mean posterior distribution of probability of presence
@@ -234,7 +234,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  sdm_uncertainty:
+  sdm_uncertainty_out:
     type: File
     label: uncertainty
     doc: credible interval of the posterior distribution

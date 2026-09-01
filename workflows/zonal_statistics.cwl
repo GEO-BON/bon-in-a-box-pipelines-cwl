@@ -331,9 +331,9 @@ steps:
   zonal_statistics>zonal_stats.yml@4:
     run: ../tools/zonal_statistics/zonal_stats.cwl
     in:
-      rasters: data>loadFromStac.yml@25/rasters
+      rasters: data>loadFromStac.yml@25/rasters_out
       bbox_crs: pipeline@27
-      study_area_polygon: data>load_polygons.yml@28/polygon
+      study_area_polygon: data>load_polygons.yml@28/polygon_out
       summary_statistic: zonal_statistics>zonal_stats.yml@4|summary_statistic
       envFolder:
         source: prepareEnvironments/envFolder
@@ -346,7 +346,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [zonal_stats]
+    out: [zonal_stats_out]
 
 
   data>loadFromStac.yml@25:
@@ -361,7 +361,7 @@ steps:
       spatial_res: data>loadFromStac.yml@25|spatial_res
       resampling: data>loadFromStac.yml@25|resampling
       aggregation: data>loadFromStac.yml@25|aggregation
-      study_area: data>load_polygons.yml@28/polygon
+      study_area: data>load_polygons.yml@28/polygon_out
       envFolder:
         source: prepareEnvironments/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac' } : null)"
@@ -373,7 +373,7 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [rasters]
+    out: [rasters_out]
 
 
   data>load_polygons.yml@28:
@@ -393,19 +393,19 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [polygon, bbox_crs]
+    out: [polygon_out, bbox_crs_out]
 
 
 outputs:
-  zonal_statistics>zonal_stats.yml@4|zonal_stats:
+  zonal_statistics>zonal_stats.yml@4|zonal_stats_out:
     type: File
     label: Summary statistic
     doc: Summary statistic over the polygon
-    outputSource: zonal_statistics>zonal_stats.yml@4/zonal_stats
+    outputSource: zonal_statistics>zonal_stats.yml@4/zonal_stats_out
 
-  data>loadFromStac.yml@25|rasters:
+  data>loadFromStac.yml@25|rasters_out:
     type: File[]
     label: Rasters
     doc: Output raster files in geotiff format.
-    outputSource: data>loadFromStac.yml@25/rasters
+    outputSource: data>loadFromStac.yml@25/rasters_out
 

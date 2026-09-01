@@ -248,7 +248,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  protected_area_polygon:
+  protected_area_polygon_out:
     type: File
     label: Polygon of protected areas
     doc: GeoPackage file containing the protected areas vectors within the selected country.
@@ -262,7 +262,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  country_bounding_box:
+  country_bounding_box_out:
     type: File
     label: Polygon of the country's bounding box
     doc: GeoPackage file containing the bounding box of the selected country.

@@ -334,7 +334,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  study_area_clean:
+  study_area_clean_out:
     type: File
     label: Study area
     doc: Study area with fixed geometry
@@ -348,7 +348,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  protected_areas_clean:
+  protected_areas_clean_out:
     type: File
     label: Polygon of protected areas
     doc: Map of the protected areas in GeoPackage format, cleaned and filtered according to the input criteria.

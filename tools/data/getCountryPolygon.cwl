@@ -246,7 +246,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  country:
+  country_out:
     type: string
     label: Country
     doc: Name of country of interest
@@ -259,7 +259,7 @@ outputs:
           return value;
         }
 
-  region:
+  region_out:
     type: string
     label: Region
     doc: Name of state/province of interest
@@ -272,7 +272,7 @@ outputs:
           return value;
         }
 
-  country_region_polygon:
+  country_region_polygon_out:
     type: File
     label: Polygon of country or region
     doc: A GeoPackage file containing the polygon of the chosen country or region of interest, in the specified crs.

@@ -282,7 +282,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  occurrences:
+  occurrences_out:
     type: File
     label: OBIS Occurrences
     doc: CSV of OBIS occurrences

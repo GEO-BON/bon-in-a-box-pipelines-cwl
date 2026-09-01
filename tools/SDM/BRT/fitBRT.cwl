@@ -282,7 +282,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  predicted_sdm:
+  predicted_sdm_out:
     type: File
     label: predicted sdm
     doc: map of predicted occurrence probability
@@ -296,7 +296,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  sdm_uncertainty:
+  sdm_uncertainty_out:
     type: File
     label: sdm uncertainty
     doc: map of relative uncertainty
@@ -310,7 +310,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  fit_stats:
+  fit_stats_out:
     type: File
     label: fit statistics
     doc: JSON of model fit stats and threshold
@@ -324,7 +324,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  range:
+  range_out:
     type: File
     label: range
     doc: range map thresholded at todo
@@ -338,7 +338,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  pseudoabsences:
+  pseudoabsences_out:
     type: File
     label: pseudoabsences
     doc: pseudoabsence coordinates
@@ -352,7 +352,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  env_corners:
+  env_corners_out:
     type: File
     label: env_corners
     doc: location of presences and pseudoabsences in environment space
@@ -366,7 +366,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  tuning:
+  tuning_out:
     type: File
     label: tuning curve
     doc: tuning curve

@@ -337,7 +337,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  rasters:
+  rasters_out:
     type: File[]
     label: Phenology rasters
     doc: >
@@ -357,7 +357,7 @@ outputs:
           });
         }
 
-  timeseries:
+  timeseries_out:
     type: File
     label: Zonal statistics
     doc: Summarised values over the polygon of interest (mean, minimum, or maximum) for each year for each band of interest

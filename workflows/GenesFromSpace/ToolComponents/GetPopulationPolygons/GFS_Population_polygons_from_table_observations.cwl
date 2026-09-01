@@ -181,13 +181,13 @@ steps:
       environment: environment
       condaPackURL: condaPackURL
       scripts_root: scripts_root
-    out: [population_polygons]
+    out: [population_polygons_out]
 
 
 outputs:
-  GFS_IndicatorsTool>get_pop_poly.yml@5|population_polygons:
+  GFS_IndicatorsTool>get_pop_poly.yml@5|population_polygons_out:
     type: File
     label: Polygons of populations
     doc: Path to geojson file storing polygons of populations.
-    outputSource: GFS_IndicatorsTool>get_pop_poly.yml@5/population_polygons
+    outputSource: GFS_IndicatorsTool>get_pop_poly.yml@5/population_polygons_out
 

@@ -251,7 +251,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  study_area:
+  study_area_out:
     type: File
     label: Polygon of study area
     doc: The map of the study area
@@ -265,7 +265,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  protected_areas:
+  protected_areas_out:
     type: File
     label: Polygon of protected areas
     doc: The map of the protected areas within the study area
@@ -279,7 +279,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  number_pas:
+  number_pas_out:
     type: string
     label: Number of protected areas
     doc: Number of protected areas in the country of interest

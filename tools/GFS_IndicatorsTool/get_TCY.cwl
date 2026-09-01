@@ -212,7 +212,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  tcyy:
+  tcyy_out:
     type: File
     label: Tree cover year-by-year
     doc: Tif file of year-by-year tree cover, cropped to bbox extent
@@ -226,7 +226,7 @@ outputs:
           return { class: "File", location: "file://" + value };
         }
 
-  time_points:
+  time_points_out:
     type: string[]
     label: Years with tree cover information
     doc: List of years for which tree cover information is available.

@@ -205,7 +205,7 @@ inputs:
     doc: Root folder for scripts. Use this to override the image's scripts while debugging.
 
 outputs:
-  bii_change:
+  bii_change_out:
     type: File[]
     label: Change in BII
     doc: Raster plot of change in BII. Higher numbers indicate greater percentage BII loss.
