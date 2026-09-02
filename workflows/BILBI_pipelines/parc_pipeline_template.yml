@@ -1,0 +1,44 @@
+scripts_root:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+runFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+pipeline@23:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@23/bboxCRS" record type.
+    region:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@23/bboxCRS/region/regionDefinition" record type.
+        bboxWGS84:  # array of type 'float' (optional)
+          - 0.1
+        regionName: a_string  # type 'string' (optional)
+        regionID: a_string  # type 'string' (optional)
+        countryEnglishName: a_string  # type 'string' (optional)
+    bbox:  # array of type 'float'
+      - 0.1
+    CRS:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@23/bboxCRS/CRS/CRSDefinition" record type.
+        wktDef: a_string  # type 'string' (optional)
+        proj4Def: a_string  # type 'string' (optional)
+        CRSBboxWGS84:  # array of type 'float' (optional)
+          - 0.1
+        name: a_string  # type 'string' (optional)
+        authority: a_string  # type 'string' (optional)
+        code: 0  # type 'int' (optional)
+        unit: a_string  # type 'string' (optional)
+    country:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@23/bboxCRS/country/countryDefinition" record type.
+        bboxWGS84:  # array of type 'float' (optional)
+          - 0.1
+        ISO3: a_string  # type 'string' (optional)
+        englishName: a_string  # type 'string' (optional)
+pipeline@20: first  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@20/first", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@20/min", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@20/max", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@20/mean", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@20/median"
+pipeline@19: 0.008833  # default value of type 'float'. (optional)
+pipeline@18: near  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@18/near", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@18/bilinear", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@18/average", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@18/mode", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@18/cubic", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@18/cubicspline", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@18/lanczos", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@18/rms", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@18/min", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@18/max", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@18/sum", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@18/med", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@18/q1", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#pipeline@18/q3"
+environment:  # type 'File' (optional)
+    class: File
+    path: a/file/path
+envFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+data>load_polygons.yml@25|polygon_type: Country or region  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#data>load_polygons.yml@25|polygon_type/Country or region", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/BILBI_pipelines/parc_pipeline.cwl#data>load_polygons.yml@25|polygon_type/Polygon of bounding box"
+data>loadFromStac.yml@1|temporal_res: a_string  # type 'string' (optional)
+data>loadFromStac.yml@1|t1: a_string  # type 'string' (optional)
+data>loadFromStac.yml@1|t0: a_string  # type 'string' (optional)
+condaPackURL: 
+    https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
