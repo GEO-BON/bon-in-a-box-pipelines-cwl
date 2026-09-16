@@ -84,7 +84,7 @@ requirements:
 
 
   DockerRequirement:
-    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95
+    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
     #     $include: ../runners/cwl/conda-cwl.dockerfile
@@ -234,22 +234,24 @@ inputs:
 
   bands:
     type:
-      type: enum[]
-      symbols:
-        - SOSD
-        - EOSD
-        - SOSV
-        - EOSV
-        - MAXD
-        - MAXV
-        - MINV
-        - AMPL
-        - LENGTH
-        - LSLOPE
-        - RSLOPE
-        - SPROD
-        - TPROD
-        - QFLAG
+      type: array
+      items:
+        type: enum
+        symbols:
+          - SOSD
+          - EOSD
+          - SOSV
+          - EOSV
+          - MAXD
+          - MAXV
+          - MINV
+          - AMPL
+          - LENGTH
+          - LSLOPE
+          - RSLOPE
+          - SPROD
+          - TPROD
+          - QFLAG
     label: Bands
     doc: >
       Bands of interest for the calculations.

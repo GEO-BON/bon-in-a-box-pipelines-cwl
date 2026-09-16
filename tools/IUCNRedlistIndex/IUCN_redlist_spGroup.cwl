@@ -83,7 +83,7 @@ requirements:
 
 
   DockerRequirement:
-    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95
+    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
     #     $include: ../runners/cwl/conda-cwl.dockerfile
@@ -144,59 +144,61 @@ inputs:
   #################
   taxonomic_group:
     type:
-      type: enum[]
-      symbols:
-        - All
-        - Amphibians
-        - Birds
-        - Mammals
-        - Reptiles
-        - Fishes
-        - Insects
-        - Angelfishes
-        - Arachnids
-        - Blennies
-        - Brown algae
-        - Butterfly fishes
-        - Cacti
-        - Chameleons
-        - Cone snails
-        - Conifers
-        - Corals
-        - Crocodiles and alligators
-        - Crustaceans
-        - Cycads
-        - Fernes and allies
-        - Flowering plants
-        - Fw caridean shrimps
-        - Fw crabs
-        - Fw crayfish
-        - Green algae
-        - Groupers
-        - Gymnosperms
-        - Hagfishes
-        - Horseshoe crabs
-        - Lichens
-        - Lobsters
-        - Magnolias
-        - Mangrove plants
-        - Molluscs
-        - Mosses
-        - Mushrooms
-        - Others
-        - Pufferfishes
-        - Red algae
-        - Reef building corals
-        - Seabreams porgies picarels
-        - Seagrasses
-        - Seasnakes
-        - Sharks and rays
-        - Sturgeons
-        - Surgeonfishes
-        - Tarpons and ladyfishes
-        - Tunas and billfishes
-        - Velvet worms
-        - Wrasses and parrotfishes
+      type: array
+      items:
+        type: enum
+        symbols:
+          - All
+          - Amphibians
+          - Birds
+          - Mammals
+          - Reptiles
+          - Fishes
+          - Insects
+          - Angelfishes
+          - Arachnids
+          - Blennies
+          - Brown algae
+          - Butterfly fishes
+          - Cacti
+          - Chameleons
+          - Cone snails
+          - Conifers
+          - Corals
+          - Crocodiles and alligators
+          - Crustaceans
+          - Cycads
+          - Fernes and allies
+          - Flowering plants
+          - Fw caridean shrimps
+          - Fw crabs
+          - Fw crayfish
+          - Green algae
+          - Groupers
+          - Gymnosperms
+          - Hagfishes
+          - Horseshoe crabs
+          - Lichens
+          - Lobsters
+          - Magnolias
+          - Mangrove plants
+          - Molluscs
+          - Mosses
+          - Mushrooms
+          - Others
+          - Pufferfishes
+          - Red algae
+          - Reef building corals
+          - Seabreams porgies picarels
+          - Seagrasses
+          - Seasnakes
+          - Sharks and rays
+          - Sturgeons
+          - Surgeonfishes
+          - Tarpons and ladyfishes
+          - Tunas and billfishes
+          - Velvet worms
+          - Wrasses and parrotfishes
     label: Taxonomic group
     doc: Select the taxonomic group to obtain the list of species of that group. If 'all' is selected, a list of all species listed by the IUCN for the selected taxonomic group(s) will be obtained.
     default:

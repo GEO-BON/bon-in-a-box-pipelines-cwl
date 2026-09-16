@@ -81,7 +81,7 @@ requirements:
 
 
   DockerRequirement:
-    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95
+    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
     #     $include: ../runners/cwl/conda-cwl.dockerfile
@@ -142,23 +142,25 @@ inputs:
   #################
   threat_category_input:
     type:
-      type: enum[]
-      symbols:
-        - Do not filter by threat category
-        - Residential & commercial development
-        - Agriculture & aquaculture
-        - Energy production & mining
-        - Transportation & service corridors
-        - Biological resource use
-        - Human intrusions & disturbance
-        - Natural system modifications
-        - Invasive and other problematic species, genes & diseases
-        - Invasive alien species or diseases
-        - Pollution
-        - Geological events
-        - Climate change & severe weather
-        - Fisheries
-        - Other options
+      type: array
+      items:
+        type: enum
+        symbols:
+          - Do not filter by threat category
+          - Residential & commercial development
+          - Agriculture & aquaculture
+          - Energy production & mining
+          - Transportation & service corridors
+          - Biological resource use
+          - Human intrusions & disturbance
+          - Natural system modifications
+          - Invasive and other problematic species, genes & diseases
+          - Invasive alien species or diseases
+          - Pollution
+          - Geological events
+          - Climate change & severe weather
+          - Fisheries
+          - Other options
     label: Threat category
     doc: Select the species threat(s) to filter for. This returns a list of IUCN Red List species that are threatened by the categories selected.
     default:

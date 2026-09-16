@@ -99,7 +99,7 @@ requirements:
 
 
   DockerRequirement:
-    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95
+    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
     #     $include: ../runners/cwl/conda-cwl.dockerfile
@@ -142,8 +142,15 @@ arguments:
     echo "Inputs:" | tee -a $log
     cat $OUTPUT_LOCATION/input.json | tee -a $log
 
-    source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "rbase" \
-    "" /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
+    source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "protconn_analysis__protconn_analysis" \
+    "channels: [conda-forge]
+    dependencies: [r-ggrepel, r-proj, r-remotes, r-rjson, r-tidyverse, r-units, r-boot,
+      r-cpprouting, r-data.table, r-formattable, r-furrr, r-future, r-gdistance, r-ggplot2,
+      r-ggpubr, r-googledrive, r-igraph, r-magrittr, r-ps, r-purrr, r-rappdirs, r-raster,
+      r-rlang, r-rmapshaper, r-sf, r-terra, r-rcppeigen, r-rcppthread, r-adegenet, r-ecodist,
+      r-foreign, r-hierfstat, r-pegas, r-spatstat.geom, r-spatstat.linnet, r-vegan]
+    name: protconn_analysis__protconn_analysis
+    " /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
 
     Rscript \
       $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \
@@ -158,7 +165,7 @@ arguments:
       cp -a "$OUTPUT_LOCATION"/. "$(runtime.outdir)"/
     fi
 
-    source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh rbase /conda-envs >> "$log" 2>&1
+    source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh protconn_analysis__protconn_analysis /conda-envs >> "$log" 2>&1
 
     exit "$scriptExitCode"
 

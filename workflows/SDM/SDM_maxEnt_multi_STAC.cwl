@@ -396,7 +396,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs
@@ -800,8 +800,8 @@ outputs:
     outputSource: data>getGBIFObservations>getGBIFObservations.yml@142/gbif_doi_out
 
   STAC>createCollection.yml@153|stac_collection_out:
-    type: File
+    type: Directory
     label: STAC Collection
-    doc: JSON file representing a STAC collection containing the provided GeoTIFFs
+    doc: A STAC collection containing the resulting GeoTIFFs
     outputSource: STAC>createCollection.yml@153/stac_collection_out
 

@@ -1,36 +1,15 @@
 [1;30mINFO[0m /home/jean-michel/.local/bin/cwl-runner 3.2.20260413085819
 [1;30mINFO[0m Resolved '/home/jean-michel/code/cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl' to 'file:///home/jean-michel/code/cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl'
 [1;30mERROR[0m [31mTool definition failed validation:
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:1:1:     Object
-                                                              '../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl'
-                                                              is not valid because
-                                                                tried 'Workflow' but
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:87:1:       the 'inputs' field is not valid
-                                                                  because
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:110:3:       item is invalid because
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:111:5:         the 'type' field is not valid
-                                                                      because
-                                                                        - tried InputRecordSchema
-                                                                        but
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:112:7:             * the 'type' field is not
-                                                                          valid because
-                                                                            value is a CommentedMap
-                                                                            but expected a string
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:113:7:             * invalid field
-                                                                          'symbols', expected one of: 'fields',
-                                                                          'type', 'label', 'doc', 'name'
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:111:5:           - tried InputEnumSchema but
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:112:7:             the 'type' field is not
-                                                                          valid because
-                                                                            value is a CommentedMap
-                                                                            but expected a string
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:111:5:           - tried InputArraySchema but
-                                                                          * missing required field
-                                                                          'items'
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:112:7:             * the 'type' field is not
-                                                                          valid because
-                                                                            value is a CommentedMap
-                                                                            but expected a string
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:113:7:             * invalid field
-                                                                          'symbols', expected one of: 'items',
-                                                                          'type', 'label', 'doc', 'name'[0m
+
+../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:403:45: Source 'api_citation_out' of type
+                                                               "string" is incompatible
+../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:571:5:     with sink
+                                                                 'IUCNRedlistIndex>IUCN_redlist_historyAssesment.yml@55|api_citation_out'
+                                                                 of type "File"
+../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:488:34: Source 'taxonomic_group_out' of type
+                                                               {"type": "array", "items": "string"}
+                                                               is incompatible
+../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:553:5:     with sink
+                                                                 'IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82|taxonomic_group_out'
+                                                                 of type "File"[0m

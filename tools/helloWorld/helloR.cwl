@@ -91,7 +91,7 @@ requirements:
 
 
   DockerRequirement:
-    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95
+    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
     #     $include: ../runners/cwl/conda-cwl.dockerfile
@@ -203,19 +203,21 @@ inputs:
 
   multi_options_example:
     type:
-      type: enum[]
-      symbols:
-        - first option
-        - second option
-        - third option
-        - fourth option
-        - fifth options
-        - sixth options
-        - seventh option
-        - eight option
-        - ninth option
-        - tenth option
-        - eleventh option
+      type: array
+      items:
+        type: enum
+        symbols:
+          - first option
+          - second option
+          - third option
+          - fourth option
+          - fifth options
+          - sixth options
+          - seventh option
+          - eight option
+          - ninth option
+          - tenth option
+          - eleventh option
     label: Multiselect options
     doc: The user can select 0 to many from a fixed number of text options. The script receives the selected option as an array of text.
     default:

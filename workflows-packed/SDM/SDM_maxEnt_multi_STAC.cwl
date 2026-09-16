@@ -9,7 +9,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
                     "class": "DockerRequirement"
                 },
                 {
@@ -163,7 +163,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
                     "class": "DockerRequirement"
                 },
                 {
@@ -382,7 +382,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
                     "class": "DockerRequirement"
                 },
                 {
@@ -729,7 +729,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
                     "class": "DockerRequirement"
                 },
                 {
@@ -950,7 +950,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1176,7 +1176,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1443,7 +1443,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1604,13 +1604,13 @@
                     "id": "#createCollection.cwl/logs"
                 },
                 {
-                    "type": "File",
+                    "type": "Directory",
                     "label": "STAC Collection",
-                    "doc": "JSON file representing a STAC collection containing the provided GeoTIFFs",
+                    "doc": "JSON file representing a STAC collection containing the provided GeoTIFFs The official MIME type is application/json however, we use application/stac+json to indicate that this is a STAC catalog and differentiate from other json files.\n",
                     "outputBinding": {
                         "glob": "output.json",
                         "loadContents": true,
-                        "outputEval": "${\n  var value = extractOutput(self, \"stac_collection\");\n  if (value === null) return null;\n  return { class: \"File\", location: \"file://\" + value };\n}\n"
+                        "outputEval": "${\n  var value = extractOutput(self, \"stac_collection\");\n  if (value === null) return null;\n  value = value.substring(0, value.lastIndexOf('/'));\n  return { class: \"Directory\", location: \"file://\" + value };\n}\n"
                     },
                     "id": "#createCollection.cwl/stac_collection_out"
                 }
@@ -1627,7 +1627,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1876,7 +1876,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
                     "class": "DockerRequirement"
                 },
                 {
@@ -2155,7 +2155,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
                     "class": "DockerRequirement"
                 },
                 {
@@ -2494,7 +2494,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
                     "class": "DockerRequirement"
                 },
                 {
@@ -3907,7 +3907,7 @@
                         "class": "CommandLineTool",
                         "requirements": [
                             {
-                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95",
+                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
                                 "class": "DockerRequirement"
                             },
                             {
@@ -4032,9 +4032,9 @@
                     "id": "#main/SDM>runMaxent.yml@108|sdm_pred_out"
                 },
                 {
-                    "type": "File",
+                    "type": "Directory",
                     "label": "STAC Collection",
-                    "doc": "JSON file representing a STAC collection containing the provided GeoTIFFs",
+                    "doc": "A STAC collection containing the resulting GeoTIFFs",
                     "outputSource": "#main/STAC>createCollection.yml@153/stac_collection_out",
                     "id": "#main/STAC>createCollection.yml@153|stac_collection_out"
                 },

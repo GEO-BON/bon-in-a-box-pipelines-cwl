@@ -81,7 +81,7 @@ requirements:
 
 
   DockerRequirement:
-    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95
+    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
     #     $include: ../runners/cwl/conda-cwl.dockerfile
@@ -142,28 +142,30 @@ inputs:
   #################
   species_use:
     type:
-      type: enum[]
-      symbols:
-        - All
-        - Do not filter by species use or trade
-        - Food - human
-        - Food - animal
-        - Medicine - human & veterinary
-        - Poisons
-        - Manufacturing chemicals
-        - Other chemicals
-        - Fuels
-        - Fibre
-        - Construction or structural materials
-        - Wearing apparel, accessories
-        - Other household goods
-        - Handicrafts, jewellery, etc.
-        - Pets/display animals, horticulture
-        - Research
-        - Sport hunting/specimen collecting
-        - Establishing ex-situ production
-        - Other
-        - Unknown
+      type: array
+      items:
+        type: enum
+        symbols:
+          - All
+          - Do not filter by species use or trade
+          - Food - human
+          - Food - animal
+          - Medicine - human & veterinary
+          - Poisons
+          - Manufacturing chemicals
+          - Other chemicals
+          - Fuels
+          - Fibre
+          - Construction or structural materials
+          - Wearing apparel, accessories
+          - Other household goods
+          - Handicrafts, jewellery, etc.
+          - Pets/display animals, horticulture
+          - Research
+          - Sport hunting/specimen collecting
+          - Establishing ex-situ production
+          - Other
+          - Unknown
     label: Species use
     doc: Select the species use or trade. This returns a list of IUCN Red List species that are used/involved in the categories selected. If 'All' is selected, the script will return the list of all species involved in the uses and trades listed.
     default:

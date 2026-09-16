@@ -1,0 +1,49 @@
+zonal_statistics>zonal_stats.yml@25|summary_statistic: "{'type': 'array', 'items':
+    {'type': 'enum', 'symbols': ['https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/BII/BII.cwl#main/zonal_statistics>zonal_stats.yml@25|summary_statistic/mean',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/BII/BII.cwl#main/zonal_statistics>zonal_stats.yml@25|summary_statistic/median',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/BII/BII.cwl#main/zonal_statistics>zonal_stats.yml@25|summary_statistic/sum',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/BII/BII.cwl#main/zonal_statistics>zonal_stats.yml@25|summary_statistic/min',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/BII/BII.cwl#main/zonal_statistics>zonal_stats.yml@25|summary_statistic/max',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/BII/BII.cwl#main/zonal_statistics>zonal_stats.yml@25|summary_statistic/stdev',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/BII/BII.cwl#main/zonal_statistics>zonal_stats.yml@25|summary_statistic/variance',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/BII/BII.cwl#main/zonal_statistics>zonal_stats.yml@25|summary_statistic/mode']}}"  # type 'array'
+scripts_root:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+runFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+pipeline@67:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/BII/BII.cwl#main/pipeline@67/bboxCRS" record type.
+    region:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/BII/BII.cwl#main/pipeline@67/bboxCRS/region/regionDefinition" record type.
+        bboxWGS84:  # array of type 'float' (optional)
+          - 0.1
+        regionName: a_string  # type 'string' (optional)
+        regionID: a_string  # type 'string' (optional)
+        countryEnglishName: a_string  # type 'string' (optional)
+    bbox:  # array of type 'float'
+      - 0.1
+    CRS:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/BII/BII.cwl#main/pipeline@67/bboxCRS/CRS/CRSDefinition" record type.
+        wktDef: a_string  # type 'string' (optional)
+        proj4Def: a_string  # type 'string' (optional)
+        CRSBboxWGS84:  # array of type 'float' (optional)
+          - 0.1
+        name: a_string  # type 'string' (optional)
+        authority: a_string  # type 'string' (optional)
+        code: 0  # type 'int' (optional)
+        unit: a_string  # type 'string' (optional)
+    country:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/BII/BII.cwl#main/pipeline@67/bboxCRS/country/countryDefinition" record type.
+        bboxWGS84:  # array of type 'float' (optional)
+          - 0.1
+        ISO3: a_string  # type 'string' (optional)
+        englishName: a_string  # type 'string' (optional)
+pipeline@64: a_string  # type 'string' (optional)
+pipeline@63: a_string  # type 'string' (optional)
+environment:  # type 'File' (optional)
+    class: File
+    path: a/file/path
+envFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+data>load_polygons.yml@68|polygon_type: "Country or region"  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/BII/BII.cwl#main/data>load_polygons.yml@68|polygon_type/Country or region", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/BII/BII.cwl#main/data>load_polygons.yml@68|polygon_type/Polygon of bounding box"
+data>loadFromStac.yml@56|spatial_res: 0.00833  # default value of type 'float'. (optional)
+condaPackURL: "https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/"  # default value of type 'string'.

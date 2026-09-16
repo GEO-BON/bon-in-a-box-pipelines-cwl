@@ -109,59 +109,61 @@ inputs:
 
   IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82|taxonomic_group:
     type:
-      type: enum[]
-      symbols:
-        - All
-        - Amphibians
-        - Birds
-        - Mammals
-        - Reptiles
-        - Fishes
-        - Insects
-        - Angelfishes
-        - Arachnids
-        - Blennies
-        - Brown algae
-        - Butterfly fishes
-        - Cacti
-        - Chameleons
-        - Cone snails
-        - Conifers
-        - Corals
-        - Crocodiles and alligators
-        - Crustaceans
-        - Cycads
-        - Fernes and allies
-        - Flowering plants
-        - Fw caridean shrimps
-        - Fw crabs
-        - Fw crayfish
-        - Green algae
-        - Groupers
-        - Gymnosperms
-        - Hagfishes
-        - Horseshoe crabs
-        - Lichens
-        - Lobsters
-        - Magnolias
-        - Mangrove plants
-        - Molluscs
-        - Mosses
-        - Mushrooms
-        - Others
-        - Pufferfishes
-        - Red algae
-        - Reef building corals
-        - Seabreams porgies picarels
-        - Seagrasses
-        - Seasnakes
-        - Sharks and rays
-        - Sturgeons
-        - Surgeonfishes
-        - Tarpons and ladyfishes
-        - Tunas and billfishes
-        - Velvet worms
-        - Wrasses and parrotfishes
+      type: array
+      items:
+        type: enum
+        symbols:
+          - All
+          - Amphibians
+          - Birds
+          - Mammals
+          - Reptiles
+          - Fishes
+          - Insects
+          - Angelfishes
+          - Arachnids
+          - Blennies
+          - Brown algae
+          - Butterfly fishes
+          - Cacti
+          - Chameleons
+          - Cone snails
+          - Conifers
+          - Corals
+          - Crocodiles and alligators
+          - Crustaceans
+          - Cycads
+          - Fernes and allies
+          - Flowering plants
+          - Fw caridean shrimps
+          - Fw crabs
+          - Fw crayfish
+          - Green algae
+          - Groupers
+          - Gymnosperms
+          - Hagfishes
+          - Horseshoe crabs
+          - Lichens
+          - Lobsters
+          - Magnolias
+          - Mangrove plants
+          - Molluscs
+          - Mosses
+          - Mushrooms
+          - Others
+          - Pufferfishes
+          - Red algae
+          - Reef building corals
+          - Seabreams porgies picarels
+          - Seagrasses
+          - Seasnakes
+          - Sharks and rays
+          - Sturgeons
+          - Surgeonfishes
+          - Tarpons and ladyfishes
+          - Tunas and billfishes
+          - Velvet worms
+          - Wrasses and parrotfishes
     label: Taxonomic group
     doc: Select the taxonomic groups for which to calculate the RLI. If 'All' is selected, the pipeline will include all taxonomic groups.
     default:
@@ -169,28 +171,30 @@ inputs:
 
   IUCNRedlistIndex>IUCN_redlist_spUse.yml@77|species_use:
     type:
-      type: enum[]
-      symbols:
-        - All
-        - Do not filter by species use or trade
-        - Food - human
-        - Food - animal
-        - Medicine - human & veterinary
-        - Poisons
-        - Manufacturing chemicals
-        - Other chemicals
-        - Fuels
-        - Fibre
-        - Construction or structural materials
-        - Wearing apparel, accessories
-        - Other household goods
-        - Handicrafts, jewellery, etc.
-        - Pets/display animals, horticulture
-        - Research
-        - Sport hunting/specimen collecting
-        - Establishing ex-situ production
-        - Other
-        - Unknown
+      type: array
+      items:
+        type: enum
+        symbols:
+          - All
+          - Do not filter by species use or trade
+          - Food - human
+          - Food - animal
+          - Medicine - human & veterinary
+          - Poisons
+          - Manufacturing chemicals
+          - Other chemicals
+          - Fuels
+          - Fibre
+          - Construction or structural materials
+          - Wearing apparel, accessories
+          - Other household goods
+          - Handicrafts, jewellery, etc.
+          - Pets/display animals, horticulture
+          - Research
+          - Sport hunting/specimen collecting
+          - Establishing ex-situ production
+          - Other
+          - Unknown
     label: Species use
     doc: Select the species use(s) or trade(s). This will filter the species list to only include species with the selected uses. If 'All' is selected, the pipeline will include all species that have a use recorded in the Red List database. You may omit this filter by selecting 'Do not filter by species use or trade'.
     default:
@@ -198,23 +202,25 @@ inputs:
 
   IUCNRedlistIndex>IUCN_redlist_spThreats.yml@92|threat_category_input:
     type:
-      type: enum[]
-      symbols:
-        - Do not filter by threat category
-        - Residential & commercial development
-        - Agriculture & aquaculture
-        - Energy production & mining
-        - Transportation & service corridors
-        - Biological resource use
-        - Human intrusions & disturbance
-        - Natural system modifications
-        - Invasive and other problematic species, genes & diseases
-        - Invasive alien species or diseases
-        - Pollution
-        - Geological events
-        - Climate change & severe weather
-        - Fisheries
-        - Other options
+      type: array
+      items:
+        type: enum
+        symbols:
+          - Do not filter by threat category
+          - Residential & commercial development
+          - Agriculture & aquaculture
+          - Energy production & mining
+          - Transportation & service corridors
+          - Biological resource use
+          - Human intrusions & disturbance
+          - Natural system modifications
+          - Invasive and other problematic species, genes & diseases
+          - Invasive alien species or diseases
+          - Pollution
+          - Geological events
+          - Climate change & severe weather
+          - Fisheries
+          - Other options
     label: Threat category
     doc: Select the species threat(s) to filter for. This returns a list of IUCN Red List species that are threatened by the categories selected.
     default:
@@ -286,7 +292,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs

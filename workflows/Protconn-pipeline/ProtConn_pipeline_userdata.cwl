@@ -267,7 +267,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs
@@ -295,6 +295,15 @@ steps:
           }
           export -f getPackedEnv
 
+          bash -c 'getPackedEnv "protconn_analysis__protconn_analysis" "channels: [conda-forge]
+          dependencies: [r-ggrepel, r-proj, r-remotes, r-rjson, r-tidyverse, r-units, r-boot,
+            r-cpprouting, r-data.table, r-formattable, r-furrr, r-future, r-gdistance, r-ggplot2,
+            r-ggpubr, r-googledrive, r-igraph, r-magrittr, r-ps, r-purrr, r-rappdirs, r-raster,
+            r-rlang, r-rmapshaper, r-sf, r-terra, r-rcppeigen, r-rcppthread, r-adegenet, r-ecodist,
+            r-foreign, r-hierfstat, r-pegas, r-spatstat.geom, r-spatstat.linnet, r-vegan]
+          name: protconn_analysis__protconn_analysis
+          "'
+          
           bash -c 'getPackedEnv "data__load_polygons" "channels: [conda-forge]
           dependencies: [r-rjson, r-dbplyr=2.5.2, r-dplyr=1.2.1, r-duckdb=1.4.4, r-fs=2.1.0,
             r-arrow=24.0.0, r-nanoarrow=0.8.0, r-geoarrow=0.4.2, r-sf=1.1-0, r-stringi=1.8.7,
@@ -340,6 +349,11 @@ steps:
       include_na_dates: protconn_analysis>protconn_analysis.yml@8|include_na_dates
       start_year: protconn_analysis>protconn_analysis.yml@8|start_year
       year_int: protconn_analysis>protconn_analysis.yml@8|year_int
+      envFolder:
+        source: prepareEnvironments/envFolder
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/protconn_analysis__protconn_analysis' } : null)"
+      envFolderWritable:
+        default: false
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/protconn_analysis__protconn_analysis/8' } : null)"

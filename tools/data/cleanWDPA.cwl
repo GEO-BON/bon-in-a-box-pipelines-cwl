@@ -88,7 +88,7 @@ requirements:
 
 
   DockerRequirement:
-    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95
+    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
     #     $include: ../runners/cwl/conda-cwl.dockerfile
@@ -222,13 +222,15 @@ inputs:
 
   status_type:
     type:
-      type: enum[]
-      symbols:
-        - Proposed
-        - Inscribed
-        - Adopted
-        - Designated
-        - Established
+      type: array
+      items:
+        type: enum
+        symbols:
+          - Proposed
+          - Inscribed
+          - Adopted
+          - Designated
+          - Established
     label: PA legal status types to include
     doc: >
       Legal status types of protected areas to include.

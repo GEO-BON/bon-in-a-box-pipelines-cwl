@@ -111,16 +111,18 @@ inputs:
 
   zonal_statistics>zonal_stats.yml@25|summary_statistic:
     type:
-      type: enum[]
-      symbols:
-        - mean
-        - median
-        - sum
-        - min
-        - max
-        - stdev
-        - variance
-        - mode
+      type: array
+      items:
+        type: enum
+        symbols:
+          - mean
+          - median
+          - sum
+          - min
+          - max
+          - stdev
+          - variance
+          - mode
     label: Summary statistic
     doc: Summary statistic for layers
     default:
@@ -208,7 +210,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-eee5c95
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs

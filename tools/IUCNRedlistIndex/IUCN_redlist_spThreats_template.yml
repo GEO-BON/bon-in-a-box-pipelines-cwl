@@ -1,0 +1,32 @@
+threat_category_input: "{'type': 'array', 'items': {'type': 'enum', 'symbols': ['https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl#threat_category_input/Do
+    not filter by threat category', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl#threat_category_input/Residential
+    & commercial development', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl#threat_category_input/Agriculture
+    & aquaculture', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl#threat_category_input/Energy
+    production & mining', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl#threat_category_input/Transportation
+    & service corridors', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl#threat_category_input/Biological
+    resource use', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl#threat_category_input/Human
+    intrusions & disturbance', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl#threat_category_input/Natural
+    system modifications', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl#threat_category_input/Invasive
+    and other problematic species, genes & diseases', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl#threat_category_input/Invasive
+    alien species or diseases', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl#threat_category_input/Pollution',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl#threat_category_input/Geological
+    events', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl#threat_category_input/Climate
+    change & severe weather', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl#threat_category_input/Fisheries',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spThreats.cwl#threat_category_input/Other
+    options']}}"  # type 'array'
+scripts_root:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+scriptPath: IUCNRedlistIndex/IUCN_redlist_spThreats.R  # default value of type 'string'.
+runFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+environment:  # type 'File' (optional)
+    class: File
+    path: a/file/path
+envFolderWritable: true  # default value of type 'boolean'.
+envFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+condaPackURL: 
+    https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.

@@ -1,0 +1,57 @@
+scripts_root:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+runFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+pipeline@68:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/pipeline@68/bboxCRS" record type.
+    region:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/pipeline@68/bboxCRS/region/regionDefinition" record type.
+        bboxWGS84:  # array of type 'float' (optional)
+          - 0.1
+        regionName: a_string  # type 'string' (optional)
+        regionID: a_string  # type 'string' (optional)
+        countryEnglishName: a_string  # type 'string' (optional)
+    bbox:  # array of type 'float'
+      - 0.1
+    CRS:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/pipeline@68/bboxCRS/CRS/CRSDefinition" record type.
+        wktDef: a_string  # type 'string' (optional)
+        proj4Def: a_string  # type 'string' (optional)
+        CRSBboxWGS84:  # array of type 'float' (optional)
+          - 0.1
+        name: a_string  # type 'string' (optional)
+        authority: a_string  # type 'string' (optional)
+        code: 0  # type 'int' (optional)
+        unit: a_string  # type 'string' (optional)
+    country:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/pipeline@68/bboxCRS/country/countryDefinition" record type.
+        bboxWGS84:  # array of type 'float' (optional)
+          - 0.1
+        ISO3: a_string  # type 'string' (optional)
+        englishName: a_string  # type 'string' (optional)
+pipeline@45: "2024"  # default value of type 'string'. (optional)
+pipeline@44: "2017"  # default value of type 'string'. (optional)
+phenology>summarise_phenology.yml@37|spatial_resolution: 0.1  # type 'float' (optional)
+phenology>summarise_phenology.yml@37|season: "SEASON1"  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/phenology>summarise_phenology.yml@37|season/SEASON1", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/phenology>summarise_phenology.yml@37|season/SEASON2"
+phenology>summarise_phenology.yml@37|bands: "{'type': 'array', 'items': {'type': 'enum',
+    'symbols': ['https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/phenology>summarise_phenology.yml@37|bands/SOSD',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/phenology>summarise_phenology.yml@37|bands/EOSD',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/phenology>summarise_phenology.yml@37|bands/SOSV',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/phenology>summarise_phenology.yml@37|bands/EOSV',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/phenology>summarise_phenology.yml@37|bands/MAXD',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/phenology>summarise_phenology.yml@37|bands/MAXV',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/phenology>summarise_phenology.yml@37|bands/MINV',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/phenology>summarise_phenology.yml@37|bands/AMPL',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/phenology>summarise_phenology.yml@37|bands/LENGTH',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/phenology>summarise_phenology.yml@37|bands/LSLOPE',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/phenology>summarise_phenology.yml@37|bands/RSLOPE',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/phenology>summarise_phenology.yml@37|bands/SPROD',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/phenology>summarise_phenology.yml@37|bands/TPROD',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/phenology>summarise_phenology.yml@37|bands/QFLAG']}}"  # type 'array'
+phenology>summarise_phenology.yml@37|aggregate_function: "mean"  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/phenology>summarise_phenology.yml@37|aggregate_function/mean", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/phenology>summarise_phenology.yml@37|aggregate_function/min", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/phenology>summarise_phenology.yml@37|aggregate_function/max"
+environment:  # type 'File' (optional)
+    class: File
+    path: a/file/path
+envFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+data>load_polygons.yml@69|polygon_type: "Country or region"  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/data>load_polygons.yml@69|polygon_type/Country or region", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Phenology/phenology_EO.cwl#main/data>load_polygons.yml@69|polygon_type/Polygon of bounding box"
+condaPackURL: "https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/"  # default value of type 'string'.

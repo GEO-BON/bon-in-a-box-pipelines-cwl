@@ -1,0 +1,56 @@
+scripts_root:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+runFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+protconn_analysis>protconn_analysis.yml@42|years: 2026  # default value of type 'int'. (optional)
+protconn_analysis>protconn_analysis.yml@42|year_int: 20  # default value of type 'int'. (optional)
+protconn_analysis>protconn_analysis.yml@42|time_series: true  # default value of type 'boolean'. (optional)
+protconn_analysis>protconn_analysis.yml@42|start_year: 1980  # default value of type 'int'. (optional)
+protconn_analysis>protconn_analysis.yml@42|pa_size_threshold: 1000  # default value of type 'float'. (optional)
+protconn_analysis>protconn_analysis.yml@42|include_na_dates: true  # default value of type 'boolean'. (optional)
+protconn_analysis>protconn_analysis.yml@42|distance_threshold: [1000, 10000]  # array of type 'int' (optional)
+protconn_analysis>protconn_analysis.yml@42|date_column_name: a_string  # type 'string' (optional)
+pipeline@69: 0.1  # type 'float' (optional)
+pipeline@68: "{'type': 'array', 'items': {'type': 'enum', 'symbols': ['https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Protconn-pipeline/ProtConn_pipeline.cwl#main/pipeline@68/Designated',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Protconn-pipeline/ProtConn_pipeline.cwl#main/pipeline@68/Inscribed',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Protconn-pipeline/ProtConn_pipeline.cwl#main/pipeline@68/Established',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Protconn-pipeline/ProtConn_pipeline.cwl#main/pipeline@68/Adopted',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Protconn-pipeline/ProtConn_pipeline.cwl#main/pipeline@68/Proposed']}}"  # type 'array'
+pipeline@60:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Protconn-pipeline/ProtConn_pipeline.cwl#main/pipeline@60/bboxCRS" record type.
+    region:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Protconn-pipeline/ProtConn_pipeline.cwl#main/pipeline@60/bboxCRS/region/regionDefinition" record type.
+        bboxWGS84:  # array of type 'float' (optional)
+          - 0.1
+        regionName: a_string  # type 'string' (optional)
+        regionID: a_string  # type 'string' (optional)
+        countryEnglishName: a_string  # type 'string' (optional)
+    bbox:  # array of type 'float'
+      - 0.1
+    CRS:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Protconn-pipeline/ProtConn_pipeline.cwl#main/pipeline@60/bboxCRS/CRS/CRSDefinition" record type.
+        wktDef: a_string  # type 'string' (optional)
+        proj4Def: a_string  # type 'string' (optional)
+        CRSBboxWGS84:  # array of type 'float' (optional)
+          - 0.1
+        name: a_string  # type 'string' (optional)
+        authority: a_string  # type 'string' (optional)
+        code: 0  # type 'int' (optional)
+        unit: a_string  # type 'string' (optional)
+    country:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/Protconn-pipeline/ProtConn_pipeline.cwl#main/pipeline@60/bboxCRS/country/countryDefinition" record type.
+        bboxWGS84:  # array of type 'float' (optional)
+          - 0.1
+        ISO3: a_string  # type 'string' (optional)
+        englishName: a_string  # type 'string' (optional)
+pipeline@41: []  # array of type 'File' (optional)
+pipeline@29: []  # array of type 'File' (optional)
+environment:  # type 'File' (optional)
+    class: File
+    path: a/file/path
+envFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+data>cleanWDPA.yml@48|include_unesco: true  # default value of type 'boolean'. (optional)
+data>cleanWDPA.yml@48|include_oecm: true  # default value of type 'boolean'. (optional)
+data>cleanWDPA.yml@48|include_marine: false  # type 'boolean' (optional)
+data>cleanWDPA.yml@48|buffer_points: true  # default value of type 'boolean'. (optional)
+condaPackURL: "https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/"  # default value of type 'string'.

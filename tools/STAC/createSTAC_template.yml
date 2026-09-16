@@ -1,7 +1,7 @@
 stac_name: biab-stac  # default value of type 'string'. (optional)
-stac_collections:  # array of type 'File' (optional)
-  - class: File
-    path: a/file/path
+stac_collections:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
 scripts_root:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path

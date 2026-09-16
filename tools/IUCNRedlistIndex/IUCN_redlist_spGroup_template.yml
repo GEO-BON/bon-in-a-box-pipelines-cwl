@@ -1,0 +1,68 @@
+taxonomic_group: "{'type': 'array', 'items': {'type': 'enum', 'symbols': ['https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/All',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Amphibians',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Birds',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Mammals',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Reptiles',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Fishes',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Insects',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Angelfishes',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Arachnids',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Blennies',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Brown
+    algae', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Butterfly
+    fishes', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Cacti',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Chameleons',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Cone
+    snails', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Conifers',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Corals',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Crocodiles
+    and alligators', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Crustaceans',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Cycads',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Fernes
+    and allies', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Flowering
+    plants', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Fw
+    caridean shrimps', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Fw
+    crabs', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Fw
+    crayfish', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Green
+    algae', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Groupers',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Gymnosperms',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Hagfishes',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Horseshoe
+    crabs', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Lichens',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Lobsters',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Magnolias',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Mangrove
+    plants', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Molluscs',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Mosses',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Mushrooms',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Others',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Pufferfishes',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Red
+    algae', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Reef
+    building corals', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Seabreams
+    porgies picarels', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Seagrasses',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Seasnakes',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Sharks
+    and rays', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Sturgeons',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Surgeonfishes',
+    'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Tarpons
+    and ladyfishes', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Tunas
+    and billfishes', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Velvet
+    worms', 'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IUCNRedlistIndex/IUCN_redlist_spGroup.cwl#taxonomic_group/Wrasses
+    and parrotfishes']}}"  # type 'array'
+scripts_root:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+scriptPath: IUCNRedlistIndex/IUCN_redlist_spGroup.R  # default value of type 'string'.
+runFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+environment:  # type 'File' (optional)
+    class: File
+    path: a/file/path
+envFolderWritable: true  # default value of type 'boolean'.
+envFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+condaPackURL: 
+    https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.
