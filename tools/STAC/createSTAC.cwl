@@ -82,7 +82,7 @@ requirements:
 
 
   DockerRequirement:
-    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2
+    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
     #     $include: ../runners/cwl/conda-cwl.dockerfile
@@ -143,7 +143,7 @@ inputs:
   # Script inputs #
   #################
   stac_collections:
-    type: Directory?
+    type: Directory[]?
     label: STAC collections
     doc: Input STAC collection(s) to convert to a STAC catalog. Can be a single collection or a list of collections.
 
