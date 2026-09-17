@@ -107,19 +107,8 @@ inputs:
       * Similar to or smaller than the species' range: results lean toward habitat suitability. Predictors tied to local habitat structure (vegetation, soil) may matter more.
     type:
       type: record
-      name: bboxCRS
+      name: crsBBox
       fields:
-      - name: country
-        type:
-          name: countryDefinition
-          type: record
-          fields:
-          - name: englishName
-            type: string?
-          - name: ISO3
-            type: string?
-          - name: bboxWGS84
-            type: float[]?
       - name: CRS
         type:
           name: CRSDefinition
@@ -141,19 +130,6 @@ inputs:
             type: string?
       - name: bbox
         type: float[]
-      - name: region
-        type:
-          name: regionDefinition
-          type: record
-          fields:
-          - name: countryEnglishName
-            type: string?
-          - name: regionID
-            type: string?
-          - name: regionName
-            type: string?
-          - name: bboxWGS84
-            type: float[]?
 
   pipeline@152:
     type: File?
@@ -396,7 +372,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs

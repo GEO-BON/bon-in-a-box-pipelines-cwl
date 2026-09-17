@@ -9,7 +9,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235",
                     "class": "DockerRequirement"
                 },
                 {
@@ -163,7 +163,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235",
                     "class": "DockerRequirement"
                 },
                 {
@@ -382,7 +382,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235",
                     "class": "DockerRequirement"
                 },
                 {
@@ -729,7 +729,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235",
                     "class": "DockerRequirement"
                 },
                 {
@@ -950,7 +950,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1176,7 +1176,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1443,7 +1443,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1627,7 +1627,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1876,7 +1876,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235",
                     "class": "DockerRequirement"
                 },
                 {
@@ -2155,7 +2155,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235",
                     "class": "DockerRequirement"
                 },
                 {
@@ -2494,7 +2494,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235",
                     "class": "DockerRequirement"
                 },
                 {
@@ -2962,77 +2962,44 @@
                     "doc": "Bounding box and coordinate reference system defining the analysis extent. This extent is used to retrieve GBIF occurrences, environmental predictor rasters, the GBIF sampling-effort heatmap, and the study extent for modelling.\nThe extent you choose affects how results should be interpreted and may change which predictors emerge as important. * Larger than the species' range: results lean toward occurrence/accessibility. Predictors tied to broad-scale distributional limits (climate, biogeography) may dominate. * Similar to or smaller than the species' range: results lean toward habitat suitability. Predictors tied to local habitat structure (vegetation, soil) may matter more.\n",
                     "type": {
                         "type": "record",
-                        "name": "#main/pipeline@140/bboxCRS",
+                        "name": "#main/pipeline@140/crsBBox",
                         "fields": [
                             {
-                                "name": "#main/pipeline@140/bboxCRS/country",
+                                "name": "#main/pipeline@140/crsBBox/CRS",
                                 "type": {
-                                    "name": "#main/pipeline@140/bboxCRS/country/countryDefinition",
+                                    "name": "#main/pipeline@140/crsBBox/CRS/CRSDefinition",
                                     "type": "record",
                                     "fields": [
                                         {
-                                            "name": "#main/pipeline@140/bboxCRS/country/countryDefinition/englishName",
+                                            "name": "#main/pipeline@140/crsBBox/CRS/CRSDefinition/unit",
                                             "type": [
                                                 "null",
                                                 "string"
                                             ]
                                         },
                                         {
-                                            "name": "#main/pipeline@140/bboxCRS/country/countryDefinition/ISO3",
-                                            "type": [
-                                                "null",
-                                                "string"
-                                            ]
-                                        },
-                                        {
-                                            "name": "#main/pipeline@140/bboxCRS/country/countryDefinition/bboxWGS84",
-                                            "type": [
-                                                "null",
-                                                {
-                                                    "type": "array",
-                                                    "items": "float"
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                "name": "#main/pipeline@140/bboxCRS/CRS",
-                                "type": {
-                                    "name": "#main/pipeline@140/bboxCRS/CRS/CRSDefinition",
-                                    "type": "record",
-                                    "fields": [
-                                        {
-                                            "name": "#main/pipeline@140/bboxCRS/CRS/CRSDefinition/unit",
-                                            "type": [
-                                                "null",
-                                                "string"
-                                            ]
-                                        },
-                                        {
-                                            "name": "#main/pipeline@140/bboxCRS/CRS/CRSDefinition/code",
+                                            "name": "#main/pipeline@140/crsBBox/CRS/CRSDefinition/code",
                                             "type": [
                                                 "null",
                                                 "int"
                                             ]
                                         },
                                         {
-                                            "name": "#main/pipeline@140/bboxCRS/CRS/CRSDefinition/authority",
+                                            "name": "#main/pipeline@140/crsBBox/CRS/CRSDefinition/authority",
                                             "type": [
                                                 "null",
                                                 "string"
                                             ]
                                         },
                                         {
-                                            "name": "#main/pipeline@140/bboxCRS/CRS/CRSDefinition/name",
+                                            "name": "#main/pipeline@140/crsBBox/CRS/CRSDefinition/name",
                                             "type": [
                                                 "null",
                                                 "string"
                                             ]
                                         },
                                         {
-                                            "name": "#main/pipeline@140/bboxCRS/CRS/CRSDefinition/CRSBboxWGS84",
+                                            "name": "#main/pipeline@140/crsBBox/CRS/CRSDefinition/CRSBboxWGS84",
                                             "type": [
                                                 "null",
                                                 {
@@ -3042,14 +3009,14 @@
                                             ]
                                         },
                                         {
-                                            "name": "#main/pipeline@140/bboxCRS/CRS/CRSDefinition/proj4Def",
+                                            "name": "#main/pipeline@140/crsBBox/CRS/CRSDefinition/proj4Def",
                                             "type": [
                                                 "null",
                                                 "string"
                                             ]
                                         },
                                         {
-                                            "name": "#main/pipeline@140/bboxCRS/CRS/CRSDefinition/wktDef",
+                                            "name": "#main/pipeline@140/crsBBox/CRS/CRSDefinition/wktDef",
                                             "type": [
                                                 "null",
                                                 "string"
@@ -3059,50 +3026,10 @@
                                 }
                             },
                             {
-                                "name": "#main/pipeline@140/bboxCRS/bbox",
+                                "name": "#main/pipeline@140/crsBBox/bbox",
                                 "type": {
                                     "type": "array",
                                     "items": "float"
-                                }
-                            },
-                            {
-                                "name": "#main/pipeline@140/bboxCRS/region",
-                                "type": {
-                                    "name": "#main/pipeline@140/bboxCRS/region/regionDefinition",
-                                    "type": "record",
-                                    "fields": [
-                                        {
-                                            "name": "#main/pipeline@140/bboxCRS/region/regionDefinition/countryEnglishName",
-                                            "type": [
-                                                "null",
-                                                "string"
-                                            ]
-                                        },
-                                        {
-                                            "name": "#main/pipeline@140/bboxCRS/region/regionDefinition/regionID",
-                                            "type": [
-                                                "null",
-                                                "string"
-                                            ]
-                                        },
-                                        {
-                                            "name": "#main/pipeline@140/bboxCRS/region/regionDefinition/regionName",
-                                            "type": [
-                                                "null",
-                                                "string"
-                                            ]
-                                        },
-                                        {
-                                            "name": "#main/pipeline@140/bboxCRS/region/regionDefinition/bboxWGS84",
-                                            "type": [
-                                                "null",
-                                                {
-                                                    "type": "array",
-                                                    "items": "float"
-                                                }
-                                            ]
-                                        }
-                                    ]
                                 }
                             }
                         ]
@@ -3907,7 +3834,7 @@
                         "class": "CommandLineTool",
                         "requirements": [
                             {
-                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-259f5b2",
+                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235",
                                 "class": "DockerRequirement"
                             },
                             {
