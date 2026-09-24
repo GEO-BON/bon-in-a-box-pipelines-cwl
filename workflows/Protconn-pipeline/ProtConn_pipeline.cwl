@@ -289,10 +289,11 @@ inputs:
       If left blank, a temporary folder will be used and discarded after the run.
 
   environment:
-    type: File?
+    type: string?
     doc:
-      Optional. BON in a Box runner.env file, necessary for scripts requiring credentials.
-      If not provided, an empty one will be used.
+      Optional. URL (http/https) or file:// URI pointing to a BON in a Box runner.env
+      file, necessary for scripts requiring credentials. If not provided, an empty one will be used.
+      Relative paths are not supported.
 
   #################################################################
   # The following inputs should not be changed in a regular setup #
@@ -310,8 +311,53 @@ inputs:
 
 
 steps:
+  prepareRunnerEnv:
+    doc: 
+      Copy or download environment file (runner.env) into a CWL output.
+      This step is a patch to go around issue https://github.com/common-workflow-language/cwltool/issues/1842.
+    when: $(inputs.environment != null)
+    in:
+      environment: environment
+    out: [ environmentFile ]
+    run:
+      class: CommandLineTool
+      requirements:
+        NetworkAccess:
+          networkAccess: true
+        InlineJavascriptRequirement: { }
+        EnvVarRequirement:
+          envDef:
+            RUNNER_ENV_URI: $(inputs.environment)
+      baseCommand: [ bash, -c ]
+      arguments:
+        - |
+          echo "Preparing runner.env..."
+          
+          if [[ "$RUNNER_ENV_URI" == http://* ||
+                  "$RUNNER_ENV_URI" == https://* ||
+                  "$RUNNER_ENV_URI" == file://* ]]; then
+            if ! curl -fsSL "$RUNNER_ENV_URI" -o runner.env; then
+              echo "ERROR: failed to download runner.env from $RUNNER_ENV_URI" >&2
+              exit 1
+            fi
+            source runner.env
+          else
+            echo "ERROR: environment file input, BON in a Box's "runner.env", was not provided as an URI." >&2
+            echo "Please use the format file:// or https://" >&2
+            exit 1;
+          fi
+      inputs:
+        environment:
+          type: string
+      outputs:
+        environmentFile:
+          type: File?
+          outputBinding:
+            glob: runner.env
+
+
   # This step prepares the environments for all the following steps
-  prepareEnvironments:
+  preparePackedEnvs:
     when: $(inputs.envFolderWrite != null)
     run:
       class: CommandLineTool
@@ -338,13 +384,14 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs
             CONDA_ENVS_PATH: /opt/conda/envs:/conda-env-yml/envs
             SCRIPT_STUBS_LOCATION: /script-stubs
             OUTPUT_LOCATION: "$(inputs.runFolderWrite ? inputs.runFolderWrite.path : runtime.outdir)"
+            CONDA_PACK_URL: $(inputs.condaPackURL)
       baseCommand: [bash, -c]
       arguments:
         - |
@@ -360,7 +407,7 @@ steps:
             
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh "$OUTPUT_LOCATION" "$condaEnvName" \
-              "$condaEnvYml" "$dedicatedEnvFolder" "$(inputs.condaPackURL)" --noActivate
+              "$condaEnvYml" "$dedicatedEnvFolder" "$CONDA_PACK_URL" --noActivate
             source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh "$condaEnvName" "$dedicatedEnvFolder"
             echo "Done."
           }
@@ -387,7 +434,6 @@ steps:
             r-stringr=1.6.0, r-tidyr=1.3.2, r-uuid=1.2_2, r-remotes=2.5.0]
           name: data__load_polygons
           "'
-          
       inputs:
         envFolderWrite:
           type: Directory?
@@ -405,7 +451,7 @@ steps:
       envFolderWrite: envFolder
       runFolder:
         source: runFolder
-        valueFrom: "$({ class: 'Directory', location: (self ? self.location : '/tmp/cwl' ) + '/prepareEnvironments' })"
+        valueFrom: "$({ class: 'Directory', location: (self ? self.location : '/tmp/cwl' ) + '/preparePackedEnvs' })"
       condaPackURL: condaPackURL
     out: [envFolder]
 
@@ -429,14 +475,14 @@ steps:
       start_year: protconn_analysis>protconn_analysis.yml@42|start_year
       year_int: protconn_analysis>protconn_analysis.yml@42|year_int
       envFolder:
-        source: prepareEnvironments/envFolder
+        source: preparePackedEnvs/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/protconn_analysis__protconn_analysis' } : null)"
       envFolderWritable:
         default: false
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/protconn_analysis__protconn_analysis/42' } : null)"
-      environment: environment
+      environment: prepareRunnerEnv/environmentFile
       condaPackURL: condaPackURL
       scripts_root: scripts_root
     out: [protected_areas_out, study_area_km2_out, protected_area_km2_out, protconn_result_out, result_plot_out, result_yrs_plot_out, result_yrs_out]
@@ -454,14 +500,14 @@ steps:
       include_marine: data>cleanWDPA.yml@48|include_marine
       include_oecm: data>cleanWDPA.yml@48|include_oecm
       envFolder:
-        source: prepareEnvironments/envFolder
+        source: preparePackedEnvs/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__cleanWDPA' } : null)"
       envFolderWritable:
         default: false
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__cleanWDPA/48' } : null)"
-      environment: environment
+      environment: prepareRunnerEnv/environmentFile
       condaPackURL: condaPackURL
       scripts_root: scripts_root
     out: [study_area_clean_out, protected_areas_clean_out]
@@ -474,14 +520,14 @@ steps:
       country_region_bbox: pipeline@60
       buffer: { default: 0.0 }
       envFolder:
-        source: prepareEnvironments/envFolder
+        source: preparePackedEnvs/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons' } : null)"
       envFolderWritable:
         default: false
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/61' } : null)"
-      environment: environment
+      environment: prepareRunnerEnv/environmentFile
       condaPackURL: condaPackURL
       scripts_root: scripts_root
     out: [polygon_out, bbox_crs_out]
@@ -494,14 +540,14 @@ steps:
       country_region_bbox: pipeline@60
       buffer: pipeline@69
       envFolder:
-        source: prepareEnvironments/envFolder
+        source: preparePackedEnvs/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons' } : null)"
       envFolderWritable:
         default: false
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/64' } : null)"
-      environment: environment
+      environment: prepareRunnerEnv/environmentFile
       condaPackURL: condaPackURL
       scripts_root: scripts_root
     out: [polygon_out, bbox_crs_out]

@@ -47,9 +47,7 @@ phenology>summarise_phenology.yml@37|bands: "{'type': 'array', 'items': {'type':
     'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/Phenology/phenology_EO.cwl#phenology>summarise_phenology.yml@37|bands/TPROD',
     'https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/Phenology/phenology_EO.cwl#phenology>summarise_phenology.yml@37|bands/QFLAG']}}"  # type 'array'
 phenology>summarise_phenology.yml@37|aggregate_function: mean  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/Phenology/phenology_EO.cwl#phenology>summarise_phenology.yml@37|aggregate_function/mean", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/Phenology/phenology_EO.cwl#phenology>summarise_phenology.yml@37|aggregate_function/min", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/Phenology/phenology_EO.cwl#phenology>summarise_phenology.yml@37|aggregate_function/max"
-environment:  # type 'File' (optional)
-    class: File
-    path: a/file/path
+environment: a_string  # type 'string' (optional)
 envFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path

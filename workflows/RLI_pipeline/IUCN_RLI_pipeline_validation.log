@@ -1,15 +1,20 @@
 [1;30mINFO[0m /home/jean-michel/.local/bin/cwl-runner 3.2.20260413085819
 [1;30mINFO[0m Resolved '/home/jean-michel/code/cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl' to 'file:///home/jean-michel/code/cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl'
+[1;30mWARNING[0m [33mWorkflow checker warning:
+../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:246:5: Source 'environment' of type ["null",
+                                                              "string"] may be incompatible
+../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:274:7:   with sink 'environment' of type
+                                                                "string"[0m
 [1;30mERROR[0m [31mTool definition failed validation:
 
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:403:45: Source 'api_citation_out' of type
+../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:449:45: Source 'api_citation_out' of type
                                                                "string" is incompatible
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:571:5:     with sink
+../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:617:5:     with sink
                                                                  'IUCNRedlistIndex>IUCN_redlist_historyAssesment.yml@55|api_citation_out'
                                                                  of type "File"
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:488:34: Source 'taxonomic_group_out' of type
+../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:534:34: Source 'taxonomic_group_out' of type
                                                                {"type": "array", "items": "string"}
                                                                is incompatible
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:553:5:     with sink
+../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:599:5:     with sink
                                                                  'IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82|taxonomic_group_out'
                                                                  of type "File"[0m

@@ -9,9 +9,7 @@ pipeline@16: "EPSG:4326"  # default value of type 'string'. (optional)
 pipeline@15: 2000  # default value of type 'int'. (optional)
 pipeline@14: 1980  # default value of type 'int'. (optional)
 pipeline@12: "Quercus sartorii"  # default value of type 'string'. (optional)
-environment:  # type 'File' (optional)
-    class: File
-    path: a/file/path
+environment: a_string  # type 'string' (optional)
 envFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path

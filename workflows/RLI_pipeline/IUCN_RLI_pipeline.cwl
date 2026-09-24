@@ -243,10 +243,11 @@ inputs:
       If left blank, a temporary folder will be used and discarded after the run.
 
   environment:
-    type: File?
+    type: string?
     doc:
-      Optional. BON in a Box runner.env file, necessary for scripts requiring credentials.
-      If not provided, an empty one will be used.
+      Optional. URL (http/https) or file:// URI pointing to a BON in a Box runner.env
+      file, necessary for scripts requiring credentials. If not provided, an empty one will be used.
+      Relative paths are not supported.
 
   #################################################################
   # The following inputs should not be changed in a regular setup #
@@ -264,8 +265,53 @@ inputs:
 
 
 steps:
+  prepareRunnerEnv:
+    doc: 
+      Copy or download environment file (runner.env) into a CWL output.
+      This step is a patch to go around issue https://github.com/common-workflow-language/cwltool/issues/1842.
+    when: $(inputs.environment != null)
+    in:
+      environment: environment
+    out: [ environmentFile ]
+    run:
+      class: CommandLineTool
+      requirements:
+        NetworkAccess:
+          networkAccess: true
+        InlineJavascriptRequirement: { }
+        EnvVarRequirement:
+          envDef:
+            RUNNER_ENV_URI: $(inputs.environment)
+      baseCommand: [ bash, -c ]
+      arguments:
+        - |
+          echo "Preparing runner.env..."
+          
+          if [[ "$RUNNER_ENV_URI" == http://* ||
+                  "$RUNNER_ENV_URI" == https://* ||
+                  "$RUNNER_ENV_URI" == file://* ]]; then
+            if ! curl -fsSL "$RUNNER_ENV_URI" -o runner.env; then
+              echo "ERROR: failed to download runner.env from $RUNNER_ENV_URI" >&2
+              exit 1
+            fi
+            source runner.env
+          else
+            echo "ERROR: environment file input, BON in a Box's "runner.env", was not provided as an URI." >&2
+            echo "Please use the format file:// or https://" >&2
+            exit 1;
+          fi
+      inputs:
+        environment:
+          type: string
+      outputs:
+        environmentFile:
+          type: File?
+          outputBinding:
+            glob: runner.env
+
+
   # This step prepares the environments for all the following steps
-  prepareEnvironments:
+  preparePackedEnvs:
     when: $(inputs.envFolderWrite != null)
     run:
       class: CommandLineTool
@@ -292,13 +338,14 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs
             CONDA_ENVS_PATH: /opt/conda/envs:/conda-env-yml/envs
             SCRIPT_STUBS_LOCATION: /script-stubs
             OUTPUT_LOCATION: "$(inputs.runFolderWrite ? inputs.runFolderWrite.path : runtime.outdir)"
+            CONDA_PACK_URL: $(inputs.condaPackURL)
       baseCommand: [bash, -c]
       arguments:
         - |
@@ -314,7 +361,7 @@ steps:
             
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh "$OUTPUT_LOCATION" "$condaEnvName" \
-              "$condaEnvYml" "$dedicatedEnvFolder" "$(inputs.condaPackURL)" --noActivate
+              "$condaEnvYml" "$dedicatedEnvFolder" "$CONDA_PACK_URL" --noActivate
             source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh "$condaEnvName" "$dedicatedEnvFolder"
             echo "Done."
           }
@@ -362,7 +409,6 @@ steps:
           dependencies: [r-magrittr, r-dplyr, r-rredlist, r-this.path, r-rjson]
           name: IUCNRedlistIndex__IUCN_redlist_spCountry
           "'
-          
       inputs:
         envFolderWrite:
           type: Directory?
@@ -380,7 +426,7 @@ steps:
       envFolderWrite: envFolder
       runFolder:
         source: runFolder
-        valueFrom: "$({ class: 'Directory', location: (self ? self.location : '/tmp/cwl' ) + '/prepareEnvironments' })"
+        valueFrom: "$({ class: 'Directory', location: (self ? self.location : '/tmp/cwl' ) + '/preparePackedEnvs' })"
       condaPackURL: condaPackURL
     out: [envFolder]
 
@@ -390,14 +436,14 @@ steps:
       species_data: IUCNRedlistIndex>IUCN_redlist_spList.yml@58/iucn_splist_out
       sp_col: { default: scientific_name }
       envFolder:
-        source: prepareEnvironments/envFolder
+        source: preparePackedEnvs/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_historyAssesment' } : null)"
       envFolderWritable:
         default: false
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_historyAssesment/55' } : null)"
-      environment: environment
+      environment: prepareRunnerEnv/environmentFile
       condaPackURL: condaPackURL
       scripts_root: scripts_root
     out: [iucn_history_assessment_data_out, api_citation_out]
@@ -414,14 +460,14 @@ steps:
       species_use: IUCNRedlistIndex>IUCN_redlist_spUse.yml@77/species_use_out
       threat: IUCNRedlistIndex>IUCN_redlist_spThreats.yml@92/threat_category_out
       envFolder:
-        source: prepareEnvironments/envFolder
+        source: preparePackedEnvs/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spList' } : null)"
       envFolderWritable:
         default: false
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spList/58' } : null)"
-      environment: environment
+      environment: prepareRunnerEnv/environmentFile
       condaPackURL: condaPackURL
       scripts_root: scripts_root
     out: [iucn_splist_out, number_species_out]
@@ -439,14 +485,14 @@ steps:
       time_col: { default: assess_year }
       threat_category_code_column: { default: code }
       envFolder:
-        source: prepareEnvironments/envFolder
+        source: preparePackedEnvs/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__RedListIndex' } : null)"
       envFolderWritable:
         default: false
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__RedListIndex/59' } : null)"
-      environment: environment
+      environment: prepareRunnerEnv/environmentFile
       condaPackURL: condaPackURL
       scripts_root: scripts_root
     out: [redlist_trend_plot_out, redlist_data_out, redlist_matrix_out]
@@ -457,14 +503,14 @@ steps:
     in:
       species_use: IUCNRedlistIndex>IUCN_redlist_spUse.yml@77|species_use
       envFolder:
-        source: prepareEnvironments/envFolder
+        source: preparePackedEnvs/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spUse' } : null)"
       envFolderWritable:
         default: false
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spUse/77' } : null)"
-      environment: environment
+      environment: prepareRunnerEnv/environmentFile
       condaPackURL: condaPackURL
       scripts_root: scripts_root
     out: [iucn_use_splist_out, species_use_out, api_citation_out]
@@ -475,14 +521,14 @@ steps:
     in:
       taxonomic_group: IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82|taxonomic_group
       envFolder:
-        source: prepareEnvironments/envFolder
+        source: preparePackedEnvs/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spGroup' } : null)"
       envFolderWritable:
         default: false
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spGroup/82' } : null)"
-      environment: environment
+      environment: prepareRunnerEnv/environmentFile
       condaPackURL: condaPackURL
       scripts_root: scripts_root
     out: [iucn_taxon_splist_out, taxonomic_group_out, api_citation_out]
@@ -493,14 +539,14 @@ steps:
     in:
       threat_category_input: IUCNRedlistIndex>IUCN_redlist_spThreats.yml@92|threat_category_input
       envFolder:
-        source: prepareEnvironments/envFolder
+        source: preparePackedEnvs/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spThreats' } : null)"
       envFolderWritable:
         default: false
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spThreats/92' } : null)"
-      environment: environment
+      environment: prepareRunnerEnv/environmentFile
       condaPackURL: condaPackURL
       scripts_root: scripts_root
     out: [threat_category_out, threats_list_out, iucn_threats_splist_out, api_citation_out]
@@ -511,14 +557,14 @@ steps:
     in:
       country: pipeline@95
       envFolder:
-        source: prepareEnvironments/envFolder
+        source: preparePackedEnvs/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spCountry' } : null)"
       envFolderWritable:
         default: false
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/IUCNRedlistIndex__IUCN_redlist_spCountry/96' } : null)"
-      environment: environment
+      environment: prepareRunnerEnv/environmentFile
       condaPackURL: condaPackURL
       scripts_root: scripts_root
     out: [iucn_country_splist_out, api_citation_out]

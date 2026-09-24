@@ -83,7 +83,7 @@ requirements:
 
 
   DockerRequirement:
-    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235
+    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
     #     $include: ../runners/cwl/conda-cwl.dockerfile
@@ -92,7 +92,9 @@ requirements:
     envDef:
       CONDA_PKGS_DIRS: /conda-env-yml/pkgs
       CONDA_ENVS_PATH: /opt/conda/envs:/conda-env-yml/envs
+      CONDA_PACK_URL: $(inputs.condaPackURL)
       SCRIPT_LOCATION: /scripts
+      SCRIPT_PATH: $(inputs.scriptPath)
       SCRIPT_STUBS_LOCATION: /script-stubs
       USERDATA_LOCATION: /userdata
       OUTPUT_LOCATION: "$(inputs.runFolder ? inputs.runFolder.path : runtime.outdir)"
@@ -119,12 +121,12 @@ arguments:
     cat $OUTPUT_LOCATION/input.json | tee -a $log
 
     source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "rbase" \
-    "" /conda-envs $(inputs.condaPackURL) >> "$log" 2>&1
+    "" /conda-envs "$CONDA_PACK_URL" >> "$log" 2>&1
 
     Rscript \
       $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \
       $OUTPUT_LOCATION \
-      $SCRIPT_LOCATION/$(inputs.scriptPath) \
+      "$SCRIPT_LOCATION/$SCRIPT_PATH" \
       2>&1 | tee -a $log
     scriptExitCode=\${PIPESTATUS[0]}
     echo "Script exited with code $scriptExitCode" | tee -a $log

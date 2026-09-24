@@ -9,9 +9,7 @@ pipeline@102: ["y2000", "y2001", "y2002", "y2003", "y2004", "y2005", "y2006", "y
     "y2017", "y2018", "y2019", "y2020", "y2021", "y2022", "y2023"]  # array of type 'string' (optional)
 pipeline@101: "/userdata/tcyy.tif"  # default value of type 'File'. (optional)
 pipeline@100: "/userdata/population_polygons.geojson"  # default value of type 'File'. (optional)
-environment:  # type 'File' (optional)
-    class: File
-    path: a/file/path
+environment: a_string  # type 'string' (optional)
 envFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path

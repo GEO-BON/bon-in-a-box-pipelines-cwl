@@ -38,9 +38,7 @@ pipeline@67:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipeline
         englishName: a_string  # type 'string' (optional)
 pipeline@64: a_string  # type 'string' (optional)
 pipeline@63: a_string  # type 'string' (optional)
-environment:  # type 'File' (optional)
-    class: File
-    path: a/file/path
+environment: a_string  # type 'string' (optional)
 envFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path

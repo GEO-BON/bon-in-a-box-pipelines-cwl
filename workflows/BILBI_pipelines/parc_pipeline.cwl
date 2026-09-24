@@ -10,20 +10,23 @@ label: Protected Area Representativeness and Connectedness (PARC)
 doc:
   - |
     Description:
-    ## Introduction
-    The Protected Area Representativeness and Connectedness (PARC) indices measure the extent to which terrestrial protected areas, and other effective area-based conservation measures (OECMs), are ecologically representative, and well-connected (both to one another, and to other areas of intact natural ecosystems in the surrounding landscape).
-    
-    This pipeline calculates a weighted geometric mean of the PARC indicator over a region of interest.  The code to calculate the weighted mean was adapted from the "Calculating weighted geometric means of  CSIRO BILBI indicator" script on the  [CSIRO data access portal](https://doi.org/10.25919/edwj-4b67)
-    ## Uses
-    The PARC indices, whether generated separately or as a composite, are used to monitor and report past-to-present trends in representativeness and connectedness by repeated calculation using best-available mapping of protected areas and OECMs at multiple points in time, e.g. for different years. They can also provide a foundation for assessing the contribution that potential additions to the system of protected areas and OECMs might make to improving present PARC scores, thereby providing a foundation for prioritising such actions.
+    ## Introduction The Protected Area Representativeness and Connectedness (PARC) indices measure  the extent to which terrestrial protected areas, and other effective area-based conservation measures (OECMs), are ecologically representative, and well-connected - both to one another, and to other areas of intact natural ecosystems in the surrounding landscape (Hoskins et al., 2022).  
+    The PARC-representativeness index provides a rigorous measure of the extent to which a system of terrestrial protected areas and OECMs is ecologically representative of the full range of environmental and biological diversity within any given spatial reporting unit (e.g. country, broad ecosystem time).  The PARC- connectedness index provides a rigorous measure of the extent to which protected areas and OECMs are functionally connected to one another and to other areas of intact natural ecosystems.
+    Together, the composite PARC indicator offers a measure of progress in the expansion of any system of protected areas and OECMs. The indicator is expressed in proportional (or percent) coverage with the position of any given reporting unit on this scale rigorously adjusted for the effects of both representativeness and connectedness.
+    This pipeline calculates a weighted geometric mean of the PARC indicator over a region of interest.  The code to calculate the weighted mean was adapted from the "Calculating weighted geometric means of CSIRO BILBI indicator" script on the CSIRO data access portal](https://doi.org/10.25919/edwj-4b67) ## Uses
+    The PARC indices assess Goal A and Target 3 of the GBF, whether generated separately or as a composite, are used to monitor and report past-to-present trends in representativeness and connectedness by repeated calculation using best-available mapping of protected areas and OECMs at multiple points in time, e.g. for different years. They can also provide a foundation for assessing the contribution that potential additions to the system of protected areas and OECMs might make to improving present PARC scores, thereby providing a foundation for prioritising such actions.
     ### Pipeline limitations
     - PARC is a modeled layer, therefore there are greater uncertainties in areas with less data. Interpret the results with caution.
   - |
     Authors:
     Jory Griffith (jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)
+    Nina Obiar (nina.obiar@mcgill.ca, https://orcid.org/0009-0002-6555-9908)
   - |
     References:
     Harwood et al. 2022
+    null
+
+    Hoskins et al.,2020
     null
 
 
@@ -186,10 +189,11 @@ inputs:
       If left blank, a temporary folder will be used and discarded after the run.
 
   environment:
-    type: File?
+    type: string?
     doc:
-      Optional. BON in a Box runner.env file, necessary for scripts requiring credentials.
-      If not provided, an empty one will be used.
+      Optional. URL (http/https) or file:// URI pointing to a BON in a Box runner.env
+      file, necessary for scripts requiring credentials. If not provided, an empty one will be used.
+      Relative paths are not supported.
 
   #################################################################
   # The following inputs should not be changed in a regular setup #
@@ -207,8 +211,53 @@ inputs:
 
 
 steps:
+  prepareRunnerEnv:
+    doc: 
+      Copy or download environment file (runner.env) into a CWL output.
+      This step is a patch to go around issue https://github.com/common-workflow-language/cwltool/issues/1842.
+    when: $(inputs.environment != null)
+    in:
+      environment: environment
+    out: [ environmentFile ]
+    run:
+      class: CommandLineTool
+      requirements:
+        NetworkAccess:
+          networkAccess: true
+        InlineJavascriptRequirement: { }
+        EnvVarRequirement:
+          envDef:
+            RUNNER_ENV_URI: $(inputs.environment)
+      baseCommand: [ bash, -c ]
+      arguments:
+        - |
+          echo "Preparing runner.env..."
+          
+          if [[ "$RUNNER_ENV_URI" == http://* ||
+                  "$RUNNER_ENV_URI" == https://* ||
+                  "$RUNNER_ENV_URI" == file://* ]]; then
+            if ! curl -fsSL "$RUNNER_ENV_URI" -o runner.env; then
+              echo "ERROR: failed to download runner.env from $RUNNER_ENV_URI" >&2
+              exit 1
+            fi
+            source runner.env
+          else
+            echo "ERROR: environment file input, BON in a Box's "runner.env", was not provided as an URI." >&2
+            echo "Please use the format file:// or https://" >&2
+            exit 1;
+          fi
+      inputs:
+        environment:
+          type: string
+      outputs:
+        environmentFile:
+          type: File?
+          outputBinding:
+            glob: runner.env
+
+
   # This step prepares the environments for all the following steps
-  prepareEnvironments:
+  preparePackedEnvs:
     when: $(inputs.envFolderWrite != null)
     run:
       class: CommandLineTool
@@ -235,13 +284,14 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs
             CONDA_ENVS_PATH: /opt/conda/envs:/conda-env-yml/envs
             SCRIPT_STUBS_LOCATION: /script-stubs
             OUTPUT_LOCATION: "$(inputs.runFolderWrite ? inputs.runFolderWrite.path : runtime.outdir)"
+            CONDA_PACK_URL: $(inputs.condaPackURL)
       baseCommand: [bash, -c]
       arguments:
         - |
@@ -257,7 +307,7 @@ steps:
             
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh "$OUTPUT_LOCATION" "$condaEnvName" \
-              "$condaEnvYml" "$dedicatedEnvFolder" "$(inputs.condaPackURL)" --noActivate
+              "$condaEnvYml" "$dedicatedEnvFolder" "$CONDA_PACK_URL" --noActivate
             source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh "$condaEnvName" "$dedicatedEnvFolder"
             echo "Done."
           }
@@ -280,7 +330,6 @@ steps:
             r-stringr=1.6.0, r-tidyr=1.3.2, r-uuid=1.2_2, r-remotes=2.5.0]
           name: data__load_polygons
           "'
-          
       inputs:
         envFolderWrite:
           type: Directory?
@@ -298,7 +347,7 @@ steps:
       envFolderWrite: envFolder
       runFolder:
         source: runFolder
-        valueFrom: "$({ class: 'Directory', location: (self ? self.location : '/tmp/cwl' ) + '/prepareEnvironments' })"
+        valueFrom: "$({ class: 'Directory', location: (self ? self.location : '/tmp/cwl' ) + '/preparePackedEnvs' })"
       condaPackURL: condaPackURL
     out: [envFolder]
 
@@ -309,14 +358,14 @@ steps:
       bilbi_denominator: data>loadFromStac.yml@2/rasters_out
       study_area: data>load_polygons.yml@25/polygon_out
       envFolder:
-        source: prepareEnvironments/envFolder
+        source: preparePackedEnvs/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/bilbi_indicators__bilbi_weighted_mean' } : null)"
       envFolderWritable:
         default: false
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/bilbi_indicators__bilbi_weighted_mean/0' } : null)"
-      environment: environment
+      environment: prepareRunnerEnv/environmentFile
       condaPackURL: condaPackURL
       scripts_root: scripts_root
     out: [summarised_values_out, time_series_plot_out]
@@ -336,14 +385,14 @@ steps:
       aggregation: pipeline@20
       study_area: data>load_polygons.yml@25/polygon_out
       envFolder:
-        source: prepareEnvironments/envFolder
+        source: preparePackedEnvs/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac' } : null)"
       envFolderWritable:
         default: false
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/1' } : null)"
-      environment: environment
+      environment: prepareRunnerEnv/environmentFile
       condaPackURL: condaPackURL
       scripts_root: scripts_root
     out: [rasters_out]
@@ -363,14 +412,14 @@ steps:
       aggregation: pipeline@20
       study_area: data>load_polygons.yml@25/polygon_out
       envFolder:
-        source: prepareEnvironments/envFolder
+        source: preparePackedEnvs/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac' } : null)"
       envFolderWritable:
         default: false
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/2' } : null)"
-      environment: environment
+      environment: prepareRunnerEnv/environmentFile
       condaPackURL: condaPackURL
       scripts_root: scripts_root
     out: [rasters_out]
@@ -383,14 +432,14 @@ steps:
       country_region_bbox: pipeline@23
       buffer: { default: null }
       envFolder:
-        source: prepareEnvironments/envFolder
+        source: preparePackedEnvs/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons' } : null)"
       envFolderWritable:
         default: false
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/25' } : null)"
-      environment: environment
+      environment: prepareRunnerEnv/environmentFile
       condaPackURL: condaPackURL
       scripts_root: scripts_root
     out: [polygon_out, bbox_crs_out]

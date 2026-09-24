@@ -11,10 +11,12 @@ doc:
   - |
     Description:
     ## Introduction
-    CSIRO Biodiversity Habitat Index (BHI v2) is a global 30 arc-second product for 2000,2005,2010,2015 and 2020. BHI estimates the level of species diversity expected to be retained within any given spatial reporting unit (e.g., a country, a broad ecosystem type, or the entire planet) as a function of the unit’s area, connectivity and integrity of natural ecosystems across it. Results for the indicator can either be expressed as 1) the ‘effective proportion of habitat’ remaining within the unit – adjusting for the effects of the condition and functional connectivity of habitat, and of spatial variation in the species composition of ecological communities (beta diversity); or 2) the effective proportion of habitat that can be translated, through standard species-area analysis, into a prediction of the proportion of species expected to persist (i.e. avoid extinction) over the long term.
+    The CSIRO Biodiversity Habitat Index (BHI) directly assess the progress of Goal A within the Kunming-Montreal Global Biodiversity Framework (GBF) to increase the area of national ecosystems by 2050 through maintaining, enhancing, and restoring the integrity, connectivity, resilience of all ecosystems. 
+    BHI estimates the proportion of species expected to persist (i.e. avoid extinction) within and given spatial reporting unit (Hoskins et al., 2020). More specifically, BHI estimates the level of species diversity expected to be retained within any given spatial reporting unit (e.g., a country, a broad ecosystem type, or the entire planet) as a function of the unit’s area, connectivity and integrity of natural ecosystems across that unit (Harwood, et al., 2022).
+    Results for the indicator can either be expressed as 1. the ‘effective proportion of habitat’ remaining within the unit – adjusting for the effects of the condition and functional connectivity of habitat, and of spatial variation in the species composition of ecological communities (beta diversity); or 2. the effective proportion of habitat that can be translated, through standard species-area analysis, into a prediction of the proportion of species expected to persist (i.e. avoid extinction) over the long term.
+    This pipeline calculates a weighted geometric mean of the BERI indicator over a region of interest. The code to calculate the weighted mean was adapted from the "Calculating weighted geometric means of CSIRO BILBI indicator" script on the [CSIRO data access portal](https://doi.org/10.25919/tt2t-h452)
+    ## Uses  BHI directly addresses three of the key ecosystem attributes in Goal A of the GBF, which include area, integrity, and connetivity, along with the combined effect of these attributes on species diversity.  
     
-    This pipeline calculates a weighted geometric mean of the BHI indicator over a region of interest.  The code to calculate the weighted mean was adapted from the "Calculating weighted geometric means of  CSIRO BILBI indicator" script on the  [CSIRO data access portal](https://doi.org/10.25919/tt2t-h452)
-    ## Uses 
     The BHI is used to monitor and report past-to-present trends in the expected persistence of species diversity by repeatedly recalculating the indicator using best-available mapping of ecosystem condition or integrity observed at multiple points in time, e.g., for different years. A wide variety of data sources can be used for this purpose, spanning spatial scales from global to subnational, and including data assembled by countries for deriving ecosystem condition accounts under the UN SEEA Ecosystem Accounting framework. The BHI can also serve as a leading indicator for assessing the contribution that proposed or implemented area-based actions are expected to make towards enhancing the present capacity of ecosystems to retain species diversity, thereby providing a foundation for strategic prioritisation of such actions by countries.
     ## Pipeline limitations
     - BHI is a modeled layer, therefore there are greater uncertainties in areas with less data.  Interpret the results with caution.
@@ -24,6 +26,9 @@ doc:
   - |
     References:
     Harwood et al. 2022
+    null
+
+    Hoskins et al.,2020
     null
 
 
@@ -186,10 +191,11 @@ inputs:
       If left blank, a temporary folder will be used and discarded after the run.
 
   environment:
-    type: File?
+    type: string?
     doc:
-      Optional. BON in a Box runner.env file, necessary for scripts requiring credentials.
-      If not provided, an empty one will be used.
+      Optional. URL (http/https) or file:// URI pointing to a BON in a Box runner.env
+      file, necessary for scripts requiring credentials. If not provided, an empty one will be used.
+      Relative paths are not supported.
 
   #################################################################
   # The following inputs should not be changed in a regular setup #
@@ -207,8 +213,53 @@ inputs:
 
 
 steps:
+  prepareRunnerEnv:
+    doc: 
+      Copy or download environment file (runner.env) into a CWL output.
+      This step is a patch to go around issue https://github.com/common-workflow-language/cwltool/issues/1842.
+    when: $(inputs.environment != null)
+    in:
+      environment: environment
+    out: [ environmentFile ]
+    run:
+      class: CommandLineTool
+      requirements:
+        NetworkAccess:
+          networkAccess: true
+        InlineJavascriptRequirement: { }
+        EnvVarRequirement:
+          envDef:
+            RUNNER_ENV_URI: $(inputs.environment)
+      baseCommand: [ bash, -c ]
+      arguments:
+        - |
+          echo "Preparing runner.env..."
+          
+          if [[ "$RUNNER_ENV_URI" == http://* ||
+                  "$RUNNER_ENV_URI" == https://* ||
+                  "$RUNNER_ENV_URI" == file://* ]]; then
+            if ! curl -fsSL "$RUNNER_ENV_URI" -o runner.env; then
+              echo "ERROR: failed to download runner.env from $RUNNER_ENV_URI" >&2
+              exit 1
+            fi
+            source runner.env
+          else
+            echo "ERROR: environment file input, BON in a Box's "runner.env", was not provided as an URI." >&2
+            echo "Please use the format file:// or https://" >&2
+            exit 1;
+          fi
+      inputs:
+        environment:
+          type: string
+      outputs:
+        environmentFile:
+          type: File?
+          outputBinding:
+            glob: runner.env
+
+
   # This step prepares the environments for all the following steps
-  prepareEnvironments:
+  preparePackedEnvs:
     when: $(inputs.envFolderWrite != null)
     run:
       class: CommandLineTool
@@ -235,13 +286,14 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs
             CONDA_ENVS_PATH: /opt/conda/envs:/conda-env-yml/envs
             SCRIPT_STUBS_LOCATION: /script-stubs
             OUTPUT_LOCATION: "$(inputs.runFolderWrite ? inputs.runFolderWrite.path : runtime.outdir)"
+            CONDA_PACK_URL: $(inputs.condaPackURL)
       baseCommand: [bash, -c]
       arguments:
         - |
@@ -257,7 +309,7 @@ steps:
             
             echo "Exporting $condaEnvName..."
             source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh "$OUTPUT_LOCATION" "$condaEnvName" \
-              "$condaEnvYml" "$dedicatedEnvFolder" "$(inputs.condaPackURL)" --noActivate
+              "$condaEnvYml" "$dedicatedEnvFolder" "$CONDA_PACK_URL" --noActivate
             source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh "$condaEnvName" "$dedicatedEnvFolder"
             echo "Done."
           }
@@ -280,7 +332,6 @@ steps:
             r-stringr=1.6.0, r-tidyr=1.3.2, r-uuid=1.2_2, r-remotes=2.5.0]
           name: data__load_polygons
           "'
-          
       inputs:
         envFolderWrite:
           type: Directory?
@@ -298,7 +349,7 @@ steps:
       envFolderWrite: envFolder
       runFolder:
         source: runFolder
-        valueFrom: "$({ class: 'Directory', location: (self ? self.location : '/tmp/cwl' ) + '/prepareEnvironments' })"
+        valueFrom: "$({ class: 'Directory', location: (self ? self.location : '/tmp/cwl' ) + '/preparePackedEnvs' })"
       condaPackURL: condaPackURL
     out: [envFolder]
 
@@ -309,14 +360,14 @@ steps:
       bilbi_denominator: data>loadFromStac.yml@2/rasters_out
       study_area: data>load_polygons.yml@24/polygon_out
       envFolder:
-        source: prepareEnvironments/envFolder
+        source: preparePackedEnvs/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/bilbi_indicators__bilbi_weighted_mean' } : null)"
       envFolderWritable:
         default: false
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/bilbi_indicators__bilbi_weighted_mean/0' } : null)"
-      environment: environment
+      environment: prepareRunnerEnv/environmentFile
       condaPackURL: condaPackURL
       scripts_root: scripts_root
     out: [summarised_values_out, time_series_plot_out]
@@ -336,14 +387,14 @@ steps:
       aggregation: pipeline@20
       study_area: data>load_polygons.yml@24/polygon_out
       envFolder:
-        source: prepareEnvironments/envFolder
+        source: preparePackedEnvs/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac' } : null)"
       envFolderWritable:
         default: false
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/1' } : null)"
-      environment: environment
+      environment: prepareRunnerEnv/environmentFile
       condaPackURL: condaPackURL
       scripts_root: scripts_root
     out: [rasters_out]
@@ -363,14 +414,14 @@ steps:
       aggregation: pipeline@20
       study_area: data>load_polygons.yml@24/polygon_out
       envFolder:
-        source: prepareEnvironments/envFolder
+        source: preparePackedEnvs/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac' } : null)"
       envFolderWritable:
         default: false
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac/2' } : null)"
-      environment: environment
+      environment: prepareRunnerEnv/environmentFile
       condaPackURL: condaPackURL
       scripts_root: scripts_root
     out: [rasters_out]
@@ -383,14 +434,14 @@ steps:
       country_region_bbox: pipeline@23
       buffer: { default: 0.0 }
       envFolder:
-        source: prepareEnvironments/envFolder
+        source: preparePackedEnvs/envFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons' } : null)"
       envFolderWritable:
         default: false
       runFolder:
         source: runFolder
         valueFrom: "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons/24' } : null)"
-      environment: environment
+      environment: prepareRunnerEnv/environmentFile
       condaPackURL: condaPackURL
       scripts_root: scripts_root
     out: [polygon_out, bbox_crs_out]

@@ -10,7 +10,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5",
                     "class": "DockerRequirement"
                 },
                 {
@@ -18,6 +18,10 @@
                         {
                             "envValue": "/opt/conda/envs:/conda-env-yml/envs",
                             "envName": "CONDA_ENVS_PATH"
+                        },
+                        {
+                            "envValue": "$(inputs.condaPackURL)",
+                            "envName": "CONDA_PACK_URL"
                         },
                         {
                             "envValue": "/conda-env-yml/pkgs",
@@ -30,6 +34,10 @@
                         {
                             "envValue": "/scripts",
                             "envName": "SCRIPT_LOCATION"
+                        },
+                        {
+                            "envValue": "$(inputs.scriptPath)",
+                            "envName": "SCRIPT_PATH"
                         },
                         {
                             "envValue": "/script-stubs",
@@ -66,7 +74,7 @@
                 "-c"
             ],
             "arguments": [
-                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\nmkdir -p /conda-env-yml/pkgs /conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    bbox_crs: inputs.bbox_crs,\n    stac_url: inputs.stac_url,\n    collections_items: inputs.collections_items,\n    t0: inputs.t0,\n    t1: inputs.t1,\n    temporal_res: inputs.temporal_res,\n    spatial_res: inputs.spatial_res,\n    resampling: inputs.resampling,\n    aggregation: inputs.aggregation,\n    study_area: inputs.study_area ? inputs.study_area.path : null,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" | tee -a $log\necho \"Inputs:\" | tee -a $log\ncat $OUTPUT_LOCATION/input.json | tee -a $log\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"data__loadFromStac\" \\\n\"channels: [conda-forge, r]\ndependencies: [libgdal, r-lubridate, proj, r-proj, r-gdalcubes=0.7.4, r-rstac, r-dplyr,\n  r-rcurl, r-rjson, r-sf, r-stars, r-terra]\nname: data__loadFromStac\n\" /conda-envs $(inputs.condaPackURL) >> \"$log\" 2>&1\n\nRscript \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \\\n  $OUTPUT_LOCATION \\\n  $SCRIPT_LOCATION/$(inputs.scriptPath) \\\n  2>&1 | tee -a $log\nscriptExitCode=\\${PIPESTATUS[0]}\necho \"Script exited with code $scriptExitCode\" | tee -a $log\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" | tee -a $log\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh data__loadFromStac /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
+                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\nmkdir -p /conda-env-yml/pkgs /conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    bbox_crs: inputs.bbox_crs,\n    stac_url: inputs.stac_url,\n    collections_items: inputs.collections_items,\n    t0: inputs.t0,\n    t1: inputs.t1,\n    temporal_res: inputs.temporal_res,\n    spatial_res: inputs.spatial_res,\n    resampling: inputs.resampling,\n    aggregation: inputs.aggregation,\n    study_area: inputs.study_area ? inputs.study_area.path : null,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" | tee -a $log\necho \"Inputs:\" | tee -a $log\ncat $OUTPUT_LOCATION/input.json | tee -a $log\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"data__loadFromStac\" \\\n\"channels: [conda-forge, r]\ndependencies: [libgdal, r-lubridate, proj, r-proj, r-gdalcubes=0.7.4, r-rstac, r-dplyr,\n  r-rcurl, r-rjson, r-sf, r-stars, r-terra]\nname: data__loadFromStac\n\" /conda-envs \"$CONDA_PACK_URL\" >> \"$log\" 2>&1\n\nRscript \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \\\n  $OUTPUT_LOCATION \\\n  \"$SCRIPT_LOCATION/$SCRIPT_PATH\" \\\n  2>&1 | tee -a $log\nscriptExitCode=\\${PIPESTATUS[0]}\necho \"Script exited with code $scriptExitCode\" | tee -a $log\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" | tee -a $log\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh data__loadFromStac /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
             ],
             "inputs": [
                 {
@@ -347,7 +355,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5",
                     "class": "DockerRequirement"
                 },
                 {
@@ -355,6 +363,10 @@
                         {
                             "envValue": "/opt/conda/envs:/conda-env-yml/envs",
                             "envName": "CONDA_ENVS_PATH"
+                        },
+                        {
+                            "envValue": "$(inputs.condaPackURL)",
+                            "envName": "CONDA_PACK_URL"
                         },
                         {
                             "envValue": "/conda-env-yml/pkgs",
@@ -367,6 +379,10 @@
                         {
                             "envValue": "/scripts",
                             "envName": "SCRIPT_LOCATION"
+                        },
+                        {
+                            "envValue": "$(inputs.scriptPath)",
+                            "envName": "SCRIPT_PATH"
                         },
                         {
                             "envValue": "/script-stubs",
@@ -403,7 +419,7 @@
                 "-c"
             ],
             "arguments": [
-                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\nmkdir -p /conda-env-yml/pkgs /conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    polygon_type: inputs.polygon_type,\n    country_region_bbox: inputs.country_region_bbox,\n    buffer: inputs.buffer,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" | tee -a $log\necho \"Inputs:\" | tee -a $log\ncat $OUTPUT_LOCATION/input.json | tee -a $log\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"data__load_polygons\" \\\n\"channels: [conda-forge]\ndependencies: [r-rjson, r-dbplyr=2.5.2, r-dplyr=1.2.1, r-duckdb=1.4.4, r-fs=2.1.0,\n  r-arrow=24.0.0, r-nanoarrow=0.8.0, r-geoarrow=0.4.2, r-sf=1.1-0, r-stringi=1.8.7,\n  r-stringr=1.6.0, r-tidyr=1.3.2, r-uuid=1.2_2, r-remotes=2.5.0]\nname: data__load_polygons\n\" /conda-envs $(inputs.condaPackURL) >> \"$log\" 2>&1\n\nRscript \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \\\n  $OUTPUT_LOCATION \\\n  $SCRIPT_LOCATION/$(inputs.scriptPath) \\\n  2>&1 | tee -a $log\nscriptExitCode=\\${PIPESTATUS[0]}\necho \"Script exited with code $scriptExitCode\" | tee -a $log\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" | tee -a $log\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh data__load_polygons /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
+                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\nmkdir -p /conda-env-yml/pkgs /conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    polygon_type: inputs.polygon_type,\n    country_region_bbox: inputs.country_region_bbox,\n    buffer: inputs.buffer,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" | tee -a $log\necho \"Inputs:\" | tee -a $log\ncat $OUTPUT_LOCATION/input.json | tee -a $log\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"data__load_polygons\" \\\n\"channels: [conda-forge]\ndependencies: [r-rjson, r-dbplyr=2.5.2, r-dplyr=1.2.1, r-duckdb=1.4.4, r-fs=2.1.0,\n  r-arrow=24.0.0, r-nanoarrow=0.8.0, r-geoarrow=0.4.2, r-sf=1.1-0, r-stringi=1.8.7,\n  r-stringr=1.6.0, r-tidyr=1.3.2, r-uuid=1.2_2, r-remotes=2.5.0]\nname: data__load_polygons\n\" /conda-envs \"$CONDA_PACK_URL\" >> \"$log\" 2>&1\n\nRscript \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \\\n  $OUTPUT_LOCATION \\\n  \"$SCRIPT_LOCATION/$SCRIPT_PATH\" \\\n  2>&1 | tee -a $log\nscriptExitCode=\\${PIPESTATUS[0]}\necho \"Script exited with code $scriptExitCode\" | tee -a $log\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" | tee -a $log\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh data__load_polygons /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
             ],
             "inputs": [
                 {
@@ -818,7 +834,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5",
                     "class": "DockerRequirement"
                 },
                 {
@@ -826,6 +842,10 @@
                         {
                             "envValue": "/opt/conda/envs:/conda-env-yml/envs",
                             "envName": "CONDA_ENVS_PATH"
+                        },
+                        {
+                            "envValue": "$(inputs.condaPackURL)",
+                            "envName": "CONDA_PACK_URL"
                         },
                         {
                             "envValue": "/conda-env-yml/pkgs",
@@ -838,6 +858,10 @@
                         {
                             "envValue": "/scripts",
                             "envName": "SCRIPT_LOCATION"
+                        },
+                        {
+                            "envValue": "$(inputs.scriptPath)",
+                            "envName": "SCRIPT_PATH"
                         },
                         {
                             "envValue": "/script-stubs",
@@ -874,7 +898,7 @@
                 "-c"
             ],
             "arguments": [
-                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\nmkdir -p /conda-env-yml/pkgs /conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    rasters: (inputs.rasters || []).map(function(file) { return file.path; }),\n    study_area_polygon: inputs.study_area_polygon ? inputs.study_area_polygon.path : null,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" | tee -a $log\necho \"Inputs:\" | tee -a $log\ncat $OUTPUT_LOCATION/input.json | tee -a $log\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"zonal_statistics__percentage_cover_classes\" \\\n\"channels: [conda-forge, r]\ndependencies: [r-rjson, r-terra, r-dplyr, r-sf, r-exactextractr]\nname: zonal_statistics__percentage_cover_classes\n\" /conda-envs $(inputs.condaPackURL) >> \"$log\" 2>&1\n\nRscript \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \\\n  $OUTPUT_LOCATION \\\n  $SCRIPT_LOCATION/$(inputs.scriptPath) \\\n  2>&1 | tee -a $log\nscriptExitCode=\\${PIPESTATUS[0]}\necho \"Script exited with code $scriptExitCode\" | tee -a $log\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" | tee -a $log\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh zonal_statistics__percentage_cover_classes /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
+                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\nmkdir -p /conda-env-yml/pkgs /conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    rasters: (inputs.rasters || []).map(function(file) { return file.path; }),\n    study_area_polygon: inputs.study_area_polygon ? inputs.study_area_polygon.path : null,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" | tee -a $log\necho \"Inputs:\" | tee -a $log\ncat $OUTPUT_LOCATION/input.json | tee -a $log\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"zonal_statistics__percentage_cover_classes\" \\\n\"channels: [conda-forge, r]\ndependencies: [r-rjson, r-terra, r-dplyr, r-sf, r-exactextractr]\nname: zonal_statistics__percentage_cover_classes\n\" /conda-envs \"$CONDA_PACK_URL\" >> \"$log\" 2>&1\n\nRscript \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \\\n  $OUTPUT_LOCATION \\\n  \"$SCRIPT_LOCATION/$SCRIPT_PATH\" \\\n  2>&1 | tee -a $log\nscriptExitCode=\\${PIPESTATUS[0]}\necho \"Script exited with code $scriptExitCode\" | tee -a $log\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" | tee -a $log\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh zonal_statistics__percentage_cover_classes /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
             ],
             "inputs": [
                 {
@@ -1114,9 +1138,9 @@
                 {
                     "type": [
                         "null",
-                        "File"
+                        "string"
                     ],
-                    "doc": "Optional. BON in a Box runner.env file, necessary for scripts requiring credentials. If not provided, an empty one will be used.",
+                    "doc": "Optional. URL (http/https) or file:// URI pointing to a BON in a Box runner.env file, necessary for scripts requiring credentials. If not provided, an empty one will be used. Relative paths are not supported.",
                     "id": "#main/environment"
                 },
                 {
@@ -1309,7 +1333,7 @@
                             "id": "#main/data>loadFromStac.yml@42/condaPackURL"
                         },
                         {
-                            "source": "#main/prepareEnvironments/envFolder",
+                            "source": "#main/preparePackedEnvs/envFolder",
                             "valueFrom": "$(self ? { class: 'Directory', location: self.location + '/data__loadFromStac' } : null)",
                             "id": "#main/data>loadFromStac.yml@42/envFolder"
                         },
@@ -1318,7 +1342,7 @@
                             "id": "#main/data>loadFromStac.yml@42/envFolderWritable"
                         },
                         {
-                            "source": "#main/environment",
+                            "source": "#main/prepareRunnerEnv/environmentFile",
                             "id": "#main/data>loadFromStac.yml@42/environment"
                         },
                         {
@@ -1380,7 +1404,7 @@
                             "id": "#main/data>load_polygons.yml@44/country_region_bbox"
                         },
                         {
-                            "source": "#main/prepareEnvironments/envFolder",
+                            "source": "#main/preparePackedEnvs/envFolder",
                             "valueFrom": "$(self ? { class: 'Directory', location: self.location + '/data__load_polygons' } : null)",
                             "id": "#main/data>load_polygons.yml@44/envFolder"
                         },
@@ -1389,7 +1413,7 @@
                             "id": "#main/data>load_polygons.yml@44/envFolderWritable"
                         },
                         {
-                            "source": "#main/environment",
+                            "source": "#main/prepareRunnerEnv/environmentFile",
                             "id": "#main/data>load_polygons.yml@44/environment"
                         },
                         {
@@ -1418,7 +1442,7 @@
                         "class": "CommandLineTool",
                         "requirements": [
                             {
-                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-b02f235",
+                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5",
                                 "class": "DockerRequirement"
                             },
                             {
@@ -1426,6 +1450,10 @@
                                     {
                                         "envValue": "/opt/conda/envs:/conda-env-yml/envs",
                                         "envName": "CONDA_ENVS_PATH"
+                                    },
+                                    {
+                                        "envValue": "$(inputs.condaPackURL)",
+                                        "envName": "CONDA_PACK_URL"
                                     },
                                     {
                                         "envValue": "/conda-env-yml/pkgs",
@@ -1463,26 +1491,26 @@
                             "-c"
                         ],
                         "arguments": [
-                            "echo \"Exporting all environments\"\nmkdir -p \"$OUTPUT_LOCATION\" \"$CONDA_PKGS_DIRS\" /conda-env-yml/envs\n\nfunction getPackedEnv {\n  condaEnvName=$1\n  condaEnvYml=$2\n  # We use a dedicated env folder to avoid copying the whole env folder between steps in a k8 context\n  dedicatedEnvFolder=$(inputs.envFolderWrite.path)/$condaEnvName\n  mkdir -p \"$dedicatedEnvFolder\"\n  \n  echo \"Exporting $condaEnvName...\"\n  source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh \"$OUTPUT_LOCATION\" \"$condaEnvName\" \\\n    \"$condaEnvYml\" \"$dedicatedEnvFolder\" \"$(inputs.condaPackURL)\" --noActivate\n  source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh \"$condaEnvName\" \"$dedicatedEnvFolder\"\n  echo \"Done.\"\n}\nexport -f getPackedEnv\n\nbash -c 'getPackedEnv \"zonal_statistics__percentage_cover_classes\" \"channels: [conda-forge, r]\ndependencies: [r-rjson, r-terra, r-dplyr, r-sf, r-exactextractr]\nname: zonal_statistics__percentage_cover_classes\n\"'\n\nbash -c 'getPackedEnv \"data__loadFromStac\" \"channels: [conda-forge, r]\ndependencies: [libgdal, r-lubridate, proj, r-proj, r-gdalcubes=0.7.4, r-rstac, r-dplyr,\n  r-rcurl, r-rjson, r-sf, r-stars, r-terra]\nname: data__loadFromStac\n\"'\n\nbash -c 'getPackedEnv \"data__load_polygons\" \"channels: [conda-forge]\ndependencies: [r-rjson, r-dbplyr=2.5.2, r-dplyr=1.2.1, r-duckdb=1.4.4, r-fs=2.1.0,\n  r-arrow=24.0.0, r-nanoarrow=0.8.0, r-geoarrow=0.4.2, r-sf=1.1-0, r-stringi=1.8.7,\n  r-stringr=1.6.0, r-tidyr=1.3.2, r-uuid=1.2_2, r-remotes=2.5.0]\nname: data__load_polygons\n\"'\n"
+                            "echo \"Exporting all environments\"\nmkdir -p \"$OUTPUT_LOCATION\" \"$CONDA_PKGS_DIRS\" /conda-env-yml/envs\n\nfunction getPackedEnv {\n  condaEnvName=$1\n  condaEnvYml=$2\n  # We use a dedicated env folder to avoid copying the whole env folder between steps in a k8 context\n  dedicatedEnvFolder=$(inputs.envFolderWrite.path)/$condaEnvName\n  mkdir -p \"$dedicatedEnvFolder\"\n  \n  echo \"Exporting $condaEnvName...\"\n  source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh \"$OUTPUT_LOCATION\" \"$condaEnvName\" \\\n    \"$condaEnvYml\" \"$dedicatedEnvFolder\" \"$CONDA_PACK_URL\" --noActivate\n  source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh \"$condaEnvName\" \"$dedicatedEnvFolder\"\n  echo \"Done.\"\n}\nexport -f getPackedEnv\n\nbash -c 'getPackedEnv \"zonal_statistics__percentage_cover_classes\" \"channels: [conda-forge, r]\ndependencies: [r-rjson, r-terra, r-dplyr, r-sf, r-exactextractr]\nname: zonal_statistics__percentage_cover_classes\n\"'\n\nbash -c 'getPackedEnv \"data__loadFromStac\" \"channels: [conda-forge, r]\ndependencies: [libgdal, r-lubridate, proj, r-proj, r-gdalcubes=0.7.4, r-rstac, r-dplyr,\n  r-rcurl, r-rjson, r-sf, r-stars, r-terra]\nname: data__loadFromStac\n\"'\n\nbash -c 'getPackedEnv \"data__load_polygons\" \"channels: [conda-forge]\ndependencies: [r-rjson, r-dbplyr=2.5.2, r-dplyr=1.2.1, r-duckdb=1.4.4, r-fs=2.1.0,\n  r-arrow=24.0.0, r-nanoarrow=0.8.0, r-geoarrow=0.4.2, r-sf=1.1-0, r-stringi=1.8.7,\n  r-stringr=1.6.0, r-tidyr=1.3.2, r-uuid=1.2_2, r-remotes=2.5.0]\nname: data__load_polygons\n\"'\n"
                         ],
                         "inputs": [
                             {
                                 "type": "string",
-                                "id": "#main/prepareEnvironments/run/condaPackURL"
+                                "id": "#main/preparePackedEnvs/run/condaPackURL"
                             },
                             {
                                 "type": [
                                     "null",
                                     "Directory"
                                 ],
-                                "id": "#main/prepareEnvironments/run/envFolderWrite"
+                                "id": "#main/preparePackedEnvs/run/envFolderWrite"
                             },
                             {
                                 "type": [
                                     "null",
                                     "Directory"
                                 ],
-                                "id": "#main/prepareEnvironments/run/runFolderWrite"
+                                "id": "#main/preparePackedEnvs/run/runFolderWrite"
                             }
                         ],
                         "outputs": [
@@ -1492,29 +1520,89 @@
                                     "glob": ".",
                                     "outputEval": "$(inputs.envFolderWrite)"
                                 },
-                                "id": "#main/prepareEnvironments/run/envFolder"
+                                "id": "#main/preparePackedEnvs/run/envFolder"
                             }
                         ]
                     },
                     "in": [
                         {
                             "source": "#main/condaPackURL",
-                            "id": "#main/prepareEnvironments/condaPackURL"
+                            "id": "#main/preparePackedEnvs/condaPackURL"
                         },
                         {
                             "source": "#main/envFolder",
-                            "id": "#main/prepareEnvironments/envFolderWrite"
+                            "id": "#main/preparePackedEnvs/envFolderWrite"
                         },
                         {
                             "source": "#main/runFolder",
-                            "valueFrom": "$({ class: 'Directory', location: (self ? self.location : '/tmp/cwl' ) + '/prepareEnvironments' })",
-                            "id": "#main/prepareEnvironments/runFolder"
+                            "valueFrom": "$({ class: 'Directory', location: (self ? self.location : '/tmp/cwl' ) + '/preparePackedEnvs' })",
+                            "id": "#main/preparePackedEnvs/runFolder"
                         }
                     ],
                     "out": [
-                        "#main/prepareEnvironments/envFolder"
+                        "#main/preparePackedEnvs/envFolder"
                     ],
-                    "id": "#main/prepareEnvironments"
+                    "id": "#main/preparePackedEnvs"
+                },
+                {
+                    "doc": "Copy or download environment file (runner.env) into a CWL output. This step is a patch to go around issue https://github.com/common-workflow-language/cwltool/issues/1842.",
+                    "when": "$(inputs.environment != null)",
+                    "in": [
+                        {
+                            "source": "#main/environment",
+                            "id": "#main/prepareRunnerEnv/environment"
+                        }
+                    ],
+                    "out": [
+                        "#main/prepareRunnerEnv/environmentFile"
+                    ],
+                    "run": {
+                        "class": "CommandLineTool",
+                        "requirements": [
+                            {
+                                "envDef": [
+                                    {
+                                        "envValue": "$(inputs.environment)",
+                                        "envName": "RUNNER_ENV_URI"
+                                    }
+                                ],
+                                "class": "EnvVarRequirement"
+                            },
+                            {
+                                "class": "InlineJavascriptRequirement"
+                            },
+                            {
+                                "networkAccess": true,
+                                "class": "NetworkAccess"
+                            }
+                        ],
+                        "baseCommand": [
+                            "bash",
+                            "-c"
+                        ],
+                        "arguments": [
+                            "echo \"Preparing runner.env...\"\n\nif [[ \"$RUNNER_ENV_URI\" == http://* ||\n        \"$RUNNER_ENV_URI\" == https://* ||\n        \"$RUNNER_ENV_URI\" == file://* ]]; then\n  if ! curl -fsSL \"$RUNNER_ENV_URI\" -o runner.env; then\n    echo \"ERROR: failed to download runner.env from $RUNNER_ENV_URI\" >&2\n    exit 1\n  fi\n  source runner.env\nelse\n  echo \"ERROR: environment file input, BON in a Box's \"runner.env\", was not provided as an URI.\" >&2\n  echo \"Please use the format file:// or https://\" >&2\n  exit 1;\nfi\n"
+                        ],
+                        "inputs": [
+                            {
+                                "type": "string",
+                                "id": "#main/prepareRunnerEnv/run/environment"
+                            }
+                        ],
+                        "outputs": [
+                            {
+                                "type": [
+                                    "null",
+                                    "File"
+                                ],
+                                "outputBinding": {
+                                    "glob": "runner.env"
+                                },
+                                "id": "#main/prepareRunnerEnv/run/environmentFile"
+                            }
+                        ]
+                    },
+                    "id": "#main/prepareRunnerEnv"
                 },
                 {
                     "run": "#percentage_cover_classes.cwl",
@@ -1524,7 +1612,7 @@
                             "id": "#main/zonal_statistics>percentage_cover_classes.yml@22/condaPackURL"
                         },
                         {
-                            "source": "#main/prepareEnvironments/envFolder",
+                            "source": "#main/preparePackedEnvs/envFolder",
                             "valueFrom": "$(self ? { class: 'Directory', location: self.location + '/zonal_statistics__percentage_cover_classes' } : null)",
                             "id": "#main/zonal_statistics>percentage_cover_classes.yml@22/envFolder"
                         },
@@ -1533,7 +1621,7 @@
                             "id": "#main/zonal_statistics>percentage_cover_classes.yml@22/envFolderWritable"
                         },
                         {
-                            "source": "#main/environment",
+                            "source": "#main/prepareRunnerEnv/environmentFile",
                             "id": "#main/zonal_statistics>percentage_cover_classes.yml@22/environment"
                         },
                         {

@@ -28,9 +28,7 @@ helloWorld>helloPython.yml@0|study_area_bbox:  # "https://raw.githubusercontent.
         ISO3: a_string  # type 'string' (optional)
         englishName: a_string  # type 'string' (optional)
 helloWorld>helloPython.yml@0|some_int: 3  # default value of type 'int'. (optional)
-environment:  # type 'File' (optional)
-    class: File
-    path: a/file/path
+environment: a_string  # type 'string' (optional)
 envFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path

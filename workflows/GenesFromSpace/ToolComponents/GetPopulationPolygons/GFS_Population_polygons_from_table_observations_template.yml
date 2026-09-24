@@ -4,9 +4,7 @@ scripts_root:  # type 'Directory' (optional)
 runFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
-environment:  # type 'File' (optional)
-    class: File
-    path: a/file/path
+environment: a_string  # type 'string' (optional)
 envFolder:  # type 'Directory' (optional)
     class: Directory
     path: a/directory/path
