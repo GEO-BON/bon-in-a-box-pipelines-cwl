@@ -106,7 +106,7 @@ requirements:
 
   ResourceRequirement:
     ramMin: 2048
-    coresMax: 1
+    coresMin: 1
 
 baseCommand: ["bash", "-c"]
 arguments:

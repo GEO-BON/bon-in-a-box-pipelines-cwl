@@ -958,7 +958,8 @@
                     "class": "NetworkAccess"
                 },
                 {
-                    "ramMin": 20480,
+                    "ramMin": 6144,
+                    "coresMin": 2,
                     "coresMax": 4,
                     "class": "ResourceRequirement"
                 }
