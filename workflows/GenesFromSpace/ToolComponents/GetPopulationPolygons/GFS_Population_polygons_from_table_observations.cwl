@@ -11,6 +11,7 @@ doc:
   - |
     Description:
     Component of the Genes from Space tool. Given a table of species occurrences, the tool calculates population polygons based on geographical proximity. 
+  - "Lifecycle tag: subpipeline."
   - |
     Authors:
     Oliver Selmoni (oliver.selmoni@gmail.com)
@@ -163,7 +164,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs

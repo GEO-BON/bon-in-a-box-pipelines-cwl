@@ -10,7 +10,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9",
                     "class": "DockerRequirement"
                 },
                 {
@@ -30,6 +30,10 @@
                         {
                             "envValue": "$(inputs.runFolder ? inputs.runFolder.path : runtime.outdir)",
                             "envName": "OUTPUT_LOCATION"
+                        },
+                        {
+                            "envValue": "1",
+                            "envName": "PYTHONUNBUFFERED"
                         },
                         {
                             "envValue": "/scripts",
@@ -74,7 +78,7 @@
                 "-c"
             ],
             "arguments": [
-                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\nmkdir -p /conda-env-yml/pkgs /conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    some_int: inputs.some_int,\n    study_area_bbox: inputs.study_area_bbox,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" | tee -a $log\necho \"Inputs:\" | tee -a $log\ncat $OUTPUT_LOCATION/input.json | tee -a $log\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"pythonbase\" \\\n\"\" /conda-envs \"$CONDA_PACK_URL\" >> \"$log\" 2>&1\n\npython3 \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.py \\\n  $OUTPUT_LOCATION \\\n  \"$SCRIPT_LOCATION/$SCRIPT_PATH\" \\\n  2>&1 | tee -a $log\nscriptExitCode=\\${PIPESTATUS[0]}\necho \"Script exited with code $scriptExitCode\" | tee -a $log\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" | tee -a $log\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh pythonbase /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
+                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\ntouch \"$log\"\ntail -f \"$log\" &\ntailPid=$!\ncleanupTail() {\n  kill \"$tailPid\" 2>/dev/null\n  wait \"$tailPid\" 2>/dev/null\n}\ntrap cleanupTail EXIT\n\nmkdir -p /conda-env-yml/pkgs /conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    some_int: inputs.some_int,\n    study_area_bbox: inputs.study_area_bbox,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" >> \"$log\"\necho \"Inputs:\" >> \"$log\"\ncat \"$OUTPUT_LOCATION/input.json\" >> \"$log\"\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"pythonbase\" \\\n\"\" /conda-envs \"$CONDA_PACK_URL\" >> \"$log\" 2>&1\n\npython3 \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.py \\\n  $OUTPUT_LOCATION \\\n  \"$SCRIPT_LOCATION/$SCRIPT_PATH\" \\\n  >> \"$log\" 2>&1\nscriptExitCode=$?\necho \"Script exited with code $scriptExitCode\" >> \"$log\"\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" >> \"$log\"\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh pythonbase /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
             ],
             "inputs": [
                 {
@@ -587,7 +591,7 @@
                         "class": "CommandLineTool",
                         "requirements": [
                             {
-                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5",
+                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9",
                                 "class": "DockerRequirement"
                             },
                             {

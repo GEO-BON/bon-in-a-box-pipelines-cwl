@@ -61,5 +61,5 @@ SDM>runMaxent.yml@108|partition_type: randomkfold  # enum; valid values: "https:
 SDM>runMaxent.yml@108|fc:  # array of type 'string' (optional)
   - L
   - LQ
-  - LQHP
+  - LQH
 

@@ -29,9 +29,11 @@ doc:
     
     If you want to run the analysis with custom protected area data only, please use  the `ProtConn Analysis with custom PAs` pipeline.
     
+    Click [here](https://boninabox.geobon.org/indicator?i=ProtConn) for more information about  parameterizing and running the pipeline.
+    ## Citation guidelines
+    Please refer to the citation guidelines on the Zenodo archive: 
     
-     Click [here](https://boninabox.geobon.org/indicator?i=ProtConn) for more information about 
-     parameterizing and running the pipeline.
+    > Griffith, J., Larocque, G., Tremblay, L., Lord, J.-M., Godinez-Gomez, O., Correa-Ayram, C. A., Goicolea, T., & Saura, S. (2026). BON in a Box pipeline for the Protected Connected Index (ProtConn) [Computer software]. Zenodo. [https://doi.org/10.5281/zenodo.20328903](https://doi.org/10.5281/zenodo.20328903)
   - "Lifecycle tag: Reviewed."
   - |
     Authors:
@@ -49,19 +51,22 @@ doc:
   - |
     References:
     Godínez-Gómez, O., Correa Ayram, C.A., Goicolea, T., Saura, S. 2026. Makurhini An R package for comprehensive analysis of landscape fragmentation and connectivity. Environmental Modelling & Software.
-    null
+    https://doi.org/10.34892/6fwd-af11
 
     Saura, Santiago, Lucy Bastin, Luca Battistella, Andrea Mandrici, and Grégoire Dubois. 2017. “Protected Areas in the World’s Ecoregions: How Well Connected Are They?” Ecological Indicators 76:144–58.
-    null
+    https://doi.org/10.1016/j.ecolind.2016.12.047
 
     Saura, Santiago, Bastian Bertzky, Lucy Bastin, Luca Battistella, Andrea Mandrici, and Grégoire Dubois. 2018. “Protected Area Connectivity: Shortfalls in Global Targets and Country-Level Priorities.” Biological Conservation 219:53–67.
-    null
+    https://doi.org/10.1016/j.biocon.2017.12.020
 
     Saura, Santiago, Bastian Bertzky, Lucy Bastin, Luca Battistella, Andrea Mandrici, and Grégoire Dubois. 2019. “Global Trends in Protected Area Connectivity from 2010 to 2018.” Biological Conservation 238:108183.
-    null
+    https://doi.org/doi:10.1016/j.biocon.2019.07.028
 
     UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected Areas (WDPA), Cambridge, UK: UNEP-WCMC and IUCN.
-    null
+    https://doi.org/10.34892/6fwd-af11
+
+    Griffith, J., Larocque, G., Tremblay, L., Lord, J.-M., Godinez-Gomez, O., Correa-Ayram, C. A., Goicolea, T., & Saura, S. (2026). BON in a Box pipeline for the Protected Connected Index (ProtConn) [Computer software]. Zenodo.
+    https://doi.org/10.5281/zenodo.20328903
 
 
 requirements:
@@ -384,7 +389,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs

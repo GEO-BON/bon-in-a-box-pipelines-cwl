@@ -10,7 +10,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9",
                     "class": "DockerRequirement"
                 },
                 {
@@ -30,6 +30,10 @@
                         {
                             "envValue": "$(inputs.runFolder ? inputs.runFolder.path : runtime.outdir)",
                             "envName": "OUTPUT_LOCATION"
+                        },
+                        {
+                            "envValue": "1",
+                            "envName": "PYTHONUNBUFFERED"
                         },
                         {
                             "envValue": "/scripts",
@@ -74,7 +78,7 @@
                 "-c"
             ],
             "arguments": [
-                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\nmkdir -p /conda-env-yml/pkgs /conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    bilbi_indicator: (inputs.bilbi_indicator || []).map(function(file) { return file.path; }),\n    bilbi_denominator: (inputs.bilbi_denominator || []).map(function(file) { return file.path; }),\n    study_area: inputs.study_area ? inputs.study_area.path : null,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" | tee -a $log\necho \"Inputs:\" | tee -a $log\ncat $OUTPUT_LOCATION/input.json | tee -a $log\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"bilbi_indicators__bilbi_weighted_mean\" \\\n\"channels: [conda-forge, r]\ndependencies: [r-rjson, r-terra, r-tidyverse]\nname: bilbi_indicators__bilbi_weighted_mean\n\" /conda-envs \"$CONDA_PACK_URL\" >> \"$log\" 2>&1\n\nRscript \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \\\n  $OUTPUT_LOCATION \\\n  \"$SCRIPT_LOCATION/$SCRIPT_PATH\" \\\n  2>&1 | tee -a $log\nscriptExitCode=\\${PIPESTATUS[0]}\necho \"Script exited with code $scriptExitCode\" | tee -a $log\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" | tee -a $log\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh bilbi_indicators__bilbi_weighted_mean /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
+                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\ntouch \"$log\"\ntail -f \"$log\" &\ntailPid=$!\ncleanupTail() {\n  kill \"$tailPid\" 2>/dev/null\n  wait \"$tailPid\" 2>/dev/null\n}\ntrap cleanupTail EXIT\n\nmkdir -p /conda-env-yml/pkgs /conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    bilbi_indicator: (inputs.bilbi_indicator || []).map(function(file) { return file.path; }),\n    bilbi_denominator: (inputs.bilbi_denominator || []).map(function(file) { return file.path; }),\n    study_area: inputs.study_area ? inputs.study_area.path : null,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" >> \"$log\"\necho \"Inputs:\" >> \"$log\"\ncat \"$OUTPUT_LOCATION/input.json\" >> \"$log\"\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"bilbi_indicators__bilbi_weighted_mean\" \\\n\"channels: [conda-forge, r]\ndependencies: [r-rjson, r-terra, r-tidyverse]\nname: bilbi_indicators__bilbi_weighted_mean\n\" /conda-envs \"$CONDA_PACK_URL\" >> \"$log\" 2>&1\n\nRscript \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \\\n  $OUTPUT_LOCATION \\\n  \"$SCRIPT_LOCATION/$SCRIPT_PATH\" \\\n  >> \"$log\" 2>&1\nscriptExitCode=$?\necho \"Script exited with code $scriptExitCode\" >> \"$log\"\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" >> \"$log\"\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh bilbi_indicators__bilbi_weighted_mean /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
             ],
             "inputs": [
                 {
@@ -204,7 +208,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9",
                     "class": "DockerRequirement"
                 },
                 {
@@ -224,6 +228,10 @@
                         {
                             "envValue": "$(inputs.runFolder ? inputs.runFolder.path : runtime.outdir)",
                             "envName": "OUTPUT_LOCATION"
+                        },
+                        {
+                            "envValue": "1",
+                            "envName": "PYTHONUNBUFFERED"
                         },
                         {
                             "envValue": "/scripts",
@@ -268,7 +276,7 @@
                 "-c"
             ],
             "arguments": [
-                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\nmkdir -p /conda-env-yml/pkgs /conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    bbox_crs: inputs.bbox_crs,\n    stac_url: inputs.stac_url,\n    collections_items: inputs.collections_items,\n    t0: inputs.t0,\n    t1: inputs.t1,\n    temporal_res: inputs.temporal_res,\n    spatial_res: inputs.spatial_res,\n    resampling: inputs.resampling,\n    aggregation: inputs.aggregation,\n    study_area: inputs.study_area ? inputs.study_area.path : null,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" | tee -a $log\necho \"Inputs:\" | tee -a $log\ncat $OUTPUT_LOCATION/input.json | tee -a $log\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"data__loadFromStac\" \\\n\"channels: [conda-forge, r]\ndependencies: [libgdal, r-lubridate, proj, r-proj, r-gdalcubes=0.7.4, r-rstac, r-dplyr,\n  r-rcurl, r-rjson, r-sf, r-stars, r-terra]\nname: data__loadFromStac\n\" /conda-envs \"$CONDA_PACK_URL\" >> \"$log\" 2>&1\n\nRscript \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \\\n  $OUTPUT_LOCATION \\\n  \"$SCRIPT_LOCATION/$SCRIPT_PATH\" \\\n  2>&1 | tee -a $log\nscriptExitCode=\\${PIPESTATUS[0]}\necho \"Script exited with code $scriptExitCode\" | tee -a $log\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" | tee -a $log\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh data__loadFromStac /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
+                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\ntouch \"$log\"\ntail -f \"$log\" &\ntailPid=$!\ncleanupTail() {\n  kill \"$tailPid\" 2>/dev/null\n  wait \"$tailPid\" 2>/dev/null\n}\ntrap cleanupTail EXIT\n\nmkdir -p /conda-env-yml/pkgs /conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    bbox_crs: inputs.bbox_crs,\n    stac_url: inputs.stac_url,\n    collections_items: inputs.collections_items,\n    t0: inputs.t0,\n    t1: inputs.t1,\n    temporal_res: inputs.temporal_res,\n    spatial_res: inputs.spatial_res,\n    resampling: inputs.resampling,\n    aggregation: inputs.aggregation,\n    study_area: inputs.study_area ? inputs.study_area.path : null,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" >> \"$log\"\necho \"Inputs:\" >> \"$log\"\ncat \"$OUTPUT_LOCATION/input.json\" >> \"$log\"\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"data__loadFromStac\" \\\n\"channels: [conda-forge, r]\ndependencies: [libgdal, r-lubridate, proj, r-proj, r-gdalcubes=0.7.4, r-rstac, r-dplyr,\n  r-rcurl, r-rjson, r-sf, r-stars, r-terra]\nname: data__loadFromStac\n\" /conda-envs \"$CONDA_PACK_URL\" >> \"$log\" 2>&1\n\nRscript \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \\\n  $OUTPUT_LOCATION \\\n  \"$SCRIPT_LOCATION/$SCRIPT_PATH\" \\\n  >> \"$log\" 2>&1\nscriptExitCode=$?\necho \"Script exited with code $scriptExitCode\" >> \"$log\"\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" >> \"$log\"\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh data__loadFromStac /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
             ],
             "inputs": [
                 {
@@ -549,7 +557,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9",
                     "class": "DockerRequirement"
                 },
                 {
@@ -569,6 +577,10 @@
                         {
                             "envValue": "$(inputs.runFolder ? inputs.runFolder.path : runtime.outdir)",
                             "envName": "OUTPUT_LOCATION"
+                        },
+                        {
+                            "envValue": "1",
+                            "envName": "PYTHONUNBUFFERED"
                         },
                         {
                             "envValue": "/scripts",
@@ -613,7 +625,7 @@
                 "-c"
             ],
             "arguments": [
-                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\nmkdir -p /conda-env-yml/pkgs /conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    polygon_type: inputs.polygon_type,\n    country_region_bbox: inputs.country_region_bbox,\n    buffer: inputs.buffer,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" | tee -a $log\necho \"Inputs:\" | tee -a $log\ncat $OUTPUT_LOCATION/input.json | tee -a $log\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"data__load_polygons\" \\\n\"channels: [conda-forge]\ndependencies: [r-rjson, r-dbplyr=2.5.2, r-dplyr=1.2.1, r-duckdb=1.4.4, r-fs=2.1.0,\n  r-arrow=24.0.0, r-nanoarrow=0.8.0, r-geoarrow=0.4.2, r-sf=1.1-0, r-stringi=1.8.7,\n  r-stringr=1.6.0, r-tidyr=1.3.2, r-uuid=1.2_2, r-remotes=2.5.0]\nname: data__load_polygons\n\" /conda-envs \"$CONDA_PACK_URL\" >> \"$log\" 2>&1\n\nRscript \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \\\n  $OUTPUT_LOCATION \\\n  \"$SCRIPT_LOCATION/$SCRIPT_PATH\" \\\n  2>&1 | tee -a $log\nscriptExitCode=\\${PIPESTATUS[0]}\necho \"Script exited with code $scriptExitCode\" | tee -a $log\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" | tee -a $log\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh data__load_polygons /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
+                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\ntouch \"$log\"\ntail -f \"$log\" &\ntailPid=$!\ncleanupTail() {\n  kill \"$tailPid\" 2>/dev/null\n  wait \"$tailPid\" 2>/dev/null\n}\ntrap cleanupTail EXIT\n\nmkdir -p /conda-env-yml/pkgs /conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    polygon_type: inputs.polygon_type,\n    country_region_bbox: inputs.country_region_bbox,\n    buffer: inputs.buffer,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" >> \"$log\"\necho \"Inputs:\" >> \"$log\"\ncat \"$OUTPUT_LOCATION/input.json\" >> \"$log\"\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"data__load_polygons\" \\\n\"channels: [conda-forge]\ndependencies: [r-rjson, r-dbplyr=2.5.2, r-dplyr=1.2.1, r-duckdb=1.4.4, r-fs=2.1.0,\n  r-arrow=24.0.0, r-nanoarrow=0.8.0, r-geoarrow=0.4.2, r-sf=1.1-0, r-stringi=1.8.7,\n  r-stringr=1.6.0, r-tidyr=1.3.2, r-uuid=1.2_2, r-remotes=2.5.0]\nname: data__load_polygons\n\" /conda-envs \"$CONDA_PACK_URL\" >> \"$log\" 2>&1\n\nRscript \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \\\n  $OUTPUT_LOCATION \\\n  \"$SCRIPT_LOCATION/$SCRIPT_PATH\" \\\n  >> \"$log\" 2>&1\nscriptExitCode=$?\necho \"Script exited with code $scriptExitCode\" >> \"$log\"\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" >> \"$log\"\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh data__load_polygons /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
             ],
             "inputs": [
                 {
@@ -1022,7 +1034,8 @@
             "class": "Workflow",
             "label": "Biodiversity Habitat Index (BHI)",
             "doc": [
-                "Description:\n## Introduction\nThe CSIRO Biodiversity Habitat Index (BHI) directly assess the progress of Goal A within the Kunming-Montreal Global Biodiversity Framework (GBF) to increase the area of national ecosystems by 2050 through maintaining, enhancing, and restoring the integrity, connectivity, resilience of all ecosystems. \nBHI estimates the proportion of species expected to persist (i.e. avoid extinction) within and given spatial reporting unit (Hoskins et al., 2020). More specifically, BHI estimates the level of species diversity expected to be retained within any given spatial reporting unit (e.g., a country, a broad ecosystem type, or the entire planet) as a function of the unit\u2019s area, connectivity and integrity of natural ecosystems across that unit (Harwood, et al., 2022).\nResults for the indicator can either be expressed as 1. the \u2018effective proportion of habitat\u2019 remaining within the unit \u2013 adjusting for the effects of the condition and functional connectivity of habitat, and of spatial variation in the species composition of ecological communities (beta diversity); or 2. the effective proportion of habitat that can be translated, through standard species-area analysis, into a prediction of the proportion of species expected to persist (i.e. avoid extinction) over the long term.\nThis pipeline calculates a weighted geometric mean of the BERI indicator over a region of interest. The code to calculate the weighted mean was adapted from the \"Calculating weighted geometric means of CSIRO BILBI indicator\" script on the [CSIRO data access portal](https://doi.org/10.25919/tt2t-h452)\n## Uses  BHI directly addresses three of the key ecosystem attributes in Goal A of the GBF, which include area, integrity, and connetivity, along with the combined effect of these attributes on species diversity.  \n\nThe BHI is used to monitor and report past-to-present trends in the expected persistence of species diversity by repeatedly recalculating the indicator using best-available mapping of ecosystem condition or integrity observed at multiple points in time, e.g., for different years. A wide variety of data sources can be used for this purpose, spanning spatial scales from global to subnational, and including data assembled by countries for deriving ecosystem condition accounts under the UN SEEA Ecosystem Accounting framework. The BHI can also serve as a leading indicator for assessing the contribution that proposed or implemented area-based actions are expected to make towards enhancing the present capacity of ecosystems to retain species diversity, thereby providing a foundation for strategic prioritisation of such actions by countries.\n## Pipeline limitations\n- BHI is a modeled layer, therefore there are greater uncertainties in areas with less data.  Interpret the results with caution.\n",
+                "Description:\n## Introduction\nThe CSIRO Biodiversity Habitat Index (BHI) directly assess the progress of Goal A within the Kunming-Montreal Global Biodiversity Framework (GBF) to increase the area of national ecosystems by 2050 through maintaining, enhancing, and restoring the integrity, connectivity, resilience of all ecosystems. \nBHI estimates the proportion of species expected to persist (i.e. avoid extinction) within and given spatial reporting unit (Hoskins et al., 2020). More specifically, BHI estimates the level of species diversity expected to be retained within any given spatial reporting unit (e.g., a country, a broad ecosystem type, or the entire planet) as a function of the unit\u2019s area, connectivity and integrity of natural ecosystems across that unit (Harwood, et al., 2022).\nResults for the indicator can either be expressed as 1. the \u2018effective proportion of habitat\u2019 remaining within the unit \u2013 adjusting for the effects of the condition and functional connectivity of habitat, and of spatial variation in the species composition of ecological communities (beta diversity); or 2. the effective proportion of habitat that can be translated, through standard species-area analysis, into a prediction of the proportion of species expected to persist (i.e. avoid extinction) over the long term.\nThis pipeline calculates a weighted geometric mean of the BERI indicator over a region of interest. The code to calculate the weighted mean was adapted from the \"Calculating weighted geometric means of CSIRO BILBI indicator\" script on the [CSIRO data access portal](https://doi.org/10.25919/tt2t-h452)\n## Uses  \nBHI directly addresses three of the key ecosystem attributes in Goal A of the GBF, which include area, integrity, and connetivity, along with the combined effect of these attributes on species diversity.  \n\nThe BHI is used to monitor and report past-to-present trends in the expected persistence of species diversity by repeatedly recalculating the indicator using best-available mapping of ecosystem condition or integrity observed at multiple points in time, e.g., for different years. A wide variety of data sources can be used for this purpose, spanning spatial scales from global to subnational, and including data assembled by countries for deriving ecosystem condition accounts under the UN SEEA Ecosystem Accounting framework. The BHI can also serve as a leading indicator for assessing the contribution that proposed or implemented area-based actions are expected to make towards enhancing the present capacity of ecosystems to retain species diversity, thereby providing a foundation for strategic prioritisation of such actions by countries.\n## Pipeline limitations\n- BHI is a modeled layer, therefore there are greater uncertainties in areas with less data.  Interpret the results with caution.\n",
+                "Lifecycle tag: In review.",
                 "Authors:\nJory Griffith (jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)\n",
                 "References:\nHarwood et al. 2022\nnull\n\nHoskins et al.,2020\nnull\n"
             ],
@@ -1577,7 +1590,7 @@
                         "class": "CommandLineTool",
                         "requirements": [
                             {
-                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5",
+                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9",
                                 "class": "DockerRequirement"
                             },
                             {

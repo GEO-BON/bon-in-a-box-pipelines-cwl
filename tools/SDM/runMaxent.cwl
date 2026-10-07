@@ -86,7 +86,7 @@ requirements:
 
 
   DockerRequirement:
-    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5
+    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
     #     $include: ../runners/cwl/conda-cwl.dockerfile
@@ -101,12 +101,26 @@ requirements:
       SCRIPT_STUBS_LOCATION: /script-stubs
       USERDATA_LOCATION: /userdata
       OUTPUT_LOCATION: "$(inputs.runFolder ? inputs.runFolder.path : runtime.outdir)"
+      PYTHONUNBUFFERED: "1"
+
+  ResourceRequirement:
+    ramMin: 20480
+    coresMax: 12
 
 baseCommand: ["bash", "-c"]
 arguments:
   - |
     log=$OUTPUT_LOCATION/logs.txt
     rm -f $log
+    touch "$log"
+    tail -f "$log" &
+    tailPid=$!
+    cleanupTail() {
+      kill "$tailPid" 2>/dev/null
+      wait "$tailPid" 2>/dev/null
+    }
+    trap cleanupTail EXIT
+
     mkdir -p /conda-env-yml/pkgs /conda-env-yml/envs
 
     cat > "$OUTPUT_LOCATION/input.json" <<'JSON'
@@ -124,9 +138,9 @@ arguments:
       }, null, 2);
     }
     JSON
-    echo "Running in $OUTPUT_LOCATION" | tee -a $log
-    echo "Inputs:" | tee -a $log
-    cat $OUTPUT_LOCATION/input.json | tee -a $log
+    echo "Running in $OUTPUT_LOCATION" >> "$log"
+    echo "Inputs:" >> "$log"
+    cat "$OUTPUT_LOCATION/input.json" >> "$log"
 
     source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "SDM__runMaxent" \
     "channels: [conda-forge, r]
@@ -141,12 +155,12 @@ arguments:
       $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \
       $OUTPUT_LOCATION \
       "$SCRIPT_LOCATION/$SCRIPT_PATH" \
-      2>&1 | tee -a $log
-    scriptExitCode=\${PIPESTATUS[0]}
-    echo "Script exited with code $scriptExitCode" | tee -a $log
-  
+      >> "$log" 2>&1
+    scriptExitCode=$?
+    echo "Script exited with code $scriptExitCode" >> "$log"
+
     if [[ "$OUTPUT_LOCATION" != "$(runtime.outdir)" ]]; then
-      echo "Copying results from run folder to CWL output directory" | tee -a $log
+      echo "Copying results from run folder to CWL output directory" >> "$log"
       cp -a "$OUTPUT_LOCATION"/. "$(runtime.outdir)"/
     fi
 
@@ -180,11 +194,11 @@ inputs:
   fc:
     type: string[]?
     label: feature classes
-    doc: Vector of strings, feature classes for MaxEnt algorithm. Accepted values are combinations of L (linear), Q (quadratic), P (product), H (hinge) or T (threshold).
+    doc: Vector of strings, feature classes for MaxEnt algorithm. Accepted values are combinations of L (linear), Q (quadratic), P (product), H (hinge) or T (threshold, deprecated).
     default:
     - L
     - LQ
-    - LQHP
+    - LQH
 
   rm:
     type: float[]?

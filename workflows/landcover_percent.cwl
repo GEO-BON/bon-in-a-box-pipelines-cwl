@@ -11,6 +11,7 @@ doc:
   - |
     Description:
     Calculate percentage of classes over a bounding box or polygon of interest in categorical rasters.
+  - "Lifecycle tag: subpipeline."
   - |
     Authors:
     Jory Griffith (Pipeline development, jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)
@@ -277,7 +278,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs

@@ -17,6 +17,7 @@ doc:
     BERI can be used to assess Target 8 of the GBF. This indicator can be used to monitor and report past-to-present trends of the resilience of ecosystem condition and connectivity in the face of ongoing climate change. The index repeatedly recalculates the indicator using the best-available mapping of ecosystem condition or integrity observed at multiple points in time.
     ## Pipeline limitations
     - BERI is a modeled layer, therefore there are greater uncertainties in areas with less data.  Interpret the results with caution.
+  - "Lifecycle tag: In review."
   - |
     Authors:
     Jory Griffith (jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)
@@ -284,7 +285,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs

@@ -11,6 +11,7 @@ doc:
   - |
     Description:
     Component of the Genes from Space tool. Given poylgons of population distribution (geojson format) and a raster stack describing habitat availability over time (geotiff format), the pipeline returns genetic diversity loss indicators (Ne500 and Populations Maintained indicator), displayed through an interactive interface. 
+  - "Lifecycle tag: subpipeline."
   - |
     Authors:
     Oliver Selmoni (oliver.selmoni@gmail.com)
@@ -210,7 +211,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs

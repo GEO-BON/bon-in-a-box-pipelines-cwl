@@ -15,11 +15,13 @@ doc:
     BHI estimates the proportion of species expected to persist (i.e. avoid extinction) within and given spatial reporting unit (Hoskins et al., 2020). More specifically, BHI estimates the level of species diversity expected to be retained within any given spatial reporting unit (e.g., a country, a broad ecosystem type, or the entire planet) as a function of the unit’s area, connectivity and integrity of natural ecosystems across that unit (Harwood, et al., 2022).
     Results for the indicator can either be expressed as 1. the ‘effective proportion of habitat’ remaining within the unit – adjusting for the effects of the condition and functional connectivity of habitat, and of spatial variation in the species composition of ecological communities (beta diversity); or 2. the effective proportion of habitat that can be translated, through standard species-area analysis, into a prediction of the proportion of species expected to persist (i.e. avoid extinction) over the long term.
     This pipeline calculates a weighted geometric mean of the BERI indicator over a region of interest. The code to calculate the weighted mean was adapted from the "Calculating weighted geometric means of CSIRO BILBI indicator" script on the [CSIRO data access portal](https://doi.org/10.25919/tt2t-h452)
-    ## Uses  BHI directly addresses three of the key ecosystem attributes in Goal A of the GBF, which include area, integrity, and connetivity, along with the combined effect of these attributes on species diversity.  
+    ## Uses  
+    BHI directly addresses three of the key ecosystem attributes in Goal A of the GBF, which include area, integrity, and connetivity, along with the combined effect of these attributes on species diversity.  
     
     The BHI is used to monitor and report past-to-present trends in the expected persistence of species diversity by repeatedly recalculating the indicator using best-available mapping of ecosystem condition or integrity observed at multiple points in time, e.g., for different years. A wide variety of data sources can be used for this purpose, spanning spatial scales from global to subnational, and including data assembled by countries for deriving ecosystem condition accounts under the UN SEEA Ecosystem Accounting framework. The BHI can also serve as a leading indicator for assessing the contribution that proposed or implemented area-based actions are expected to make towards enhancing the present capacity of ecosystems to retain species diversity, thereby providing a foundation for strategic prioritisation of such actions by countries.
     ## Pipeline limitations
     - BHI is a modeled layer, therefore there are greater uncertainties in areas with less data.  Interpret the results with caution.
+  - "Lifecycle tag: In review."
   - |
     Authors:
     Jory Griffith (jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)
@@ -286,7 +288,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs

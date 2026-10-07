@@ -10,8 +10,12 @@ label: Species distribution modeling with Boosted Regression Trees (BRTs)
 doc:
   - |
     Description:
-    This pipeline generates predictions for a species distribution model using the BRTs.
-  - "Lifecycle tag: In review."
+    **This pipeline is not actively maintained. Please refrain from using.**  
+    
+      
+      This pipeline generates predictions for a species distribution model using the
+    BRTs.
+  - "Lifecycle tag: Stale. This pipeline is not actively maintained. It might be non-functional."
   - |
     Authors:
     Michael D. Catchen (Pipeline development, https://orcid.org/0000-0002-6506-6487)
@@ -274,7 +278,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs

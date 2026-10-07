@@ -11,6 +11,7 @@ doc:
   - |
     Description:
     Component of the Genes from Space tool. Given an area of interest, the tool creates a raster stack describing habitat presence for landcover classes and for years of interest (allowed time window range: 1992-2020). 
+  - "Lifecycle tag: subpipeline."
   - |
     Authors:
     Oliver Selmoni (oliver.selmoni@gmail.com)
@@ -180,7 +181,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs

@@ -10,7 +10,11 @@ label: Species distribution modeling with ewlgcpSDM
 doc:
   - |
     Description:
-    This pipeline generates predictions from a species distribution model  using a point process approach and the effort-weighted Log-Gaussian  Cox Process (ewlgcp) implemented in the R package [ewlgcpSDM](https://github.com/BiodiversiteQuebec/ewlgcpSDM).
+    **This pipeline is not actively maintained. Please refrain from using.**   
+      
+      This
+    pipeline generates predictions from a species distribution model  using a point process approach and the effort-weighted Log-Gaussian  Cox Process (ewlgcp) implemented in the R package [ewlgcpSDM](https://github.com/BiodiversiteQuebec/ewlgcpSDM).
+  - "Lifecycle tag: Stale. This pipeline is not actively maintained. It might be non-functional."
   - |
     Authors:
     François Rousseu (Pipeline development, https://orcid.org/0000-0002-2400-2479)
@@ -286,7 +290,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs

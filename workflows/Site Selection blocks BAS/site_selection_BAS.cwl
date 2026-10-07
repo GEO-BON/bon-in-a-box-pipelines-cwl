@@ -31,6 +31,7 @@ doc:
     * Define a projected CRS for your study area 
     * Select environmental variables that may be of ecological importance for your study 
     * Define how many environmental blocks you expect to produce (too many may be noisy, to little may be underrepresenting the environmental diversity). 
+  - "Lifecycle tag: In review."
   - |
     Authors:
     Francis van Oordt (francis.vanoordtlahoz@mail.mcgill.ca, https://orcid.org/0000-0002-8471-235X)
@@ -271,7 +272,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs

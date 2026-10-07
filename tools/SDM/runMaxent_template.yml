@@ -27,7 +27,7 @@ method_select_params: p10  # enum; valid values: "https://raw.githubusercontent.
 fc:  # array of type 'string' (optional)
   - L
   - LQ
-  - LQHP
+  - LQH
 
 environment:  # type 'File' (optional)
     class: File

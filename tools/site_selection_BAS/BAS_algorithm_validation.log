@@ -1,15 +1,15 @@
 [1;30mINFO[0m /home/jean-michel/.local/bin/cwl-runner 3.2.20260413085819
 [1;30mINFO[0m Resolved '/home/jean-michel/code/cwl/tools/site_selection_BAS/BAS_algorithm.cwl' to 'file:///home/jean-michel/code/cwl/tools/site_selection_BAS/BAS_algorithm.cwl'
 [1;30mERROR[0m [31mTool definition failed validation:
-../../cwl/tools/site_selection_BAS/BAS_algorithm.cwl:149:1: checking field 'inputs'
-../../cwl/tools/site_selection_BAS/BAS_algorithm.cwl:153:3:   checking object
+../../cwl/tools/site_selection_BAS/BAS_algorithm.cwl:159:1: checking field 'inputs'
+../../cwl/tools/site_selection_BAS/BAS_algorithm.cwl:163:3:   checking object
                                                               '../../cwl/tools/site_selection_BAS/BAS_algorithm.cwl#colors_vect'
                                                                 Field 'type' references unknown
                                                                 identifier 'csv', tried
                                                                 file:///home/jean-michel/code/cwl/tools/site_selection_BAS/BAS_algorithm.cwl#csv
-../../cwl/tools/site_selection_BAS/BAS_algorithm.cwl:234:1: checking field 'outputs'
-../../cwl/tools/site_selection_BAS/BAS_algorithm.cwl:249:3:   checking object
+../../cwl/tools/site_selection_BAS/BAS_algorithm.cwl:244:1: checking field 'outputs'
+../../cwl/tools/site_selection_BAS/BAS_algorithm.cwl:259:3:   checking object
                                                               '../../cwl/tools/site_selection_BAS/BAS_algorithm.cwl#pts_df_out'
-../../cwl/tools/site_selection_BAS/BAS_algorithm.cwl:250:5:     Field 'type' references unknown
+../../cwl/tools/site_selection_BAS/BAS_algorithm.cwl:260:5:     Field 'type' references unknown
                                                                 identifier 'csv', tried
                                                                 file:///home/jean-michel/code/cwl/tools/site_selection_BAS/BAS_algorithm.cwl#csv[0m

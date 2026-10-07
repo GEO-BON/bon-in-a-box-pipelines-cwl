@@ -11,6 +11,7 @@ doc:
   - |
     Description:
     Component of the Genes from Space tool. Given an area of interest, the tool creates a raster stack describing forest habitat presence for the years of interest (maximum range: from 2000 to 2023). Forest habitat presence made available by the Global Forest Watch (https://www.globalforestwatch.org/)
+  - "Lifecycle tag: subpipeline."
   - |
     Authors:
     Oliver Selmoni (oliver.selmoni@gmail.com)
@@ -171,7 +172,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs

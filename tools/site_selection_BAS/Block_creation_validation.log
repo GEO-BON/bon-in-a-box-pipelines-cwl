@@ -1,14 +1,14 @@
 [1;30mINFO[0m /home/jean-michel/.local/bin/cwl-runner 3.2.20260413085819
 [1;30mINFO[0m Resolved '/home/jean-michel/code/cwl/tools/site_selection_BAS/Block_creation.cwl' to 'file:///home/jean-michel/code/cwl/tools/site_selection_BAS/Block_creation.cwl'
 [1;30mERROR[0m [31mTool definition failed validation:
-../../cwl/tools/site_selection_BAS/Block_creation.cwl:230:1: checking field 'outputs'
-../../cwl/tools/site_selection_BAS/Block_creation.cwl:276:3:   checking object
+../../cwl/tools/site_selection_BAS/Block_creation.cwl:240:1: checking field 'outputs'
+../../cwl/tools/site_selection_BAS/Block_creation.cwl:286:3:   checking object
                                                                '../../cwl/tools/site_selection_BAS/Block_creation.cwl#colors_vect_out'
-../../cwl/tools/site_selection_BAS/Block_creation.cwl:277:5:     Field 'type' references unknown
+../../cwl/tools/site_selection_BAS/Block_creation.cwl:287:5:     Field 'type' references unknown
                                                                  identifier 'csv', tried
                                                                  file:///home/jean-michel/code/cwl/tools/site_selection_BAS/Block_creation.cwl#csv
-../../cwl/tools/site_selection_BAS/Block_creation.cwl:263:3:   checking object
+../../cwl/tools/site_selection_BAS/Block_creation.cwl:273:3:   checking object
                                                                '../../cwl/tools/site_selection_BAS/Block_creation.cwl#pca_summary_df_out'
-../../cwl/tools/site_selection_BAS/Block_creation.cwl:264:5:     Field 'type' references unknown
+../../cwl/tools/site_selection_BAS/Block_creation.cwl:274:5:     Field 'type' references unknown
                                                                  identifier 'csv', tried
                                                                  file:///home/jean-michel/code/cwl/tools/site_selection_BAS/Block_creation.cwl#csv[0m

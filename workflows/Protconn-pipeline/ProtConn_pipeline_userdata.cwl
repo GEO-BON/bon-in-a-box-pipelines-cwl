@@ -26,9 +26,11 @@ doc:
     This pipeline requires an input file of protected areas. ensure your data is in GeoPackage format and input the file path into the "polygon of protected areas" input (ex: /userdata/my_PA_polygons.gpkg).
     If you would like to run the pipeline with WDPA data, or a combination of combination of custom protected area polygons and WDPA data, please use  the `ProtConn Analysis with WDPA` pipeline.
     
+    Click [here](https://boninabox.geobon.org/indicator?i=ProtConn) for more information about  parameterizing and running the pipeline.
+    ## Citation guidelines
+    Please refer to the citation guidelines on the Zenodo archive: 
     
-     Click [here](https://boninabox.geobon.org/indicator?i=ProtConn) for more information about 
-     parameterizing and running the pipeline.
+    > Griffith, J., Larocque, G., Tremblay, L., Lord, J.-M., Godinez-Gomez, O., Correa-Ayram, C. A., Goicolea, T., & Saura, S. (2026). BON in a Box pipeline for the Protected Connected Index (ProtConn) [Computer software]. Zenodo. [https://doi.org/10.5281/zenodo.20328903](https://doi.org/10.5281/zenodo.20328903)
   - "Lifecycle tag: Reviewed."
   - |
     Authors:
@@ -59,6 +61,9 @@ doc:
 
     UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected Areas (WDPA), Cambridge, UK: UNEP-WCMC and IUCN.
     null
+
+    Griffith, J., Larocque, G., Tremblay, L., Lord, J.-M., Godinez-Gomez, O., Correa-Ayram, C. A., Goicolea, T., & Saura, S. (2026). BON in a Box pipeline for the Protected Connected Index (ProtConn) [Computer software]. Zenodo.
+    https://doi.org/10.5281/zenodo.20328903
 
 
 requirements:
@@ -313,7 +318,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-1babea5
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs
