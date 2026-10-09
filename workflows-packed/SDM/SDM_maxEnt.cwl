@@ -9,7 +9,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
                     "class": "DockerRequirement"
                 },
                 {
@@ -175,7 +175,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
                     "class": "DockerRequirement"
                 },
                 {
@@ -406,7 +406,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
                     "class": "DockerRequirement"
                 },
                 {
@@ -771,7 +771,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1004,7 +1004,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1242,7 +1242,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1521,7 +1521,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1782,7 +1782,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
                     "class": "DockerRequirement"
                 },
                 {
@@ -2073,7 +2073,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
                     "class": "DockerRequirement"
                 },
                 {
@@ -2424,7 +2424,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
                     "class": "DockerRequirement"
                 },
                 {
@@ -2687,7 +2687,7 @@
                         }
                     ],
                     "label": "Feature classes",
-                    "doc": "MaxEnt feature classes control the shapes of relationships the model can learn between species occurrence and environmental predictors. Simpler classes, such as L or LQ, fit smoother, more constrained responses and are often safer for small datasets. More complex combinations, such as LQH or LQH, can capture more flexible ecological responses but may overfit when occurrence records are limited. This pipeline tests all values provided here and selects the best-performing combination using the parameter selection method configured in the MaxEnt step. Accepted values are combinations of L (linear), Q (quadratic), P (product), H (hinge) or T (threshold, deprecated).",
+                    "doc": "MaxEnt feature classes control the shapes of relationships the model can learn between species occurrence and environmental predictors. Simpler classes, such as L or LQ, fit smoother, more constrained responses and are often safer for small datasets. More complex combinations, such as LQH or LQH, can capture more flexible ecological responses but may overfit when occurrence records are limited. \nThis pipeline tests all values provided here and selects the best-performing combination using the parameter selection method configured in the MaxEnt step. \nAccepted values are combinations of L (linear), Q (quadratic), P (product), H (hinge) or T (threshold, deprecated).\n",
                     "default": [
                         "L",
                         "LQ",
@@ -2789,8 +2789,12 @@
                     "label": "STAC collection items",
                     "doc": "To pull a specific collection item, input the collection name followed by | followed by the item ID (e.g. \"chelsa-clim|bio1\").\nTo extract a whole collection, type the collection name only (e.g. \"chelsa-clim\").\nIf pulling a layer that is tiled (e.g. https://stac.geobon.org/viewer/gfw-lossyear/_80N_180W), enter the collection name (e.g. gfw-lossyear) and a bounding box, and the script will assemble the tiles into a continuous layer automatically.\n",
                     "default": [
-                        "chelsa-clim|bio1",
-                        "chelsa-clim|bio2"
+                        "chelsa-clim|bio6",
+                        "chelsa-clim|bio5",
+                        "chelsa-clim|bio17",
+                        "chelsa-clim|bio12",
+                        "soilgrids|wv0033_5-15cm",
+                        "earthenv_topography|elevation"
                     ],
                     "id": "#main/data>loadFromStac.yml@144|collections_items"
                 },
@@ -2809,7 +2813,7 @@
                         "null",
                         "File"
                     ],
-                    "label": "Study area",
+                    "label": "Study area (optional)",
                     "doc": "Polygon of the study area, in geopackage format. To use a custom study area, input the path to the file in userdata (e.g. /userdata/study_area_polygon.gpkg) and it will crop the area to the shape of the polygon. Leave blank to use bounding box and CRS chosen above.",
                     "id": "#main/data>loadFromStac.yml@144|study_area"
                 },
@@ -2860,13 +2864,13 @@
                         "float"
                     ],
                     "label": "Spatial resolution",
-                    "doc": "Target spatial resolution for the predictor rasters and GBIF heatmap. Units must match the selected CRS, for example meters for projected CRS or degrees for latitude-longitude CRS.\nChoosing a coarser resolution reduces computation time, but at the cost of fine-scale predictor detail. Variables like land cover and elevation may lose relevance at coarse scales, while broader-scale variables such as climate become comparatively more informative.\n",
+                    "doc": "Target spatial resolution for the predictor rasters and GBIF heatmap. **Units must match the selected CRS**, for example meters for projected CRS or degrees for latitude-longitude CRS.\nChoosing a coarser resolution reduces computation time, but at the cost of fine-scale predictor detail. Variables like land cover and elevation may lose relevance at coarse scales, while broader-scale variables such as climate become comparatively more informative.\n",
                     "default": 1000,
                     "id": "#main/pipeline@128"
                 },
                 {
                     "label": "Bounding box and CRS",
-                    "doc": "Bounding box and coordinate reference system defining the analysis extent. This extent is used to retrieve GBIF occurrences, environmental predictor rasters, the GBIF sampling-effort heatmap, and the study extent for modelling.\nThe extent you choose affects how results should be interpreted and may change which predictors emerge as important. * Larger than the species' range: results lean toward occurrence/accessibility. Predictors tied to broad-scale distributional limits (climate, biogeography) may dominate. * Similar to or smaller than the species' range: results lean toward habitat suitability. Predictors tied to local habitat structure (vegetation, soil) may matter more.\n",
+                    "doc": "Bounding box and coordinate reference system defining the analysis extent. This extent is used to retrieve GBIF occurrences, environmental predictor rasters, the GBIF sampling-effort heatmap, and the study extent for modelling.\n**Units must match the selected spatial resolution.**\nThe extent you choose affects how results should be interpreted and may change which predictors emerge as important. * Larger than the species' range: results lean toward occurrence/accessibility. Predictors tied to broad-scale distributional limits (climate, biogeography) may dominate. * Similar to or smaller than the species' range: results lean toward habitat suitability. Predictors tied to local habitat structure (vegetation, soil) may matter more.\n",
                     "type": {
                         "type": "record",
                         "name": "#main/pipeline@140/crsBBox",
@@ -3571,7 +3575,7 @@
                         "class": "CommandLineTool",
                         "requirements": [
                             {
-                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9",
+                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
                                 "class": "DockerRequirement"
                             },
                             {

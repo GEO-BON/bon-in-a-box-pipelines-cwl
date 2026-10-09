@@ -37,13 +37,13 @@ inputs:
   pipeline@121:
     type: string[]?
     label: Species
-    doc: Name of species
+    doc: Name of species. Species with fewer than about 50 usable presences in the study area give a very small test set and unreliable fit statistics.
     default:
     - Acer saccharum
 
   pipeline@174:
     label: Bounding and CRS
-    doc: Select a bounding box and CRS
+    doc: Select a bounding box and CRS. Choose an area that contains enough presences (see Species).
     type:
       type: record
       name: bboxCRS
@@ -97,7 +97,7 @@ inputs:
   pipeline@137:
     type: string[]?
     label: Environmental Predictors
-    doc: Vector of strings, collection name followed by '|' followed by item id. View GEO BON STAC catalog items [here](https://stac.geobon.org/viewer/). The collection name and item name can be found in the URL (e.g. for "https://stac.geobon.org/viewer/chelsa-clim/bio1" the collection name is chelsa-clim and the item id is bio1). 
+    doc: Vector of strings, collection name followed by '|' followed by item id. View GEO BON STAC catalog items [here](https://stac.geobon.org/viewer/). The collection name and item name can be found in the URL (e.g. for "https://stac.geobon.org/viewer/chelsa-clim/bio1" the collection name is chelsa-clim and the item id is bio1). Choose few variables that plausibly limit the species and avoid highly correlated ones. Only the first 5 are shown in the Environment space output.
     default:
     - chelsa-clim|bio1
     - chelsa-clim|bio3
@@ -106,16 +106,16 @@ inputs:
     - chelsa-clim|bio15
 
   data>getGBIFObservations>getGBIFObservations.yml@159|min_year:
-    type: int?
+    type: string?
     label: minimum year
     doc: Min year observations wanted
-    default: 2010
+    default: '2010'
 
   data>getGBIFObservations>getGBIFObservations.yml@159|max_year:
-    type: int?
+    type: string?
     label: maximum year
     doc: Max year observations wanted
-    default: 2024
+    default: '2024'
 
   pipeline@128:
     type: float?
@@ -131,19 +131,19 @@ inputs:
   pipeline@152:
     type: float?
     label: Pseudoabsence Buffer
-    doc: The minimum distance a PA is allowed to be from a presence in kilometers
+    doc: The minimum distance a PA is allowed to be from a presence in kilometers. Keep it well below the size of the study area, otherwise no candidate cell remains. Larger values make absences more distinct from presences but exclude nearby suitable habitat.
     default: 10
 
   pipeline@153:
     type: int?
     label: Max Candidate Pseudoabsences
-    doc: The maximum number of candidate pseudoabsences to consider. This speeds up PA generation on large rasters.
+    doc: The maximum number of candidate pseudoabsences to consider. This speeds up PA generation on large rasters. If the region has more valid cells (cells with data, outside the water mask) than this limit, a random subset of that size is used. Otherwise, every valid cell that is not a presence is a candidate and the limit has no effect.
     default: 100000
 
   pipeline@154:
     type: float?
     label: Pseudoabsence proportion
-    doc: The number of PAs, given by the proportion of the total occurrences to use.
+    doc: Number of pseudoabsences per presence (for example 2.4 gives 2.4 pseudoabsences for each presence). Higher values sample the environment more thoroughly but lower the share of presences in the test set, which lowers precision and PR AUC without the model being worse. Compare these statistics only between runs with the same value.
     default: 2.4
 
   pipeline@167:
@@ -278,7 +278,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs
@@ -474,43 +474,50 @@ outputs:
   SDM>BRT>fitBRT.yml@132|pseudoabsences_out:
     type: File
     label: Pseudoabsences
-    doc: pseudoabsence coordinates
+    doc: Coordinates of the pseudoabsence points used to train and test the model. Check that they cover the environments of the study area and are not concentrated around the presences.
     outputSource: SDM>BRT>fitBRT.yml@132/pseudoabsences_out
 
   SDM>BRT>fitBRT.yml@132|env_corners_out:
     type: File
     label: Environment Space
-    doc: Diagnostic plot of the location of presences (blue) and pseudoabsences (red) in environment space for up to the first 5 predictors.
+    doc: Plot of presences (blue) and pseudoabsences (green) in environment space, for the first 5 predictors. Presences in a distinct part of the cloud mean informative predictors; strong overlap means the model can hardly separate them.
     outputSource: SDM>BRT>fitBRT.yml@132/env_corners_out
 
   SDM>BRT>fitBRT.yml@132|tuning_out:
     type: File
     label: Tuning Curve
-    doc: Describes how the Matthew's Correlation Coefficient (MCC) changes as the threshold value changes from 0 to 1.
+    doc: Describes how the Matthew's Correlation Coefficient (MCC) changes as the threshold value changes from 0 to 1. The peak is the threshold used for the Range map. A good curve has one clear peak at an intermediate threshold, with an MCC well above 0.3. A flat curve, or a peak near 0 or 1, means weak separation or scores squeezed into a narrow range.
     outputSource: SDM>BRT>fitBRT.yml@132/tuning_out
 
   SDM>BRT>fitBRT.yml@132|fit_stats_out:
     type: File
     label: Fit Statistics
-    doc: JSON of BRT fit statistics and optimal threshold value.
+    doc: >
+      JSON of BRT fit statistics and optimal threshold value.
+      
+      - ROC AUC (0.5 is random, above 0.7 is acceptable)
+      - PR AUC (compare with the share of presences in the test set)
+      - MCC at the best threshold (0 is random, 1 is perfect)
+      
+      Computed on one small random split, so treat as indicative. Check the warning output for suspicious values.
     outputSource: SDM>BRT>fitBRT.yml@132/fit_stats_out
 
   SDM>BRT>fitBRT.yml@132|predicted_sdm_out:
     type: File
     label: Predicted SDM
-    doc: Map of occurrence score between 0 and 1.
+    doc: Map of occurrence score, generally between 0 and 1. Higher means more suitable relative to the pseudoabsences. It is not a calibrated probability and may fall outside 0 to 1: use it to compare locations, not as an absolute likelihood.
     outputSource: SDM>BRT>fitBRT.yml@132/predicted_sdm_out
 
   SDM>BRT>fitBRT.yml@132|range_out:
     type: File
     label: Range
-    doc: Range map thresholded at the optimal value.
+    doc: Range map thresholded at the optimal value. Binary map (1 is predicted suitable) obtained by applying the MCC-maximizing threshold to the Predicted SDM. It shows where the model predicts suitability, not confirmed presence, and depends on the pseudoabsence settings.
     outputSource: SDM>BRT>fitBRT.yml@132/range_out
 
   SDM>BRT>fitBRT.yml@132|sdm_uncertainty_out:
     type: File
     label: SDM Uncertainty
-    doc: Map of the BRT's relative uncertainty for each location.
+    doc: Map of the BRT's relative uncertainty for each location. It is the variance predicted by the model for each cell (not a bootstrap uncertainty). Higher values mean less certain scores: use it to down-weight or mask areas of the predicted map.
     outputSource: SDM>BRT>fitBRT.yml@132/sdm_uncertainty_out
 
   data>getGBIFObservations>getGBIFObservations.yml@159|gbif_doi_out:

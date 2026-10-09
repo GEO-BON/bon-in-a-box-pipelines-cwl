@@ -82,7 +82,7 @@ requirements:
 
 
   DockerRequirement:
-    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-0680ee9
+    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
     #     $include: ../runners/cwl/conda-cwl.dockerfile
@@ -158,19 +158,19 @@ inputs:
   #################
   occurrence:
     type: File?
-    label: occurrence coordinate dataframe
-    doc: Dataframe, presence data.
+    label: Occurrence records
+    doc: Presence records (TSV with lon and lat columns, in the CRS of the bounding box). Use cleaned records. Fewer than about 50 presences in the region give a very small test set and unreliable fit statistics.
     default: /output/data/getObservations/9f7d1cc148464cd0517e01c67af0ab5b/obs_data.tsv
 
   predictors:
     type: File[]?
-    label: geotiff predictor paths
-    doc: paths to geotiff
+    label: Predictor rasters
+    doc: Environmental rasters (GeoTIFF) on the same grid (extent, resolution, CRS). Choose few variables that plausibly limit the species and avoid highly correlated ones. Only the first 5 are shown in the Environment space output.
     default: /output/foo/bar
 
   bbox_crs:
-    label: Bounding box and CRS
-    doc: Object containing the chosen bounding box and CRS.
+    label: Extent and CRS
+    doc: Bounding box and CRS of the study area. Occurrences and rasters must be in this CRS. Choose an area that contains enough presences (see Occurrence records).
     type:
       type: record
       name: bboxCRS
@@ -223,26 +223,26 @@ inputs:
 
   water_mask:
     type: File[]?
-    label: water mask
-    doc: landcover layer containing open water pixels
+    label: Water mask
+    doc: A single land-cover raster on the same grid as the predictors. Cells with value 210 (open water) are excluded; all others are kept. Intended for terrestrial species.
     default: /output/foo/bar
 
   max_candidate_pseudoabsences:
     type: int?
-    label: max candidate pseudoabsences
-    doc: helps w large rasters
+    label: Candidate pseudoabsences
+    doc: Maximum number of cells considered as pseudoabsence candidates, from which the pseudoabsences are then drawn. If the region has more valid cells (cells with data, outside the water mask) than this limit, a random subset of that size is used, so lowering it speeds up large regions. Otherwise, every valid cell that is not a presence is a candidate and the limit has no effect.
     default: 100000
 
   pseudoabsence_buffer:
     type: float?
-    label: pseudoabsence buffer
-    doc: minimum distance to a presence in kilometers
+    label: Pseudoabsence buffer
+    doc: Minimum distance in kilometers between a pseudoabsence and any presence. Keep it well below the size of the study area, otherwise no candidate cell remains. Larger values make absences more distinct from presences but exclude nearby suitable habitat.
     default: 10.0
 
   pa_proportion:
     type: float?
     label: Pseudoabsence proportion
-    doc: The number of PAs, given by the proportion of the total occurrences to use.
+    doc: Number of pseudoabsences per presence (for example 2.4 gives 2.4 pseudoabsences for each presence). Higher values sample the environment more thoroughly but lower the share of presences in the test set, which lowers precision and PR AUC without the model being worse. Compare these statistics only between runs with the same value.
     default: 2.4
 
 
@@ -296,8 +296,11 @@ inputs:
 outputs:
   predicted_sdm_out:
     type: File
-    label: predicted sdm
-    doc: map of predicted occurrence probability
+    label: Predicted SDM
+    doc: >
+      Map of the model's occurrence score. Higher means more suitable relative to the pseudoabsences. 
+      It is not a calibrated probability and may fall outside 0 to 1: use it to compare locations, 
+      not as an absolute likelihood.
     outputBinding:
       glob: "output.json"
       loadContents: true
@@ -310,8 +313,10 @@ outputs:
 
   sdm_uncertainty_out:
     type: File
-    label: sdm uncertainty
-    doc: map of relative uncertainty
+    label: SDM uncertainty
+    doc: >
+      Map of the variance predicted by the model for each cell (not a bootstrap uncertainty). 
+      Higher values mean less certain scores: use it to down-weight or mask areas of the predicted map.
     outputBinding:
       glob: "output.json"
       loadContents: true
@@ -324,8 +329,15 @@ outputs:
 
   fit_stats_out:
     type: File
-    label: fit statistics
-    doc: JSON of model fit stats and threshold
+    label: Fit statistics
+    doc: >
+      Test-set statistics and optimal threshold: 
+      - ROC AUC (0.5 is random, above 0.7 is acceptable), 
+      - PR AUC (compare with the share of presences in the test set), 
+      - MCC at the best threshold (0 is random, 1 is perfect). 
+      
+      
+      Computed on one small random split, so treat as indicative. Check the warning output for suspicious values.
     outputBinding:
       glob: "output.json"
       loadContents: true
@@ -338,8 +350,8 @@ outputs:
 
   range_out:
     type: File
-    label: range
-    doc: range map thresholded at todo
+    label: Range map
+    doc: Binary map (1 is predicted suitable) obtained by applying the MCC-maximizing threshold to the Predicted SDM. It shows where the model predicts suitability, not confirmed presence, and depends on the pseudoabsence settings.
     outputBinding:
       glob: "output.json"
       loadContents: true
@@ -352,8 +364,8 @@ outputs:
 
   pseudoabsences_out:
     type: File
-    label: pseudoabsences
-    doc: pseudoabsence coordinates
+    label: Pseudoabsences
+    doc: Coordinates of the pseudoabsence points used to train and test the model. Check that they cover the environments of the study area and are not concentrated around the presences.
     outputBinding:
       glob: "output.json"
       loadContents: true
@@ -366,8 +378,8 @@ outputs:
 
   env_corners_out:
     type: File
-    label: env_corners
-    doc: location of presences and pseudoabsences in environment space
+    label: Environment space
+    doc: Plot of presences (blue) and pseudoabsences (green) in environment space, for the first 5 predictors. Presences in a distinct part of the cloud mean informative predictors; strong overlap means the model can hardly separate them.
     outputBinding:
       glob: "output.json"
       loadContents: true
@@ -380,8 +392,14 @@ outputs:
 
   tuning_out:
     type: File
-    label: tuning curve
-    doc: tuning curve
+    label: Tuning curve
+    doc: >
+      MCC as a function of the threshold between 0 and 1.
+      
+      
+      The peak is the threshold used for the Range map. A good curve has one clear peak at an intermediate threshold,
+      with an MCC well above 0.3. A flat curve, or a peak near 0 or 1, means weak separation or scores squeezed into
+      a narrow range.
     outputBinding:
       glob: "output.json"
       loadContents: true

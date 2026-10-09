@@ -34,8 +34,12 @@ data>loadFromStac.yml@144|study_area:  # type 'File' (optional)
     path: a/file/path
 data>loadFromStac.yml@144|stac_url: https://stac.geobon.org/  # default value of type 'string'. (optional)
 data>loadFromStac.yml@144|collections_items:  # array of type 'string' (optional)
-  - chelsa-clim|bio1
-  - chelsa-clim|bio2
+  - chelsa-clim|bio6
+  - chelsa-clim|bio5
+  - chelsa-clim|bio17
+  - chelsa-clim|bio12
+  - soilgrids|wv0033_5-15cm
+  - earthenv_topography|elevation
 
 data>GBIFHeatmapFromSTAC.yml@139|taxa: plants  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/SDM/SDM_maxEnt.cwl#data>GBIFHeatmapFromSTAC.yml@139|taxa/reptiles", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/SDM/SDM_maxEnt.cwl#data>GBIFHeatmapFromSTAC.yml@139|taxa/plants", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/SDM/SDM_maxEnt.cwl#data>GBIFHeatmapFromSTAC.yml@139|taxa/mammals", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/SDM/SDM_maxEnt.cwl#data>GBIFHeatmapFromSTAC.yml@139|taxa/birds", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/SDM/SDM_maxEnt.cwl#data>GBIFHeatmapFromSTAC.yml@139|taxa/arthropods", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/SDM/SDM_maxEnt.cwl#data>GBIFHeatmapFromSTAC.yml@139|taxa/amphibians", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows/SDM/SDM_maxEnt.cwl#data>GBIFHeatmapFromSTAC.yml@139|taxa/all"
 condaPackURL: 
