@@ -1,0 +1,28 @@
+species_column: species  # default value of type 'string'. (optional)
+scripts_root:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+scriptPath: IAS/import_national_checklist.R  # default value of type 'string'.
+runFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+national_checklist:  # type 'File' (optional)
+    class: File
+    path: a/file/path
+first_record_column: a_string  # type 'string' (optional)
+environment:  # type 'File' (optional)
+    class: File
+    path: a/file/path
+envFolderWritable: true  # default value of type 'boolean'.
+envFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+dataset_citation: user_input_data  # default value of type 'string'. (optional)
+country_name:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IAS/import_national_checklist.cwl#country_name/country" record type.
+    country:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/IAS/import_national_checklist.cwl#country_name/country/country/countryDefinition" record type.
+        bboxWGS84:  # array of type 'float' (optional)
+          - 0.1
+        ISO3: a_string  # type 'string' (optional)
+        englishName: a_string  # type 'string' (optional)
+condaPackURL: 
+    https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.

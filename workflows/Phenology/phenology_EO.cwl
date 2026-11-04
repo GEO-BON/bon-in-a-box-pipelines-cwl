@@ -13,13 +13,14 @@ doc:
     ## Introduction
     Phenology is one of the species trait EBVs. It describes presence, absence, abundance or duration of seasonal activities of organisms. This pipeline uses the openEO python package to pull phenology layers from the copernicus data space ecosystem phenology layer. The raster has values for the Plant Phenology Index (PPI), which is a vegetation index that helps estimate vegetation health and photosyntehtic activity throughout the growing season. It is more directly related to plant phenology compared to other vegetation indices like NDVI, and does not saturate in high biomass conditions. It is computed with near infrared reflectance, which is strongly reflected by healthy vegetation. 
     You can read more about the phenology layers [here](https://land.copernicus.eu/en/dataset-catalog). The script pulls the yearly phenology layers using openEO and resamples them to the spatial resolution of choice, calculates summary statistics over a country or region of interest, and subtracts the rasters to look at change over time.
-    ## Context
+    ## Uses
     This pipeline can be used to look at the Phenology EBV. It can also serve as inputs for subsequent pipelines,  such as species distribution models.
     ## Pipeline limitations 
     * Phenology layers are only available for countries in Europe.
     * The pipeline uses a very fine resolution, so it takes a long time to run on for large areas.
     ## Before you start
     The pipeline requires an API key for the Copernicus Data Space Ecosystem. To acquire an API key, visit the CDSE [website](https://dataspace.copernicus.eu/analyse/openeo).
+    YIf you are using BON in a Box locally you can 
   - "Lifecycle tag: In development."
   - |
     Authors:
@@ -40,19 +41,12 @@ inputs:
   #################
   # Script inputs #
   #################
-  data>load_polygons.yml@69|polygon_type:
-    type:
-      type: enum
-      symbols:
-        - Country or region
-        - Polygon of bounding box
-    label: Polygon type
-    doc: Type of polygon to load. Country or region polygons, World database of Protected Areas (WDPA), Exclusive Economic Zones (EEZs), or a custom polygon of a bounding box.
-    default: Country or region
-
   pipeline@68:
     label: Bounding box and CRS
-    doc: Select a country/region and a CRS to obtain the associated bounding box.
+    doc: >
+      Select a country/region and a CRS to obtain the associated bounding box. You may also draw/input a custom bounding box along with a CRS.
+      
+      This pipeline can only be run in **Europe**.
     type:
       type: record
       name: bboxCRS
@@ -102,6 +96,20 @@ inputs:
             type: string?
           - name: bboxWGS84
             type: float[]?
+
+  data>load_polygons.yml@69|polygon_type:
+    type:
+      type: enum
+      symbols:
+        - Country or region
+        - Polygon of bounding box
+    label: Polygon type
+    doc: >
+      Type of polygon to load. 
+      
+      - `Country or region` loads a polygon of the selected country or region.
+      - `Polygon of bounding box` loads a polygon of the bounding box associated with the selected country or region, or the drawn bounding box.
+    default: Country or region
 
   phenology>summarise_phenology.yml@37|season:
     type:
@@ -166,13 +174,13 @@ inputs:
   pipeline@44:
     type: string?
     label: Start year
-    doc: Start date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
+    doc: Start yearfor time series layers. Leave blank if using all available dates.
     default: '2017'
 
   pipeline@45:
     type: string?
     label: End year
-    doc: End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
+    doc: End year for time series layers. Leave blank if using all available dates.
     default: '2024'
 
   phenology>summarise_phenology.yml@37|aggregate_function:
@@ -300,7 +308,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs
@@ -423,12 +431,11 @@ steps:
 
 
 outputs:
-  phenology>summarise_phenology.yml@37|rasters_out:
-    type: File[]
-    label: Phenology rasters
-    doc: >
-      Rasters of phenology layers, with one raster per year in the input time range. Will either be the raw raster layers or resampled to the spatial resolution and CRS input by the user.
-    outputSource: phenology>summarise_phenology.yml@37/rasters_out
+  phenology>phenology_difference.yml@48|phenology_change_plot_out:
+    type: File
+    label: Plot of phenology change
+    doc: Plot of the summarised phenology values over time for the bands of interest
+    outputSource: phenology>phenology_difference.yml@48/phenology_change_plot_out
 
   phenology>phenology_difference.yml@48|phenology_change_out:
     type: File[]
@@ -437,11 +444,12 @@ outputs:
       Raster plot of change in phenology from the start year to the end year. The end year is subtracted from the start year, so larger values indicate a greater decrease in the given value over time.
     outputSource: phenology>phenology_difference.yml@48/phenology_change_out
 
-  phenology>phenology_difference.yml@48|phenology_change_plot_out:
-    type: File
-    label: Plot of phenology change
-    doc: Plot of the summarised phenology values over time for the bands of interest
-    outputSource: phenology>phenology_difference.yml@48/phenology_change_plot_out
+  phenology>summarise_phenology.yml@37|rasters_out:
+    type: File[]
+    label: Phenology rasters
+    doc: >
+      Rasters of phenology layers, with one raster per year in the input time range. Will either be the raw raster layers or resampled to the spatial resolution and CRS input by the user.
+    outputSource: phenology>summarise_phenology.yml@37/rasters_out
 
   phenology>summarise_phenology.yml@37|timeseries_out:
     type: File

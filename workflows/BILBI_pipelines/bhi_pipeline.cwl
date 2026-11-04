@@ -46,16 +46,6 @@ inputs:
   #################
   # Script inputs #
   #################
-  data>load_polygons.yml@24|polygon_type:
-    type:
-      type: enum
-      symbols:
-        - Country or region
-        - Polygon of bounding box
-    label: Polygon type
-    doc: Type of polygon to load. Country or region polygons, World database of Protected Areas (WDPA), Exclusive Economic Zones (EEZs), or a custom polygon of a bounding box.
-    default: Country or region
-
   pipeline@23:
     label: Bounding box and CRS
     doc: Select a country/region and a CRS to obtain the associated bounding box. You may also draw/input a custom bounding box along with a CRS.
@@ -109,20 +99,45 @@ inputs:
           - name: bboxWGS84
             type: float[]?
 
+  data>load_polygons.yml@24|polygon_type:
+    type:
+      type: enum
+      symbols:
+        - Country or region
+        - Polygon of bounding box
+    label: Polygon type
+    doc: >
+      Type of polygon to load. 
+      
+      - `Country or region` loads a polygon of the selected country or region.
+      - `Polygon of bounding box` loads a polygon of the bounding box associated with the selected country or region, or the drawn bounding box.
+    default: Country or region
+
   data>loadFromStac.yml@1|t0:
     type: string?
-    label: Start date (optional)
-    doc: Start date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
+    label: Start year (optional)
+    doc: >
+      Start year for time series layers. Leave blank if using all available dates.
+      
+      Must be one of: 2000, 2005, 2015, 2010, 2020
 
   data>loadFromStac.yml@1|t1:
     type: string?
-    label: End date (optional)
-    doc: End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
+    label: End year (optional)
+    doc: >
+      End year for time series layers. Leave blank if using all available dates.
+      
+      Must be one of: 2000, 2005, 2015, 2010, 2020
 
   data>loadFromStac.yml@1|temporal_res:
     type: string?
     label: Temporal resolution (optional)
-    doc: Temporal resolution to use when querying STAC items by date, in the format ("P", time interval, and time unit, e.g. "P1Y" is yearly, "P1M" is monthly, and "P1D" is daily). Leave blank if not querying by date. If the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated with the aggregation method chosen below.
+    doc: >
+      Temporal resolution to use when querying STAC items by date, in the format ("P", time interval, and time unit, e.g. "P1Y" is yearly, "P1M" is monthly, and "P1D" is daily). Leave blank if not querying by date. 
+      
+      Must be one of: P5Y, P10Y, P15Y, P20Y
+      
+      If the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated with the aggregation method chosen below.
 
   pipeline@19:
     type: float?
@@ -288,7 +303,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs
@@ -450,11 +465,11 @@ steps:
 
 
 outputs:
-  data>loadFromStac.yml@1|rasters_out:
-    type: File[]
-    label: Raster indicator layers for each year
-    doc: Output raster files in geotiff format.
-    outputSource: data>loadFromStac.yml@1/rasters_out
+  bilbi_indicators>bilbi_weighted_mean.yml@0|time_series_plot_out:
+    type: File
+    label: Time series plot
+    doc: Plot of the geometric mean of the indicator over time in the study area of interest
+    outputSource: bilbi_indicators>bilbi_weighted_mean.yml@0/time_series_plot_out
 
   bilbi_indicators>bilbi_weighted_mean.yml@0|summarised_values_out:
     type: File
@@ -466,11 +481,11 @@ outputs:
       A higher value (closer to 1) indicates that a large proportion of the habitat remains in good condition and is well-connected, leading to a high expectation of species persistence. A lower value indicates that a significant proportion of the original habitat has been lost, degraded, or fragmented, which puts biodiversity at risk.
     outputSource: bilbi_indicators>bilbi_weighted_mean.yml@0/summarised_values_out
 
-  bilbi_indicators>bilbi_weighted_mean.yml@0|time_series_plot_out:
-    type: File
-    label: Time series plot
-    doc: Plot of the geometric mean of the indicator over time in the study area of interest
-    outputSource: bilbi_indicators>bilbi_weighted_mean.yml@0/time_series_plot_out
+  data>loadFromStac.yml@1|rasters_out:
+    type: File[]
+    label: Raster indicator layers for each year
+    doc: Output raster files in geotiff format.
+    outputSource: data>loadFromStac.yml@1/rasters_out
 
   data>load_polygons.yml@24|polygon_out:
     type: File

@@ -10,7 +10,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -212,7 +212,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -565,7 +565,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1074,8 +1074,8 @@
                         "null",
                         "string"
                     ],
-                    "label": "Start date (optional)",
-                    "doc": "Start date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.",
+                    "label": "Start year (optional)",
+                    "doc": "Start year for time series layers. Leave blank if using all available dates.\nMust be one of: 2000, 2005, 2015, 2010, 2020\n",
                     "id": "#main/data>loadFromStac.yml@1|t0"
                 },
                 {
@@ -1083,8 +1083,8 @@
                         "null",
                         "string"
                     ],
-                    "label": "End date (optional)",
-                    "doc": "End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.",
+                    "label": "End year (optional)",
+                    "doc": "End year for time series layers. Leave blank if using all available dates.\nMust be one of: 2000, 2005, 2015, 2010, 2020\n",
                     "id": "#main/data>loadFromStac.yml@1|t1"
                 },
                 {
@@ -1093,7 +1093,7 @@
                         "string"
                     ],
                     "label": "Temporal resolution (optional)",
-                    "doc": "Temporal resolution to use when querying STAC items by date, in the format (\"P\", time interval, and time unit, e.g. \"P1Y\" is yearly, \"P1M\" is monthly, and \"P1D\" is daily). Leave blank if not querying by date. If the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated with the aggregation method chosen below.",
+                    "doc": "Temporal resolution to use when querying STAC items by date, in the format (\"P\", time interval, and time unit, e.g. \"P1Y\" is yearly, \"P1M\" is monthly, and \"P1D\" is daily). Leave blank if not querying by date. \nMust be one of: P5Y, P10Y, P15Y, P20Y\nIf the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated with the aggregation method chosen below.\n",
                     "id": "#main/data>loadFromStac.yml@1|temporal_res"
                 },
                 {
@@ -1105,7 +1105,7 @@
                         ]
                     },
                     "label": "Polygon type",
-                    "doc": "Type of polygon to load. Country or region polygons, World database of Protected Areas (WDPA), Exclusive Economic Zones (EEZs), or a custom polygon of a bounding box.",
+                    "doc": "Type of polygon to load. \n- `Country or region` loads a polygon of the selected country or region. - `Polygon of bounding box` loads a polygon of the bounding box associated with the selected country or region, or the drawn bounding box.\n",
                     "default": "Country or region",
                     "id": "#main/data>load_polygons.yml@24|polygon_type"
                 },
@@ -1602,7 +1602,7 @@
                         "class": "CommandLineTool",
                         "requirements": [
                             {
-                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                                 "class": "DockerRequirement"
                             },
                             {

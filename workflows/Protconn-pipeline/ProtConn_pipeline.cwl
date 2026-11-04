@@ -389,7 +389,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs
@@ -565,29 +565,11 @@ outputs:
     doc: Protected areas polygons for the ProtConn calculation. Overlapping protected areas have been merged to speed up calculation.
     outputSource: protconn_analysis>protconn_analysis.yml@42/protected_areas_out
 
-  protconn_analysis>protconn_analysis.yml@42|protconn_result_out:
-    type: File
-    label: ProtConn results
-    doc: >
-      The results of the ProtConn calculations. "Prot" and "Unprot" is the percentage of the study area that is 
-            protected and unprotected, respectively. "ProtConn" is the percentage of the study area that is protected, and
-            connected, ProtUnconn is the percentage that is protected but unconnected. "ProtConn Within" is the percentage
-            of the landscape that is connected within a single protected area, i.e. the contribution to overall connectivity
-            coming from within the protected area, without species having to traverse unprotected land. "ProtConn Contig"
-            is the proportion connected through direct physical adjascency, capturing the value of neighboring or touching PAs. 
-    outputSource: protconn_analysis>protconn_analysis.yml@42/protconn_result_out
-
   protconn_analysis>protconn_analysis.yml@42|result_plot_out:
     type: File
     label: ProtConn result plot
     doc: Donut plot of the percentage of total area that is unprotected, protected and connected, and protected and unconnected for each input dispersal distance (in meters).
     outputSource: protconn_analysis>protconn_analysis.yml@42/result_plot_out
-
-  protconn_analysis>protconn_analysis.yml@42|result_yrs_out:
-    type: File
-    label: ProtConn time series results
-    doc: Table of the time series of ProtConn and ProtUnconn values, calculated at the time interval that is specified.
-    outputSource: protconn_analysis>protconn_analysis.yml@42/result_yrs_out
 
   protconn_analysis>protconn_analysis.yml@42|result_yrs_plot_out:
     type: File[]
@@ -600,4 +582,22 @@ outputs:
     label: Study area polygon
     doc: Polygon of the study area
     outputSource: data>load_polygons.yml@61/polygon_out
+
+  protconn_analysis>protconn_analysis.yml@42|result_yrs_out:
+    type: File
+    label: ProtConn time series results
+    doc: Table of the time series of ProtConn and ProtUnconn values, calculated at the time interval that is specified.
+    outputSource: protconn_analysis>protconn_analysis.yml@42/result_yrs_out
+
+  protconn_analysis>protconn_analysis.yml@42|protconn_result_out:
+    type: File
+    label: ProtConn results
+    doc: >
+      The results of the ProtConn calculations. "Prot" and "Unprot" is the percentage of the study area that is 
+            protected and unprotected, respectively. "ProtConn" is the percentage of the study area that is protected, and
+            connected, ProtUnconn is the percentage that is protected but unconnected. "ProtConn Within" is the percentage
+            of the landscape that is connected within a single protected area, i.e. the contribution to overall connectivity
+            coming from within the protected area, without species having to traverse unprotected land. "ProtConn Contig"
+            is the proportion connected through direct physical adjascency, capturing the value of neighboring or touching PAs. 
+    outputSource: protconn_analysis>protconn_analysis.yml@42/protconn_result_out
 

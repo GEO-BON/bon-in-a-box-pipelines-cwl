@@ -10,7 +10,7 @@ label: Hello World pipeline
 doc:
   - |
     Description:
-    This very simple pipeline shows how to connect a single script to a single output.
+    This very simple example pipeline shows how to connect a single script to a single output.
     The input of the script is left blank, thus becoming a pipeline input.
   - "Lifecycle tag: Example."
   - |
@@ -202,7 +202,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs

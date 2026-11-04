@@ -86,6 +86,17 @@ inputs:
           - name: bboxWGS84
             type: float[]?
 
+  data>loadFromStac.yml@42|spatial_res:
+    type: float?
+    label: Spatial resolution (optional)
+    doc: >
+      Integer, spatial resolution of the rasters in the same units as the coordinate reference system (meters for projected reference systems and degrees for reference systems in lat long). 
+      
+      If this is left blank it will use the native resolution of the rasters. 
+      
+      If the spatial resolution is coarser than the native resolution of the rasters, the layers will be resampled with the resampling method chosen below.
+    default: 0.008833
+
   data>loadFromStac.yml@42|stac_url:
     type: string?
     label: STAC URL
@@ -119,17 +130,6 @@ inputs:
     label: Temporal resolution
     doc: Temporal resolution to use when querying STAC items by date, in the format ("P", time interval, and time unit, e.g. "P1Y" is yearly, "P1M" is montly, and "P1D" is daily). Leave blank if not querying by date. If the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated with the aggregation method chosen below.
     default: P1Y
-
-  data>loadFromStac.yml@42|spatial_res:
-    type: float?
-    label: Spatial resolution (optional)
-    doc: >
-      Integer, spatial resolution of the rasters in the same units as the coordinate reference system (meters for projected reference systems and degrees for reference systems in lat long). 
-      
-      If this is left blank it will use the native resolution of the rasters. 
-      
-      If the spatial resolution is coarser than the native resolution of the rasters, the layers will be resampled with the resampling method chosen below.
-    default: 0.008833
 
   data>loadFromStac.yml@42|resampling:
     type:
@@ -278,7 +278,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs

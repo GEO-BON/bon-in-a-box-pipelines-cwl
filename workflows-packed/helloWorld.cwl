@@ -10,7 +10,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -335,7 +335,7 @@
             "class": "Workflow",
             "label": "Hello World pipeline",
             "doc": [
-                "Description:\nThis very simple pipeline shows how to connect a single script to a single output.\nThe input of the script is left blank, thus becoming a pipeline input.\n",
+                "Description:\nThis very simple example pipeline shows how to connect a single script to a single output.\nThe input of the script is left blank, thus becoming a pipeline input.\n",
                 "Lifecycle tag: Example.",
                 "Authors:\nJean-Michel Lord (https://orcid.org/0009-0007-3826-1125)\n",
                 "External link: https://github.com/GEO-BON/biab-2.0"
@@ -595,7 +595,7 @@
                         "class": "CommandLineTool",
                         "requirements": [
                             {
-                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                                 "class": "DockerRequirement"
                             },
                             {

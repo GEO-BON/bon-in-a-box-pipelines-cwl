@@ -36,7 +36,7 @@ doc:
     Select a study area using the bounding box and CRS input. The CRS and spatial resolution determine the scale of the analysis, so choose a CRS appropriate for the region and make sure the spatial resolution is in the units of that CRS.  
     
     Choose environmental predictor layers from the [STAC catalog](https://stac.geobon.org/) that are ecologically relevant to the species being modeled. For example, climate, vegetation, elevation, land cover, or habitat-related predictors may be appropriate depending on the species. Avoid including many predictors that represent the same underlying environmental gradient.
-  - "Lifecycle tag: In review."
+  - "Lifecycle tag: Stale. This pipeline is no longer required with the new STAC chooser. Multiple STACs can be loaded in the regular MaxEnt pipeline."
   - |
     Authors:
     Sarah Valentin (Pipeline development, https://orcid.org/0000-0002-9028-681X)
@@ -419,7 +419,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs
@@ -483,7 +483,7 @@ steps:
           "'
           
           bash -c 'getPackedEnv "data__getGBIFObservations__getGBIFObservations" "channels: [conda-forge]
-          dependencies: [pygbif, pandas, pyproj]
+          dependencies: [pygbif=0.6.6, pandas, pyproj]
           name: data__getGBIFObservations__getGBIFObservations
           "'
           

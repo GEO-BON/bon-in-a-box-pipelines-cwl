@@ -39,19 +39,9 @@ inputs:
   #################
   # Script inputs #
   #################
-  data>load_polygons.yml@211|polygon_type:
-    type:
-      type: enum
-      symbols:
-        - Country or region
-        - Polygon of bounding box
-    label: Polygon type
-    doc: Type of polygon to load. Country or region polygons, World database of Protected Areas (WDPA), Exclusive Economic Zones (EEZs), or a custom polygon of a bounding box.
-    default: Country or region
-
   pipeline@210:
     label: Bounding box and CRS
-    doc: Select a country/region and a CRS to obtain the associated bounding box.
+    doc: Select a country/region and a CRS to obtain the associated bounding box. You may also draw/input a custom bounding box along with a CRS.
     type:
       type: record
       name: bboxCRS
@@ -101,6 +91,20 @@ inputs:
             type: string?
           - name: bboxWGS84
             type: float[]?
+
+  data>load_polygons.yml@211|polygon_type:
+    type:
+      type: enum
+      symbols:
+        - Country or region
+        - Polygon of bounding box
+    label: Polygon type
+    doc: >
+      Type of polygon to load. 
+      
+      - `Country or region` loads a polygon of the selected country or region.
+      - `Polygon of bounding box` loads a polygon of the bounding box associated with the selected country or region, or the drawn bounding box.
+    default: Country or region
 
   NDVI>calculateNDVI.yml@199|start_date:
     type: string?
@@ -247,7 +251,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs
@@ -352,13 +356,6 @@ steps:
 
 
 outputs:
-  NDVI>calculateNDVI.yml@199|rasters_out:
-    type: File[]
-    label: Vegetation index rasters
-    doc: >
-      Raster of the NDVI values summarised by the input statistic (mean, max, min, median) for each pixel within the time span choosen. If multiple indices were chosen, each band corresponds to a different vegetation index
-    outputSource: NDVI>calculateNDVI.yml@199/rasters_out
-
   NDVI>calculateNDVI.yml@199|timeseries_out:
     type: File
     label: Time series of NDVI
@@ -370,6 +367,13 @@ outputs:
     label: NDVI time series plot
     doc: Plot of NDVI values over time
     outputSource: NDVI>calculateNDVI.yml@199/timeseries_plot_out
+
+  NDVI>calculateNDVI.yml@199|rasters_out:
+    type: File[]
+    label: Vegetation index rasters
+    doc: >
+      Raster of the NDVI values summarised by the input statistic (mean, max, min, median) for each pixel within the time span choosen. If multiple indices were chosen, each band corresponds to a different vegetation index
+    outputSource: NDVI>calculateNDVI.yml@199/rasters_out
 
   data>load_polygons.yml@211|polygon_out:
     type: File

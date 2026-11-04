@@ -10,7 +10,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -363,7 +363,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -850,7 +850,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1201,7 +1201,7 @@
             "label": "Zonal statistics for STAC items in a region",
             "doc": [
                 "Description:\nThis pipeline extracts zonal statistics for STAC catalog items in a country or subnational region of interest.\n",
-                "Lifecycle tag: subpipeline.",
+                "Lifecycle tag: Core.",
                 "Authors:\nJory Griffith (Pipeline development, jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)\n",
                 "References:\nDaniel Baston (2023)\nnull\n"
             ],
@@ -1681,7 +1681,7 @@
                         "class": "CommandLineTool",
                         "requirements": [
                             {
-                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                                 "class": "DockerRequirement"
                             },
                             {

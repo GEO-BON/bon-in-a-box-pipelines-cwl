@@ -392,7 +392,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs
@@ -456,7 +456,7 @@ steps:
           "'
           
           bash -c 'getPackedEnv "data__getGBIFObservations__getGBIFObservations" "channels: [conda-forge]
-          dependencies: [pygbif, pandas, pyproj]
+          dependencies: [pygbif=0.6.6, pandas, pyproj]
           name: data__getGBIFObservations__getGBIFObservations
           "'
           
@@ -701,6 +701,12 @@ steps:
 
 
 outputs:
+  pipeline@121|default_output_out:
+    type: string[]
+    label: Taxa
+    doc: Taxa supplied to the pipeline and used for GBIF occurrence retrieval and model fitting.
+    outputSource: pipeline@121
+
   filtering>cleanCoordinates.yml@34|clean_presence_out:
     type: File
     label: Presences
@@ -724,12 +730,6 @@ outputs:
     label: Variability of predictions
     doc: The variability of the 95% confidence of each prediction can be viewed on a map to show uncertainty.
     outputSource: SDM>rangePredictions.yml@68/range_predictions_out
-
-  pipeline@121|default_output_out:
-    type: string[]
-    label: Taxa list
-    doc: Taxa supplied to the pipeline and used for GBIF occurrence retrieval and model fitting.
-    outputSource: pipeline@121
 
   data>getGBIFObservations>getGBIFObservations.yml@142|gbif_doi_out:
     type: string

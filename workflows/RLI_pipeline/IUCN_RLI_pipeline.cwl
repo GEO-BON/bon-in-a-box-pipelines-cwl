@@ -68,6 +68,7 @@ doc:
       - DD: Data deficient
     
     (IUCN, 2025)
+  - "Lifecycle tag: Stale. Methods are out of date, updates to come."
   - |
     Authors:
     Victor Julio Rincon (Pipeline development, rincon-v@javeriana.edu.co)
@@ -338,7 +339,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs

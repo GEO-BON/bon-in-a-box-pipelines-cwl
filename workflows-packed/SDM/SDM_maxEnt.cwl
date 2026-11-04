@@ -9,7 +9,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -179,7 +179,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -414,7 +414,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -478,7 +478,7 @@
                 },
                 {
                     "ramMin": 6144,
-                    "ramMax": 22888,
+                    "ramMax": 20480,
                     "coresMin": 2,
                     "coresMax": 7,
                     "class": "ResourceRequirement"
@@ -780,7 +780,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1017,7 +1017,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1259,7 +1259,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1542,7 +1542,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1807,7 +1807,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1879,7 +1879,7 @@
                 "-c"
             ],
             "arguments": [
-                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\ntouch \"$log\"\ntail -f \"$log\" &\ntailPid=$!\ncleanupTail() {\n  kill \"$tailPid\" 2>/dev/null\n  wait \"$tailPid\" 2>/dev/null\n}\ntrap cleanupTail EXIT\n\nmkdir -p /conda-env-yml/pkgs /conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    taxa: inputs.taxa,\n    bbox_crs: inputs.bbox_crs,\n    min_year: inputs.min_year,\n    max_year: inputs.max_year,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" >> \"$log\"\necho \"Inputs:\" >> \"$log\"\ncat \"$OUTPUT_LOCATION/input.json\" >> \"$log\"\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"data__getGBIFObservations__getGBIFObservations\" \\\n\"channels: [conda-forge]\ndependencies: [pygbif, pandas, pyproj]\nname: data__getGBIFObservations__getGBIFObservations\n\" /conda-envs \"$CONDA_PACK_URL\" >> \"$log\" 2>&1\n\npython3 \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.py \\\n  $OUTPUT_LOCATION \\\n  \"$SCRIPT_LOCATION/$SCRIPT_PATH\" \\\n  >> \"$log\" 2>&1\nscriptExitCode=$?\necho \"Script exited with code $scriptExitCode\" >> \"$log\"\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" >> \"$log\"\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh data__getGBIFObservations__getGBIFObservations /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
+                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\ntouch \"$log\"\ntail -f \"$log\" &\ntailPid=$!\ncleanupTail() {\n  kill \"$tailPid\" 2>/dev/null\n  wait \"$tailPid\" 2>/dev/null\n}\ntrap cleanupTail EXIT\n\nmkdir -p /conda-env-yml/pkgs /conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    taxa: inputs.taxa,\n    bbox_crs: inputs.bbox_crs,\n    min_year: inputs.min_year,\n    max_year: inputs.max_year,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" >> \"$log\"\necho \"Inputs:\" >> \"$log\"\ncat \"$OUTPUT_LOCATION/input.json\" >> \"$log\"\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"data__getGBIFObservations__getGBIFObservations\" \\\n\"channels: [conda-forge]\ndependencies: [pygbif=0.6.6, pandas, pyproj]\nname: data__getGBIFObservations__getGBIFObservations\n\" /conda-envs \"$CONDA_PACK_URL\" >> \"$log\" 2>&1\n\npython3 \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.py \\\n  $OUTPUT_LOCATION \\\n  \"$SCRIPT_LOCATION/$SCRIPT_PATH\" \\\n  >> \"$log\" 2>&1\nscriptExitCode=$?\necho \"Script exited with code $scriptExitCode\" >> \"$log\"\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" >> \"$log\"\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh data__getGBIFObservations__getGBIFObservations /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
             ],
             "inputs": [
                 {
@@ -2102,7 +2102,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -2457,7 +2457,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -3612,7 +3612,7 @@
                         "class": "CommandLineTool",
                         "requirements": [
                             {
-                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                                 "class": "DockerRequirement"
                             },
                             {
@@ -3661,7 +3661,7 @@
                             "-c"
                         ],
                         "arguments": [
-                            "echo \"Exporting all environments\"\nmkdir -p \"$OUTPUT_LOCATION\" \"$CONDA_PKGS_DIRS\" /conda-env-yml/envs\n\nfunction getPackedEnv {\n  condaEnvName=$1\n  condaEnvYml=$2\n  # We use a dedicated env folder to avoid copying the whole env folder between steps in a k8 context\n  dedicatedEnvFolder=$(inputs.envFolderWrite.path)/$condaEnvName\n  mkdir -p \"$dedicatedEnvFolder\"\n  \n  echo \"Exporting $condaEnvName...\"\n  source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh \"$OUTPUT_LOCATION\" \"$condaEnvName\" \\\n    \"$condaEnvYml\" \"$dedicatedEnvFolder\" \"$CONDA_PACK_URL\" --noActivate\n  source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh \"$condaEnvName\" \"$dedicatedEnvFolder\"\n  echo \"Done.\"\n}\nexport -f getPackedEnv\n\nbash -c 'getPackedEnv \"filtering__cleanCoordinates\" \"channels: [conda-forge, r]\ndependencies: [r-terra, r-rjson, r-raster, r-dplyr, r-CoordinateCleaner, r-gdalcubes]\nname: filtering__cleanCoordinates\n\"'\n\nbash -c 'getPackedEnv \"SDM__selectBackground\" \"channels: [conda-forge, r]\ndependencies: [r-rjson, r-terra, r-dplyr, r-raster, r-CoordinateCleaner, r-stars,\n  r-rstac, r-gdalcubes]\nname: SDM__selectBackground\n\"'\n\nbash -c 'getPackedEnv \"SDM__setupDataSdm\" \"channels: [conda-forge, r]\ndependencies: [r-gdalcubes, r-terra, r-rjson, r-raster, r-dplyr, r-ENMeval, r-devtools]\nname: SDM__setupDataSdm\n\"'\n\nbash -c 'getPackedEnv \"SDM__rangePredictions\" \"channels: [conda-forge, r]\ndependencies: [r-terra, r-rjson, r-raster, r-dplyr]\nname: SDM__rangePredictions\n\"'\n\nbash -c 'getPackedEnv \"SDM__removeCollinearity\" \"channels: [conda-forge, r]\ndependencies: [r-terra, r-rjson, r-dplyr, r-gdalcubes]\nname: SDM__removeCollinearity\n\"'\n\nbash -c 'getPackedEnv \"SDM__runMaxent\" \"channels: [conda-forge, r]\ndependencies: [libgdal, r-abind, r-base, r-curl, r-dismo, r-downloader, r-dplyr, r-enmeval=2.0.3,\n  r-ecospat, r-essentials, r-geojsonsf, r-ggsci, r-jpeg, r-landscapemetrics, r-magrittr,\n  r-png, r-purrr, r-rcurl, r-rgbif, r-remotes, r-rjava, r-rjson, r-sf, r-stars, r-stringr,\n  r-terra, r-this.path, r-tidyselect, r-tidyverse, r-stringr]\nname: SDM__runMaxent\n\"'\n\nbash -c 'getPackedEnv \"data__getGBIFObservations__getGBIFObservations\" \"channels: [conda-forge]\ndependencies: [pygbif, pandas, pyproj]\nname: data__getGBIFObservations__getGBIFObservations\n\"'\n\nbash -c 'getPackedEnv \"data__loadFromStac\" \"channels: [conda-forge, r]\ndependencies: [libgdal, r-lubridate, proj, r-proj, r-gdalcubes=0.7.4, r-rstac, r-dplyr,\n  r-rcurl, r-rjson, r-sf, r-stars, r-terra]\nname: data__loadFromStac\n\"'\n"
+                            "echo \"Exporting all environments\"\nmkdir -p \"$OUTPUT_LOCATION\" \"$CONDA_PKGS_DIRS\" /conda-env-yml/envs\n\nfunction getPackedEnv {\n  condaEnvName=$1\n  condaEnvYml=$2\n  # We use a dedicated env folder to avoid copying the whole env folder between steps in a k8 context\n  dedicatedEnvFolder=$(inputs.envFolderWrite.path)/$condaEnvName\n  mkdir -p \"$dedicatedEnvFolder\"\n  \n  echo \"Exporting $condaEnvName...\"\n  source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh \"$OUTPUT_LOCATION\" \"$condaEnvName\" \\\n    \"$condaEnvYml\" \"$dedicatedEnvFolder\" \"$CONDA_PACK_URL\" --noActivate\n  source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh \"$condaEnvName\" \"$dedicatedEnvFolder\"\n  echo \"Done.\"\n}\nexport -f getPackedEnv\n\nbash -c 'getPackedEnv \"filtering__cleanCoordinates\" \"channels: [conda-forge, r]\ndependencies: [r-terra, r-rjson, r-raster, r-dplyr, r-CoordinateCleaner, r-gdalcubes]\nname: filtering__cleanCoordinates\n\"'\n\nbash -c 'getPackedEnv \"SDM__selectBackground\" \"channels: [conda-forge, r]\ndependencies: [r-rjson, r-terra, r-dplyr, r-raster, r-CoordinateCleaner, r-stars,\n  r-rstac, r-gdalcubes]\nname: SDM__selectBackground\n\"'\n\nbash -c 'getPackedEnv \"SDM__setupDataSdm\" \"channels: [conda-forge, r]\ndependencies: [r-gdalcubes, r-terra, r-rjson, r-raster, r-dplyr, r-ENMeval, r-devtools]\nname: SDM__setupDataSdm\n\"'\n\nbash -c 'getPackedEnv \"SDM__rangePredictions\" \"channels: [conda-forge, r]\ndependencies: [r-terra, r-rjson, r-raster, r-dplyr]\nname: SDM__rangePredictions\n\"'\n\nbash -c 'getPackedEnv \"SDM__removeCollinearity\" \"channels: [conda-forge, r]\ndependencies: [r-terra, r-rjson, r-dplyr, r-gdalcubes]\nname: SDM__removeCollinearity\n\"'\n\nbash -c 'getPackedEnv \"SDM__runMaxent\" \"channels: [conda-forge, r]\ndependencies: [libgdal, r-abind, r-base, r-curl, r-dismo, r-downloader, r-dplyr, r-enmeval=2.0.3,\n  r-ecospat, r-essentials, r-geojsonsf, r-ggsci, r-jpeg, r-landscapemetrics, r-magrittr,\n  r-png, r-purrr, r-rcurl, r-rgbif, r-remotes, r-rjava, r-rjson, r-sf, r-stars, r-stringr,\n  r-terra, r-this.path, r-tidyselect, r-tidyverse, r-stringr]\nname: SDM__runMaxent\n\"'\n\nbash -c 'getPackedEnv \"data__getGBIFObservations__getGBIFObservations\" \"channels: [conda-forge]\ndependencies: [pygbif=0.6.6, pandas, pyproj]\nname: data__getGBIFObservations__getGBIFObservations\n\"'\n\nbash -c 'getPackedEnv \"data__loadFromStac\" \"channels: [conda-forge, r]\ndependencies: [libgdal, r-lubridate, proj, r-proj, r-gdalcubes=0.7.4, r-rstac, r-dplyr,\n  r-rcurl, r-rjson, r-sf, r-stars, r-terra]\nname: data__loadFromStac\n\"'\n"
                         ],
                         "inputs": [
                             {
@@ -3819,7 +3819,7 @@
                         "type": "array",
                         "items": "string"
                     },
-                    "label": "Taxa list",
+                    "label": "Taxa",
                     "doc": "Taxa supplied to the pipeline and used for GBIF occurrence retrieval and model fitting.",
                     "outputSource": "#main/pipeline@121",
                     "id": "#main/pipeline@121|default_output_out"

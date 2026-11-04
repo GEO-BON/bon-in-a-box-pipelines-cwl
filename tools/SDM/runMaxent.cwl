@@ -86,7 +86,7 @@ requirements:
 
 
   DockerRequirement:
-    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a
+    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
     #     $include: ../runners/cwl/conda-cwl.dockerfile
@@ -105,7 +105,7 @@ requirements:
 
   ResourceRequirement:
     ramMin: 6144
-    ramMax: 22888
+    ramMax: 20480
     coresMin: 2
     coresMax: 7
 

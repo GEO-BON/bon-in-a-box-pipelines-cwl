@@ -9,7 +9,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -202,7 +202,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -555,7 +555,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1042,7 +1042,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1392,7 +1392,7 @@
             "class": "Workflow",
             "label": "Biodiversity Intactness Index",
             "doc": [
-                "Description:\n## Introduction \nThe Biodiversity Intactness Index (BII) is a metric designed to assess the degree to which ecosystems are intact and functioning relative to their natural state. It measures the abundance and diversity of species in a given area compared to what would be expected in an undisturbed ecosystem. The BII accounts for various factors, including habitat loss, fragmentation, and degradation, providing a comprehensive view of biodiversity health. A higher BII value indicates a more intact ecosystem with greater species diversity and abundance, while a lower value suggests significant ecological disruption. The biodiversity intactness index is a complimentary indicator in the GBF. The BII was created by the Natural History Museum and uses their PREDICTS database, which aggregates data from studies comparing terrestrial biodiversity at sites experiencing varying levels of human pressure. The database is used to establish a reference state using the biodiversity patterns in habitats with minimal disturbance levels. Then, it assigns sensitivity scores to each species based on their vulnerability to human pressure. Intactness is calculated by comparing the observed species abundance in a given area to what is expected under reference conditions with low human impact. It currently contains over 3 million records from more than 26,000 sites across 94 countries, representing a diverse array of over 45,000 plant, invertebrate, and vertebrate species.\n## Uses \nThe Biodiversity Intactness Index is a complimentary indicator in the GBF. This pipeline can be used to calculate summary statistics and plot a time series of the 10km resolution BII layer for a given country or region. The BII is expressed as a percentage, with higher percentages being more intact.\n## Pipeline limitations \nThe pipeline does not model the Biodiversity Intactness Index from the data, it calculates summary statistics over the 10 x 10 km BII layer pre-calcuated by the Natural History Museum calculated global layer. Therefore, you cannot customize the model or input custom data and you cannot increase the resolution of the layer. Additionally, because BII is a modelled data layer, the values may be less accurate in areas where there is a lack of data. To learn more about the PREDICTS database, visit the [page on the Natural History Museum website](https://www.nhm.ac.uk/our-science/research/projects/predicts/science.html).\n## Before you start \nThere are no data or API keys required for this analysis. To view the global layer, go to our [STAC catalog](https://stac.geobon.org/viewer/bii_nhm/bii_nhm_10km_2020).\n",
+                "Description:\n## Introduction \nThe Biodiversity Intactness Index (BII) is a metric designed to assess the degree to which terrestrial ecosystems are intact and functioning relative to their natural state. It measures the abundance of originally present species in a given area compared to what would be expected in an undisturbed ecosystem. The BII accounts for the effects of land use and human pressure on species abundance, providing a broad view of biodiversity health. A higher BII value indicates a community closer to its natural composition, while a lower value suggests significant ecological disruption. The BII is a complementary indicator to help assess Goal A in the Kunming-Montreal Global Biodiversity Framework (GBF). \n\nThis pipeline does not calculate the BII; it summarises the BII layers produced by the Natural History Museum over space and time. The BII was created by the Natural History Museum, London, and uses their PREDICTS database, which aggregates data from studies comparing terrestrial biodiversity at sites experiencing varying levels of human pressure (Newbold et al., 2016). \n\nThe following describes how the layers are produced. The database is used to establish a reference state using the biodiversity patterns in habitats with minimal disturbance levels. Then, it assigns sensitivity scores to each species based on their vulnerability to human pressure. Intactness is calculated by comparing the observed species abundance in a given area to what is expected under reference conditions with low human impact. PREDICTS contained over 3 million records from more than 26,000 sites across 94 countries, representing over 45,000 plant, invertebrate, and vertebrate species.\n## Uses  \n\nThis pipeline summarises the Natural History Museum's global 10 x 10 km BII layers for a country or region of interest. \n\nIt can be used to: \n  \n\n  - calculate a summary statistic of BII (mean, median or\nmode) for each available year \n- see how BII in an area has changed over time \n- map where BII has increased or decreased between two chosen years\n\nBII is expressed as a percentage, with higher percentages indicating a more intact ecosystem.\n## Pipeline limitations \nThe pipeline does not model the Biodiversity Intactness Index from the data, it calculates summary statistics over the 10 x 10 km BII layer pre-calcuated by the Natural History Museum calculated global layer. Therefore, you cannot customize the model or input custom data. Additionally, because BII is a modelled data layer, the values may be less accurate in areas where there is a lack of data. To learn more about the PREDICTS database, visit the [page on the Natural History Museum website](https://www.nhm.ac.uk/our-science/research/projects/predicts/science.html).\n## Before you start \nThere are no data or API keys required for this analysis. To view the global layer, go to our [STAC catalog](https://stac.geobon.org/viewer/bii_nhm/bii_nhm_10km_2020).\n",
                 "Authors:\nJory Griffith (Pipeline development, jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)\nLaetitia Tremblay (Pipeline documentation, laetita.tremblay@mcgill.ca, https://www.linkedin.com/in/laetitia-tremblay-b0619b273/)\n",
                 "References:\nDe Palma et al. 2024\nnull\n\nNewbold et al. 2016\nnull\n\nBastion 2023\nnull\n"
             ],
@@ -1433,7 +1433,7 @@
                         ]
                     },
                     "label": "Polygon type",
-                    "doc": "Type of polygon to load. Country or region polygons, World database of Protected Areas (WDPA), Exclusive Economic Zones (EEZs), or a custom polygon of a bounding box.",
+                    "doc": "Type of polygon to load. \n- `Country or region` loads a polygon of the selected country or region. - `Polygon of bounding box` loads a polygon of the bounding box associated with the selected country or region, or the drawn bounding box.\n",
                     "default": "Country or region",
                     "id": "#main/data>load_polygons.yml@68|polygon_type"
                 },
@@ -1458,8 +1458,8 @@
                         "null",
                         "string"
                     ],
-                    "label": "Start date (optional)",
-                    "doc": "Start date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.",
+                    "label": "Start year (optional)",
+                    "doc": "Start year for time series layers. Leave blank if using all available dates.\nMust be one of: 2000, 2005, 2010, 2015, 2020\n",
                     "id": "#main/pipeline@63"
                 },
                 {
@@ -1467,13 +1467,13 @@
                         "null",
                         "string"
                     ],
-                    "label": "End date (optional)",
-                    "doc": "End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.",
+                    "label": "End year (optional)",
+                    "doc": "End year for time series layers. Leave blank if using all available dates.\nMust be one of: 2000, 2005, 2010, 2015, 2020\n",
                     "id": "#main/pipeline@64"
                 },
                 {
                     "label": "Bounding box and CRS",
-                    "doc": "Select a country/region and a CRS to obtain the associated bounding box.",
+                    "doc": "Select a country/region and a CRS to obtain the associated bounding box. You may also draw/input a custom bounding box along with a CRS.",
                     "type": {
                         "type": "record",
                         "name": "#main/pipeline@67/bboxCRS",
@@ -1657,7 +1657,7 @@
                         }
                     },
                     "label": "Summary statistic",
-                    "doc": "Summary statistic for layers",
+                    "doc": "Summary statistic taken across the polygon. Choose one or more.",
                     "default": [
                         "mean"
                     ],
@@ -1834,7 +1834,7 @@
                         "class": "CommandLineTool",
                         "requirements": [
                             {
-                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                                 "class": "DockerRequirement"
                             },
                             {
@@ -2079,7 +2079,7 @@
                 {
                     "type": "File",
                     "label": "Summary statistic",
-                    "doc": "Summary statistic over the polygon",
+                    "doc": "Summary statistic over the polygon.",
                     "outputSource": "#main/zonal_statistics>zonal_stats.yml@25/zonal_stats_out",
                     "id": "#main/zonal_statistics>zonal_stats.yml@25|zonal_stats_out"
                 }

@@ -10,7 +10,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -496,7 +496,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -708,7 +708,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1123,7 +1123,7 @@
             "class": "Workflow",
             "label": "Plant phenology index pipeline (Europe only)",
             "doc": [
-                "Description:\n## Introduction\nPhenology is one of the species trait EBVs. It describes presence, absence, abundance or duration of seasonal activities of organisms. This pipeline uses the openEO python package to pull phenology layers from the copernicus data space ecosystem phenology layer. The raster has values for the Plant Phenology Index (PPI), which is a vegetation index that helps estimate vegetation health and photosyntehtic activity throughout the growing season. It is more directly related to plant phenology compared to other vegetation indices like NDVI, and does not saturate in high biomass conditions. It is computed with near infrared reflectance, which is strongly reflected by healthy vegetation. \nYou can read more about the phenology layers [here](https://land.copernicus.eu/en/dataset-catalog). The script pulls the yearly phenology layers using openEO and resamples them to the spatial resolution of choice, calculates summary statistics over a country or region of interest, and subtracts the rasters to look at change over time.\n## Context\nThis pipeline can be used to look at the Phenology EBV. It can also serve as inputs for subsequent pipelines,  such as species distribution models.\n## Pipeline limitations \n* Phenology layers are only available for countries in Europe.\n* The pipeline uses a very fine resolution, so it takes a long time to run on for large areas.\n## Before you start\nThe pipeline requires an API key for the Copernicus Data Space Ecosystem. To acquire an API key, visit the CDSE [website](https://dataspace.copernicus.eu/analyse/openeo).\n",
+                "Description:\n## Introduction\nPhenology is one of the species trait EBVs. It describes presence, absence, abundance or duration of seasonal activities of organisms. This pipeline uses the openEO python package to pull phenology layers from the copernicus data space ecosystem phenology layer. The raster has values for the Plant Phenology Index (PPI), which is a vegetation index that helps estimate vegetation health and photosyntehtic activity throughout the growing season. It is more directly related to plant phenology compared to other vegetation indices like NDVI, and does not saturate in high biomass conditions. It is computed with near infrared reflectance, which is strongly reflected by healthy vegetation. \nYou can read more about the phenology layers [here](https://land.copernicus.eu/en/dataset-catalog). The script pulls the yearly phenology layers using openEO and resamples them to the spatial resolution of choice, calculates summary statistics over a country or region of interest, and subtracts the rasters to look at change over time.\n## Uses\nThis pipeline can be used to look at the Phenology EBV. It can also serve as inputs for subsequent pipelines,  such as species distribution models.\n## Pipeline limitations \n* Phenology layers are only available for countries in Europe.\n* The pipeline uses a very fine resolution, so it takes a long time to run on for large areas.\n## Before you start\nThe pipeline requires an API key for the Copernicus Data Space Ecosystem. To acquire an API key, visit the CDSE [website](https://dataspace.copernicus.eu/analyse/openeo).\nYIf you are using BON in a Box locally you can \n",
                 "Lifecycle tag: In development.",
                 "Authors:\nJory Griffith (Pipeline Development, jory.griffith@gmail.com, https://orcid.org/0000-0001-6020-6690)\nLaetitia Tremblay (Pipeline testing, debugging, and documentation, laetitia.tremblay@mcgill.ca, https://www.linkedin.com/in/laetitia-tremblay-b0619b273/)\n",
                 "External link: https://land.copernicus.eu/en/products/vegetation"
@@ -1155,7 +1155,7 @@
                         ]
                     },
                     "label": "Polygon type",
-                    "doc": "Type of polygon to load. Country or region polygons, World database of Protected Areas (WDPA), Exclusive Economic Zones (EEZs), or a custom polygon of a bounding box.",
+                    "doc": "Type of polygon to load. \n- `Country or region` loads a polygon of the selected country or region. - `Polygon of bounding box` loads a polygon of the bounding box associated with the selected country or region, or the drawn bounding box.\n",
                     "default": "Country or region",
                     "id": "#main/data>load_polygons.yml@69|polygon_type"
                 },
@@ -1249,7 +1249,7 @@
                         "string"
                     ],
                     "label": "Start year",
-                    "doc": "Start date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.",
+                    "doc": "Start yearfor time series layers. Leave blank if using all available dates.",
                     "default": "2017",
                     "id": "#main/pipeline@44"
                 },
@@ -1259,13 +1259,13 @@
                         "string"
                     ],
                     "label": "End year",
-                    "doc": "End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.",
+                    "doc": "End year for time series layers. Leave blank if using all available dates.",
                     "default": "2024",
                     "id": "#main/pipeline@45"
                 },
                 {
                     "label": "Bounding box and CRS",
-                    "doc": "Select a country/region and a CRS to obtain the associated bounding box.",
+                    "doc": "Select a country/region and a CRS to obtain the associated bounding box. You may also draw/input a custom bounding box along with a CRS.\nThis pipeline can only be run in **Europe**.\n",
                     "type": {
                         "type": "record",
                         "name": "#main/pipeline@68/bboxCRS",
@@ -1598,7 +1598,7 @@
                         "class": "CommandLineTool",
                         "requirements": [
                             {
-                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                                 "class": "DockerRequirement"
                             },
                             {

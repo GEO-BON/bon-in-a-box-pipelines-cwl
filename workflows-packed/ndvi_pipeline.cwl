@@ -9,7 +9,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -398,7 +398,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -955,7 +955,7 @@
                         ]
                     },
                     "label": "Polygon type",
-                    "doc": "Type of polygon to load. Country or region polygons, World database of Protected Areas (WDPA), Exclusive Economic Zones (EEZs), or a custom polygon of a bounding box.",
+                    "doc": "Type of polygon to load. \n- `Country or region` loads a polygon of the selected country or region. - `Polygon of bounding box` loads a polygon of the bounding box associated with the selected country or region, or the drawn bounding box.\n",
                     "default": "Country or region",
                     "id": "#main/data>load_polygons.yml@211|polygon_type"
                 },
@@ -977,7 +977,7 @@
                 },
                 {
                     "label": "Bounding box and CRS",
-                    "doc": "Select a country/region and a CRS to obtain the associated bounding box.",
+                    "doc": "Select a country/region and a CRS to obtain the associated bounding box. You may also draw/input a custom bounding box along with a CRS.",
                     "type": {
                         "type": "record",
                         "name": "#main/pipeline@210/bboxCRS",
@@ -1260,7 +1260,7 @@
                         "class": "CommandLineTool",
                         "requirements": [
                             {
-                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                                 "class": "DockerRequirement"
                             },
                             {

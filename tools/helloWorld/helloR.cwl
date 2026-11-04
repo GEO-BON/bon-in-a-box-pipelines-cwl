@@ -91,7 +91,7 @@ requirements:
 
 
   DockerRequirement:
-    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a
+    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
     #     $include: ../runners/cwl/conda-cwl.dockerfile
@@ -136,7 +136,7 @@ arguments:
         a_boolean: inputs.a_boolean,
         options_example: inputs.options_example,
         multi_options_example: inputs.multi_options_example,
-        freeflow_text: inputs.freeflow_text ? inputs.freeflow_text.path : null,
+        freeflow_text: inputs.freeflow_text,
         country: inputs.country,
         country_region: inputs.country_region,
         country_region_crs: inputs.country_region_crs,
@@ -240,7 +240,7 @@ inputs:
     - eleventh option
 
   freeflow_text:
-    type: File?
+    type: string?
     label: Freeflow text
     doc: This is regular text, and can have multiple lines.
     default: |
@@ -479,17 +479,16 @@ inputs:
 
 outputs:
   text_out:
-    type: File
+    type: string
     label: Text
-    doc: We can add plain text. _Output descirptions can use MarkDown too._
+    doc: We can add plain text. _Output descriptions can use MarkDown too._
     outputBinding:
       glob: "output.json"
       loadContents: true
       outputEval: |
         ${
           var value = extractOutput(self, "text");
-          if (value === null) return null;
-          return { class: "File", location: "file://" + value };
+          return value;
         }
 
   number_out:

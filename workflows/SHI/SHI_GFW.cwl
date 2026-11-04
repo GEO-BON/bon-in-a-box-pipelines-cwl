@@ -10,7 +10,15 @@ label: Species Habitat Index
 doc:
   - |
     Description:
-    This pipeline takes the outputs from the Species Habitat Score (SHS) pipeline and measures the Species Habitat Index for the species used as inputs, following the methodology proposed for Jetz et al. 2022 (https://cdn.mol.org/static/files/indicators/habitat/WCMC-species_habitat_index-15Feb2022.pdf). The index has two componentes an Area Score and a Connectivity score that are measured for the habitat of the required species (Species Habitat Score),  the Species Habitat Index is the average between those scores for the study area  Index. It can also have weight values assigned according to the proportion of the area of the habitat of the species that is located in the study area.
+    ## Introduction   
+    The Species Habitat Index (SHI) is a component indicator for the Global Biodiversity Framework (GBF).  SHI tracks changes in ecological integrity by measuring the change in the quality and connectivity of habitats of species.  It is a composite of Species Habitat Scores (SHS), which measure the amount of suitable area for a single species of interest, relative to its total range size.  
+    This pipeline takes the outputs from the Species Habitat Score (SHS) pipeline and measures the Species Habitat Index for the species used as inputs, following the methodology proposed for [Jetz et al. 2022](https://cdn.mol.org/static/files/indicators/habitat/WCMC-species_habitat_index-15Feb2022.pdf). The index has two components: 1) an Area Score and a 2) Connectivity score that are measured for the habitat of the required species (Species Habitat Score),  the Species Habitat Index is the average between those scores for the study area  Index. It can also have weight values assigned according to the proportion of the area of the habitat of the species that is located in the study area.
+    ## Uses
+    SHI is an important indicator for assessing progress towards Goal A of the GBF, which calls for the enhanced integrity of natural ecosystems. [Read more about how SHI can be used to assess progress toward goal A](https://cdn.mol.org/static/files/indicators/habitat/WCMC-species_habitat_index-15Feb2022.pdf).  
+    ## Pipeline limitations  
+    Currently, the pipeline uses only Global Forest Watch data to measure change in habitat, so the pipeline is limited to calcualting SHI for forest species.
+    ## Before you start  
+    To use this pipeline, you’ll need an [IUCN token](https://api.iucnredlist.org/users/sign_up) to access data on the International Union for Conservation of Nature (IUCN) species range polygons. species.
   - |
     Authors:
     Maria Isabel Arce-Plata (Pipeline development, https://orcid.org/0000-0003-4024-9268)
@@ -108,7 +116,10 @@ inputs:
   pipeline@112:
     type: File?
     label: Study area
-    doc: Path to the study area file. This file should be a polygon with a .gpkg extension or .shp (in this case do not foget to add the projection file to the folder). This input is optional and can be used if the user wants to provide a custom study area.
+    doc: >
+      Path to the study area file (e.g. /userdata/shi_studyarea/studyarea.shp). 
+      
+      This file should be a polygon with a .gpkg extension or .shp (in this case do not foget to add the projection file to the folder). This input is optional and can be used if the user wants to provide a custom study area.
 
   data>getAreaOfHabitat.yml@80|buff_size:
     type: int?
@@ -138,6 +149,19 @@ inputs:
     doc: >
       Source of the expert range map for the species. The options are:
       Map of Life (MOL), International union for conservation of nature (IUCN) and range maps from the Ministère de l’Environnement du Québec (QC).
+      
+      Check that your species is listed in the source's lookup table before running:
+      
+        - IUCN (International Union for Conservation of Nature): mammals, amphibians, reptiles and some plants (only plants with digitised IUCN range maps).
+        [Species list (column "binomial")](https://object-arbutus.cloud.computecanada.ca/bq-io/io/IUCN_rangemaps/iucn_fid_binomials.csv)
+      
+        - MOL (Map of Life): mammals only.
+        [Species list (column "sciname")](https://object-arbutus.cloud.computecanada.ca/bq-io/io/mol_range_maps/mol_mammals.csv)
+      
+        - QC (Ministère de l'Environnement du Québec): mammals, reptiles and amphibians, Québec extent only. Type names without accents.
+        [Species list (column "NOM_SCIENT")](https://object-arbutus.cloud.computecanada.ca/bq-io/io/qc_range_maps/qc_range_maps.csv)
+      
+        Birds are not currently available from any source.
     default: IUCN
 
   data>getAreaOfHabitat.yml@80|r_range_map:
@@ -353,7 +377,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs

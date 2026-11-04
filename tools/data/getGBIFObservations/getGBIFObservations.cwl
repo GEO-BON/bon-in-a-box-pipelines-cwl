@@ -82,7 +82,7 @@ requirements:
 
 
   DockerRequirement:
-    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a
+    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
     #     $include: ../runners/cwl/conda-cwl.dockerfile
@@ -134,7 +134,7 @@ arguments:
 
     source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION "data__getGBIFObservations__getGBIFObservations" \
     "channels: [conda-forge]
-    dependencies: [pygbif, pandas, pyproj]
+    dependencies: [pygbif=0.6.6, pandas, pyproj]
     name: data__getGBIFObservations__getGBIFObservations
     " /conda-envs "$CONDA_PACK_URL" >> "$log" 2>&1
 

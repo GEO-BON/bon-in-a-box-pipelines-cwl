@@ -6,7 +6,7 @@ runFolder:  # type 'Directory' (optional)
     path: a/directory/path
 protconn_analysis>protconn_analysis.yml@8|years: 2025  # default value of type 'int'. (optional)
 protconn_analysis>protconn_analysis.yml@8|year_int: 20  # default value of type 'int'. (optional)
-protconn_analysis>protconn_analysis.yml@8|time_series: true  # default value of type 'boolean'. (optional)
+protconn_analysis>protconn_analysis.yml@8|time_series: false  # type 'boolean' (optional)
 protconn_analysis>protconn_analysis.yml@8|start_year: 1980  # default value of type 'int'. (optional)
 protconn_analysis>protconn_analysis.yml@8|pa_size_threshold: 1000  # default value of type 'float'. (optional)
 protconn_analysis>protconn_analysis.yml@8|include_na_dates: true  # default value of type 'boolean'. (optional)

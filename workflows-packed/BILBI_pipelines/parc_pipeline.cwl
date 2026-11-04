@@ -10,7 +10,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -212,7 +212,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -565,7 +565,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -1046,7 +1046,7 @@
             "class": "Workflow",
             "label": "Protected Area Representativeness and Connectedness (PARC)",
             "doc": [
-                "Description:\n## Introduction  \nThe Protected Area Representativeness and Connectedness (PARC) indices measure  the extent to which terrestrial protected areas, and other effective area-based conservation measures (OECMs), are ecologically representative, and well-connected - both to one another, and to other areas of intact natural ecosystems in the surrounding landscape (Hoskins et al., 2022).  \nThe PARC-representativeness index provides a rigorous measure of the extent to which a system of terrestrial protected areas and OECMs is ecologically representative of the full range of environmental and biological diversity within any given spatial reporting unit (e.g. country, broad ecosystem time).  The PARC- connectedness index provides a rigorous measure of the extent to which protected areas and OECMs are functionally connected to one another and to other areas of intact natural ecosystems.\nTogether, the composite PARC indicator offers a measure of progress in the expansion of any system of protected areas and OECMs. The indicator is expressed in proportional (or percent) coverage with the position of any given reporting unit on this scale rigorously adjusted for the effects of both representativeness and connectedness.\nThis pipeline calculates a weighted geometric mean of the PARC indicator over a region of interest.  The code to calculate the weighted mean was adapted from the \"Calculating weighted geometric means of CSIRO BILBI indicator\" script on the CSIRO data access portal](https://doi.org/10.25919/edwj-4b67) ## Uses\nThe PARC indices assess Goal A and Target 3 of the GBF, whether generated separately or as a composite, are used to monitor and report past-to-present trends in representativeness and connectedness by repeated calculation using best-available mapping of protected areas and OECMs at multiple points in time, e.g. for different years. They can also provide a foundation for assessing the contribution that potential additions to the system of protected areas and OECMs might make to improving present PARC scores, thereby providing a foundation for prioritising such actions.\n### Pipeline limitations\n- PARC is a modeled layer, therefore there are greater uncertainties in areas with less data. Interpret the results with caution.\n",
+                "Description:\n## Introduction  \n\nThe Protected Area Representativeness and Connectedness (PARC) indices measure  the extent to which terrestrial protected areas, and other effective area-based conservation measures (OECMs), are ecologically representative, and well-connected - both to one another, and to other areas of intact natural ecosystems in the surrounding landscape (Hoskins et al., 2022).  \n\nThe PARC-representativeness index provides a rigorous measure of the extent to which a system of terrestrial protected areas and OECMs is ecologically representative of the full range of environmental and biological diversity within any given spatial reporting unit (e.g. country, broad ecosystem time).  The PARC- connectedness index provides a rigorous measure of the extent to which protected areas and OECMs are functionally connected to one another and to other areas of intact natural ecosystems.\n\nTogether, the composite PARC indicator offers a measure of progress in the expansion of any system of protected areas and OECMs. The indicator is expressed in proportional (or percent) coverage with the position of any given reporting unit on this scale rigorously adjusted for the effects of both representativeness and connectedness.\n\nThis pipeline calculates a weighted geometric mean of the PARC indicator over a region of interest.  The code to calculate the weighted mean was adapted from the \"Calculating weighted geometric means of CSIRO BILBI indicator\" script on the CSIRO data access portal](https://doi.org/10.25919/edwj-4b67) \n\n## Uses\nThe PARC indices assess Goal A and Target 3 of the GBF, whether generated separately or as a composite, are used to monitor and report past-to-present trends in representativeness and connectedness by repeated calculation using best-available mapping of protected areas and OECMs at multiple points in time, e.g. for different years. They can also provide a foundation for assessing the contribution that potential additions to the system of protected areas and OECMs might make to improving present PARC scores, thereby providing a foundation for prioritising such actions.\n\n## Pipeline limitations\n- PARC is a modeled layer, therefore there are greater uncertainties in areas with less data. Interpret the results with caution.\n",
                 "Lifecycle tag: In review.",
                 "Authors:\nJory Griffith (jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)\nNina Obiar (nina.obiar@mcgill.ca, https://orcid.org/0009-0002-6555-9908)\n",
                 "References:\nHarwood et al. 2022\nnull\n\nHoskins et al.,2020\nnull\n"
@@ -1074,8 +1074,8 @@
                         "null",
                         "string"
                     ],
-                    "label": "Start date (optional)",
-                    "doc": "Start date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.",
+                    "label": "Start year (optional)",
+                    "doc": "Start year for time series layers. Leave blank if using all available dates.\nMust be one of: 1970, 1980, 1990, 2000, 2005, 2015, 2010, 2020, 2024\n",
                     "id": "#main/data>loadFromStac.yml@1|t0"
                 },
                 {
@@ -1083,8 +1083,8 @@
                         "null",
                         "string"
                     ],
-                    "label": "End date (optional)",
-                    "doc": "End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.",
+                    "label": "End year (optional)",
+                    "doc": "End year for time series layers. Leave blank if using all available dates.\nMust be one of: 1970, 1980, 1990, 2000, 2005, 2015, 2010, 2020, 2024\n",
                     "id": "#main/data>loadFromStac.yml@1|t1"
                 },
                 {
@@ -1093,7 +1093,7 @@
                         "string"
                     ],
                     "label": "Temporal resolution (optional)",
-                    "doc": "Temporal resolution to use when querying STAC items by date, in the format (\"P\", time interval, and time unit, e.g. \"P1Y\" is yearly, \"P1M\" is monthly, and \"P1D\" is daily). Leave blank if not querying by date. If the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated with the aggregation method chosen below.",
+                    "doc": "Temporal resolution to use when querying STAC items by date, in the format (\"P\", time interval, and time unit, e.g. \"P1Y\" is yearly, \"P1M\" is monthly, and \"P1D\" is daily). Leave blank if not querying by date. \nMust be one of: P5Y, P10Y, P15Y, P20Y\nIf the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated with the aggregation method chosen below.\n",
                     "id": "#main/data>loadFromStac.yml@1|temporal_res"
                 },
                 {
@@ -1105,7 +1105,7 @@
                         ]
                     },
                     "label": "Polygon type",
-                    "doc": "Type of polygon to load. Country or region polygons, World database of Protected Areas (WDPA), Exclusive Economic Zones (EEZs), or a custom polygon of a bounding box.",
+                    "doc": "Type of polygon to load.  - `Country or region` loads a polygon of the selected country or region. - `Polygon of bounding box` loads a polygon of the bounding box associated with the selected country or region, or the drawn bounding box.\n",
                     "default": "Country or region",
                     "id": "#main/data>load_polygons.yml@25|polygon_type"
                 },
@@ -1602,7 +1602,7 @@
                         "class": "CommandLineTool",
                         "requirements": [
                             {
-                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                                 "class": "DockerRequirement"
                             },
                             {

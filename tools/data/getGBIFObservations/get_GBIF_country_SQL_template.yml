@@ -1,0 +1,24 @@
+start_year: 1970  # default value of type 'int'. (optional)
+scripts_root:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+scriptPath: data/getGBIFObservations/get_GBIF_country_SQL.R  # default value of type 'string'.
+runFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+environment:  # type 'File' (optional)
+    class: File
+    path: a/file/path
+envFolderWritable: true  # default value of type 'boolean'.
+envFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: a/directory/path
+end_year: 2025  # default value of type 'int'. (optional)
+country_name:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/data/getGBIFObservations/get_GBIF_country_SQL.cwl#country_name/country" record type.
+    country:  # "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/tools/data/getGBIFObservations/get_GBIF_country_SQL.cwl#country_name/country/country/countryDefinition" record type.
+        bboxWGS84:  # array of type 'float' (optional)
+          - 0.1
+        ISO3: a_string  # type 'string' (optional)
+        englishName: a_string  # type 'string' (optional)
+condaPackURL: 
+    https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/  # default value of type 'string'.

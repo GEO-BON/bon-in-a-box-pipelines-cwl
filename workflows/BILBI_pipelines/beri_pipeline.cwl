@@ -11,17 +11,23 @@ doc:
   - |
     Description:
     ## Introduction
-    The CSIRO Bioclimatic Ecosystem Resilience Index (BERI) is a recognised component indicator within the Kunming-Montreal Global Biodiversity Framework (GBF) to directly asses Target 8, which aims to minimize the impacts of climate change on biodiversity and build resilience. BERI measures the capacity of natural ecosystems to retain biodiversity in the face of climate change (Ferrier et al., 2020). The indicator is a function of ecosystem area, connectivity and integrity. BERI is a global 30 arc-second product for the years 2000, 2005, 2010, 2015 and 2020 and is based on data for more than 400,000 species of plants, vertebrates, and invertebrates (Harwood et al., 2022). 
-    BERI assesses how well a landscape's configuration of natural habitat is able to accommodate climate-driven shifts in species distributions. For each grid-cell of natural habitat, the index evaluates the cell's functional connectivity to surrounding areas that are projected to be able to support an assemblage of species similar to the one currently associated with that cell, in the face of climate change. Cells with well-connected habitat score highly, while isolated areas with no acccessible climatic analogue score poorly. The indicator can then be aggregated and reported by any desired spatial unit – e.g. an ecosystem type, a country, or the entire planet. This pipeline calculates a weighted geometric mean of the BERI indicator over a region of interest.The code to calculate the weighted mean was adapted from the "Calculating weighted geometric means of CSIRO BILBI indicator" script on the [CSIRO data access portal](https://doi.org/10.25919/4vvz-4j96)
+    The CSIRO Bioclimatic Ecosystem Resilience Index (BERI) is a recognized complementary indicator within the Kunming-Montreal Global Biodiversity Framework (GBF). It supports monitoring of Target 8 of the GBF, which aims to minimize the impacts of climate change on biodiversity and build resilience. BERI measures the capacity of natural ecosystems to retain biodiversity in the face of climate change (Ferrier et al., 2020). The indicator is a function of ecosystem area, connectivity and integrity. BERI is a global 30 arc-second product for the years 2000, 2005, 2010, 2015, and 2020 and is modelled from data for more than 400,000 species of plants, vertebrates, and invertebrates (Harwood et al., 2022).
+    
+    BERI assesses how well a landscape's configuration of natural habitat is able to accommodate climate-driven shifts in species distributions. For each grid-cell of natural habitat, the index evaluates the cell's functional connectivity to surrounding areas that are projected to be able to support an assemblage of species similar to the one currently associated with that cell, in the face of climate change. Cells with well-connected habitat score highly, while isolated areas with no accessible climatic analogue score poorly. The indicator can then be aggregated and reported by any desired spatial unit (e.g. an ecosystem type, a country, or the entire planet).
+    
+    This pipeline does not calculate BERI. It summarises the CSIRO BERI layers as a weighted geometric mean over a region of interest. The code to calculate the weighted mean was adapted from the "Calculating weighted geometric means of CSIRO BILBI (Biogeographic modelling Infrastructure for Large-scale Biodiversity Indicators) indicator" script on the [CSIRO data access portal](https://doi.org/10.25919/4vvz-4j96).
     ## Uses
-    BERI can be used to assess Target 8 of the GBF. This indicator can be used to monitor and report past-to-present trends of the resilience of ecosystem condition and connectivity in the face of ongoing climate change. The index repeatedly recalculates the indicator using the best-available mapping of ecosystem condition or integrity observed at multiple points in time.
+    BERI can be used to monitor and report past-to-present trends in the resilience of ecosystem condition and connectivity in the face of ongoing climate change, in support of Target 8 of the GBF. BERI is calculated separately for each time point using the best available mapping of ecosystem condition (integrity) for that year.
     ## Pipeline limitations
-    - BERI is a modeled layer, therefore there are greater uncertainties in areas with less data.  Interpret the results with caution.
+    - BERI is a modeled layer, therefore there are greater uncertainties in areas with less data. Interpret the results with caution.
+    - The pipeline summarises existing BERI layers; it cannot use custom data.
+    - BERI is only available for 2000, 2005, 2010, 2015 and 2020, at 30 arc-second (roughly 1 km) resolution.
   - "Lifecycle tag: In review."
   - |
     Authors:
     Jory Griffith (jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)
     Nina Obiar (nina.obiar@mcgill.ca, https://orcid.org/0009-0002-6555-9908)
+    Samara Manzin (samara.manzin@mcgill.ca, https://orcid.org/0009-0005-9134-9981)
   - |
     References:
     Ferrier et al. 2020
@@ -103,23 +109,38 @@ inputs:
         - Country or region
         - Polygon of bounding box
     label: Polygon type
-    doc: Type of polygon to load. Country or region polygons, World database of Protected Areas (WDPA), or Exclusive Economic Zones (EEZs).
+    doc: >
+      Type of polygon to load. 
+      
+      - `Country or region` loads a polygon of the selected country or region.
+      - `Polygon of bounding box` loads a polygon of the bounding box associated with the selected country or region, or the drawn bounding box.
     default: Country or region
 
   data>loadFromStac.yml@1|t0:
     type: string?
-    label: Start date (optional)
-    doc: Start date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
+    label: Start year (optional)
+    doc: >
+      Start year for time series layers. Leave blank if using all available dates.
+      
+      Must be one of: 2000, 2005, 2015, 2010, 2020
 
   data>loadFromStac.yml@1|t1:
     type: string?
-    label: End date (optional)
-    doc: End date for time series layers. Can be in the format YYYY or YYYY-MM-DD. Leave blank if using all available dates.
+    label: End year (optional)
+    doc: >
+      End year for time series layers. Leave blank if using all available dates.
+      
+      Must be one of: 2000, 2005, 2015, 2010, 2020
 
   data>loadFromStac.yml@1|temporal_res:
     type: string?
     label: Temporal resolution (optional)
-    doc: Temporal resolution to use when querying STAC items by date, in the format ("P", time interval, and time unit, e.g. "P1Y" is yearly, "P1M" is monthly, and "P1D" is daily). Leave blank if not querying by date. If the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated with the aggregation method chosen below.
+    doc: >
+      Temporal resolution to use when querying STAC items by date, in the format ("P", time interval, and time unit, e.g. "P1Y" is yearly, "P1M" is monthly, and "P1D" is daily). Leave blank if not querying by date. 
+      
+      Must be one of: P5Y, P10Y, P15Y, P20Y
+      
+      If the temporal resolution is coarser than the temporal resolution of the time series, the layers will be aggregated with the aggregation method chosen below.
 
   pipeline@19:
     type: float?
@@ -285,7 +306,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs
@@ -447,11 +468,11 @@ steps:
 
 
 outputs:
-  data>loadFromStac.yml@1|rasters_out:
-    type: File[]
-    label: Raster layers of indicator for each year
-    doc: Output raster files in geotiff format.
-    outputSource: data>loadFromStac.yml@1/rasters_out
+  bilbi_indicators>bilbi_weighted_mean.yml@0|time_series_plot_out:
+    type: File
+    label: Time series plot
+    doc: Plot of the geometric mean of the indicator over time in the study area of interest
+    outputSource: bilbi_indicators>bilbi_weighted_mean.yml@0/time_series_plot_out
 
   bilbi_indicators>bilbi_weighted_mean.yml@0|summarised_values_out:
     type: File
@@ -463,9 +484,9 @@ outputs:
       The value, ranging from 0 to 1 represents the proportion of connected habitat expected to remain under climate change compared to what would exist without human modification or climate change.
     outputSource: bilbi_indicators>bilbi_weighted_mean.yml@0/summarised_values_out
 
-  bilbi_indicators>bilbi_weighted_mean.yml@0|time_series_plot_out:
-    type: File
-    label: Time series plot
-    doc: Plot of the geometric mean of the indicator over time in the study area of interest
-    outputSource: bilbi_indicators>bilbi_weighted_mean.yml@0/time_series_plot_out
+  data>loadFromStac.yml@1|rasters_out:
+    type: File[]
+    label: Raster layers of indicator for each year
+    doc: Output raster files in geotiff format.
+    outputSource: data>loadFromStac.yml@1/rasters_out
 

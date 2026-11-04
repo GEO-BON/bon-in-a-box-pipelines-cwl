@@ -167,8 +167,8 @@ inputs:
   protconn_analysis>protconn_analysis.yml@8|time_series:
     type: boolean?
     label: Time series
-    doc: Toggle on to calculate a time series ProtConn values based on date of PA establishment
-    default: true
+    doc: Toggle on if you have more than one year of data in your input protected areas to calculate a time series ProtConn values based on date of PA establishment
+    default: false
 
   protconn_analysis>protconn_analysis.yml@8|start_year:
     type: int?
@@ -318,7 +318,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs
@@ -441,6 +441,24 @@ outputs:
     doc: Protected areas polygons for the ProtConn calculation. Overlapping protected areas have been merged to speed up calculation.
     outputSource: protconn_analysis>protconn_analysis.yml@8/protected_areas_out
 
+  protconn_analysis>protconn_analysis.yml@8|result_plot_out:
+    type: File
+    label: ProtConn result plot
+    doc: Donut plot of the percentage of total area that is unprotected, protected and connected, and protected and unconnected for each input dispersal distance (in meters).
+    outputSource: protconn_analysis>protconn_analysis.yml@8/result_plot_out
+
+  protconn_analysis>protconn_analysis.yml@8|result_yrs_plot_out:
+    type: File[]
+    label: ProtConn time series plot
+    doc: Change in the percentage area that is protected and the percentage that is protected and connected over time, at the chosen time interval, compared to the Kunming-Montreal GBF goals.
+    outputSource: protconn_analysis>protconn_analysis.yml@8/result_yrs_plot_out
+
+  protconn_analysis>protconn_analysis.yml@8|result_yrs_out:
+    type: File
+    label: ProtConn time series results
+    doc: Table of the time series of ProtConn and ProtUnconn values, calculated at the time interval that is specified.
+    outputSource: protconn_analysis>protconn_analysis.yml@8/result_yrs_out
+
   protconn_analysis>protconn_analysis.yml@8|protconn_result_out:
     type: File
     label: ProtConn results
@@ -452,22 +470,4 @@ outputs:
             coming from within the protected area, without species having to traverse unprotected land. "ProtConn Contig"
             is the proportion connected through direct physical adjascency, capturing the value of neighboring or touching PAs.
     outputSource: protconn_analysis>protconn_analysis.yml@8/protconn_result_out
-
-  protconn_analysis>protconn_analysis.yml@8|result_plot_out:
-    type: File
-    label: ProtConn result plot
-    doc: Donut plot of the percentage of total area that is unprotected, protected and connected, and protected and unconnected for each input dispersal distance (in meters).
-    outputSource: protconn_analysis>protconn_analysis.yml@8/result_plot_out
-
-  protconn_analysis>protconn_analysis.yml@8|result_yrs_out:
-    type: File
-    label: ProtConn time series results
-    doc: Table of the time series of ProtConn and ProtUnconn values, calculated at the time interval that is specified.
-    outputSource: protconn_analysis>protconn_analysis.yml@8/result_yrs_out
-
-  protconn_analysis>protconn_analysis.yml@8|result_yrs_plot_out:
-    type: File[]
-    label: ProtConn time series plot
-    doc: Change in the percentage area that is protected and the percentage that is protected and connected over time, at the chosen time interval, compared to the Kunming-Montreal GBF goals.
-    outputSource: protconn_analysis>protconn_analysis.yml@8/result_yrs_plot_out
 

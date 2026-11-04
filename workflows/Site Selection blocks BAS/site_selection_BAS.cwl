@@ -15,26 +15,24 @@ doc:
     
     Here we present a method that uses balanced acceptance sampling to randomly select  sampling sites in a defined area, and allows for the prioritization of environmentally different regions within the study area.    
     ## Uses
-    Selection of sampling sites using a BAS algorithm with two different approches (equal and unequal sampling distribution). 
+    Selection of sampling sites using a BAS algorithm with two different approches (equal and unequal sampling distribution).
+    ## Methodology
+    In a first step, the pipeline performs a  [Principal Component Analysis (PCA)](https://en.wikipedia.org/wiki/Principal_component_analysis) on the user defined environmental variables. It grids them to produce environmental  blocks based on the two axis of the simplified environemental space.  The grid size is user-defined. When only two environmental variables are provided, no PCA is performed and the raw variables are used.
     
-    In a first step, the pipeline produces environmental blocks based on user defined environmental variables (after performing a PCA analysis on said variables and defining a block grid) and can use those blocks to generate an unequal sampling distribution.  
+    In a second step, it uses the blocks to generate an unequal sampling distribution. The user specifies a target sample size to be allocated using a randomly balanced design. When the “unequal” option is selected, the inclusion probability of each block is proportional to its area, ensuring that larger blocks have a higher chance of being sampled.
     
-    Blocks are created from PCAs performed on the selected environmental variables or can use only two raw environmental variables, in which case no PCA is performed. 
-    
-    The user must define the grid size for block generation and specify a target  sample size to be allocated using a randomly balanced design. When the “unequal” option  is selected, the inclusion probability of each block is proportional to its area,  ensuring that larger blocks have a higher chance of being sampled.
-    
-    Alternatively, an equal sampling distribution can be selected, where all blocks have the  same probability of selection. The procedure will also plot the randomly selected sampling  points over the environmental blocks, allowing users to visually assess whether certain  areas are underrepresented or missing from the random sampling pattern.
+    Alternatively, an equal sampling distribution can be selected, where all blocks have the same probability of selection. The procedure will also plot the randomly selected sampling  points over the environmental blocks, allowing users to visually assess whether certain areas are underrepresented or missing from the random sampling pattern.
     ## Limitations 
     * Currently the pipeline only works for a defined geopolitical outline (e.g. country, or province). 
     * Unequal sampling may produce unexpected results in the balanced appproach. 
     ## Before you start
-    * Define a projected CRS for your study area 
-    * Select environmental variables that may be of ecological importance for your study 
+    * Select environmental variables that may be of ecological importance for your study.
     * Define how many environmental blocks you expect to produce (too many may be noisy, to little may be underrepresenting the environmental diversity). 
   - "Lifecycle tag: In review."
   - |
     Authors:
     Francis van Oordt (francis.vanoordtlahoz@mail.mcgill.ca, https://orcid.org/0000-0002-8471-235X)
+    Samara Manzin (samara.manzin@mcgill.ca, https://orcid.org/0009-0005-9134-9981)
   - |
     References:
     spbal: Spatially Balanced Sampling Algorithms
@@ -59,21 +57,9 @@ inputs:
   #################
   # Script inputs #
   #################
-  data>load_polygons.yml@61|polygon_type:
-    type:
-      type: enum
-      symbols:
-        - Country or region
-        - WDPA
-        - EEZ
-        - Polygon of bounding box
-    label: Polygon type
-    doc: Type of polygon to load. Country or region polygons, World database of Protected Areas (WDPA), Exclusive Economic Zones (EEZs), or a custom polygon of a bounding box.
-    default: Country or region
-
   pipeline@60:
     label: Bounding box and CRS
-    doc: Select a country/region and a CRS to obtain the associated bounding box.
+    doc: elect your country or region of interest, then choose a projected coordinate reference system (CRS) appropriate for the study area using the dropdown.
     type:
       type: record
       name: bboxCRS
@@ -124,13 +110,29 @@ inputs:
           - name: bboxWGS84
             type: float[]?
 
+  data>loadFromStac.yml@2|spatial_res:
+    type: float?
+    label: Spatial resolution
+    doc: Integer, spatial resolution of the rasters in the same units as the coordinate reference system (meters for projected reference systems and degrees for reference systems in lat long). This input may be blank when using ESPG:4326.
+    default: 0.00883
+
+  pipeline@64:
+    type:
+      type: enum
+      symbols:
+        - Country or region
+        - Polygon of bounding box
+    label: Polygon type
+    doc: Type of polygon loaded. If a country or region is selected in the above `Choose Bounding Box`, select `Country or region`. If a bounding box is drawn in the above `Choose Bounding Box`, select `Polygon of bounding box`
+    default: Country or region
+
   data>loadFromStac.yml@2|collections_items:
     type: string[]?
     label: Environmental variables (STAC collection items)
-    doc: Set of environmental variables to use  (e.g. for temperature "chelsa-clim|bio1", precipitation "chelsa-clim|bio12"), on which to run the PCA (a minimum of 2 variables are needed). Environmental variables must be continuous values.
+    doc: Provide at least two continuous environmental raster variables, using the format `collection|item`, such as `chelsa-clim|bio1` and `chelsa-clim|bio12`. The pipeline performs PCA on these variables to create the environmental blocks.
     default:
     - chelsa-clim|bio1
-    - chelsa-clim|bio2
+    - chelsa-clim|bio12
 
   site_selection_BAS>BAS_algorithm.yml@26|options_bas:
     type:
@@ -145,19 +147,34 @@ inputs:
   site_selection_BAS>BAS_algorithm.yml@26|ndesign:
     type: int?
     label: Target total sites
-    doc: A number of target sampling sites to obtain with the algorithm
+    doc: >
+      A number of target sampling sites to obtain with the algorithm. The user must decide on a number of sites based on their sampling goals and scale of the study. 
+      
+      Larger study areas should have greater number of sampling locations, but constraints exist (e.g budget, staff, etc.) that may limit sampling locations and coverage. 
+      
+      Researchers should take into account their specifics sampling goals and timelines, and proceed with caution. 
     default: 100
 
   site_selection_BAS>Block_creation.yml@0|n_cols:
     type: int?
     label: Number of columns
-    doc: Number of columns for the environmental space grid (together with rows will define the final number of environmental blocks)
+    doc: >
+      Number of columns for the environmental space grid (together with rows will define the final number of environmental blocks). 
+      
+      Blocks are based on a PCA of the environmental variables selected and represent  a proxy of ecozones in areas with lacking information. 
+      
+      A general recommendation is to start with fewer blocks because it would simplify computation and understanding of the study region, 5-10 blocks, and later increase if needed.
     default: 10
 
   site_selection_BAS>Block_creation.yml@0|n_rows:
     type: int?
     label: Number of rows
-    doc: Number of rows for the environmental space grid (together with columns will define the final number environmental blocks)
+    doc: >
+      Number of rows for the environmental space grid (together with columns will define the final number environmental blocks). 
+      
+      Blocks are based on a PCA of the environmental variables selected and represent  a proxy of ecozones in areas with lacking information. 
+      
+      A general recommendation is to start with fewer blocks because it would simplify computation and understanding of the study region, 5-10 blocks, and later increase if needed.
     default: 10
 
 
@@ -272,7 +289,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs
@@ -374,7 +391,7 @@ steps:
       t0: { default: null }
       t1: { default: null }
       temporal_res: { default: null }
-      spatial_res: { default: 1000.0 }
+      spatial_res: data>loadFromStac.yml@2|spatial_res
       resampling: { default: near }
       aggregation: { default: first }
       study_area: data>load_polygons.yml@61/polygon_out
@@ -417,7 +434,7 @@ steps:
   data>load_polygons.yml@61:
     run: ../../tools/data/load_polygons.cwl
     in:
-      polygon_type: data>load_polygons.yml@61|polygon_type
+      polygon_type: pipeline@64
       country_region_bbox: pipeline@60
       buffer: { default: 0.0 }
       envFolder:
@@ -438,42 +455,42 @@ outputs:
   site_selection_BAS>Block_creation.yml@0|rast_blocks_out:
     type: File[]
     label: Environmental blocks raster
-    doc: Raster file of the study area with the environmental blocks as categorical classes  
+    doc: A categorical GeoTIFF identifying the environmental block assigned to each classified raster cell.
     outputSource: site_selection_BAS>Block_creation.yml@0/rast_blocks_out
 
   site_selection_BAS>Block_creation.yml@0|pca_summary_df_out:
     type: csv
     label: Summary of PCA
-    doc: Principal component analysis summary for the environmental variables included in the analysis
+    doc: A CSV showing the standard deviation, percentage of variance explained, and cumulative percentage of variance explained for the principal components. Use it to assess how much environmental variation the first two components represent.
     outputSource: site_selection_BAS>Block_creation.yml@0/pca_summary_df_out
 
   site_selection_BAS>Block_creation.yml@0|blocks_plot_out:
     type: File
     label: Blocks and map plots
-    doc: Blocks showing the PCA 1 and 2 result and the predefined blocks dividing the environmental space and the map of the environmental blocks in geographic space
+    doc: A figure showing environmental blocks in principal-component space alongside their geographic distribution.
     outputSource: site_selection_BAS>Block_creation.yml@0/blocks_plot_out
 
   site_selection_BAS>BAS_algorithm.yml@26|maps_output_out:
     type: File
     label: Maps output
-    doc: Maps of study area with selected sampling points only (no environmental blocks) and also including the environmental blocks.
+    doc: Two maps showing the proposed sampling sites: one over the study-area polygon and one over the environmental blocks. Use these to inspect geographic and environmental coverage.
     outputSource: site_selection_BAS>BAS_algorithm.yml@26/maps_output_out
 
   data>loadFromStac.yml@2|rasters_out:
     type: File[]
     label: Environmental Rasters
-    doc: Array of environmental rasters (for exploration only)
+    doc: The environmental rasters retrieved for the analysis, provided for inspection and further exploration.
     outputSource: data>loadFromStac.yml@2/rasters_out
 
   site_selection_BAS>BAS_algorithm.yml@26|pts_df_out:
     type: csv
     label: Selected points
-    doc: dataframe of selected points
+    doc: A CSV containing the proposed sites’ longitude and latitude in WGS84 (EPSG:4326), with columns named lon and lat.
     outputSource: site_selection_BAS>BAS_algorithm.yml@26/pts_df_out
 
   site_selection_BAS>BAS_algorithm.yml@26|points_shape_out:
     type: File
-    label: selected points shapefile
-    doc: Vector shapefile of selected points
+    label: Selected points GeoJSON
+    doc: A GeoJSON file containing the proposed sampling locations
     outputSource: site_selection_BAS>BAS_algorithm.yml@26/points_shape_out
 

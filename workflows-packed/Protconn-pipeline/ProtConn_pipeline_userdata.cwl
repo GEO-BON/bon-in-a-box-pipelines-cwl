@@ -10,7 +10,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -499,7 +499,7 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                     "class": "DockerRequirement"
                 },
                 {
@@ -563,7 +563,7 @@
                 },
                 {
                     "ramMin": 6144,
-                    "ramMax": 23841,
+                    "ramMax": 20480,
                     "coresMin": 2,
                     "coresMax": 4,
                     "class": "ResourceRequirement"
@@ -1286,8 +1286,8 @@
                         "boolean"
                     ],
                     "label": "Time series",
-                    "doc": "Toggle on to calculate a time series ProtConn values based on date of PA establishment",
-                    "default": true,
+                    "doc": "Toggle on if you have more than one year of data in your input protected areas to calculate a time series ProtConn values based on date of PA establishment",
+                    "default": false,
                     "id": "#main/protconn_analysis>protconn_analysis.yml@8|time_series"
                 },
                 {
@@ -1382,7 +1382,7 @@
                         "class": "CommandLineTool",
                         "requirements": [
                             {
-                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a",
+                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
                                 "class": "DockerRequirement"
                             },
                             {

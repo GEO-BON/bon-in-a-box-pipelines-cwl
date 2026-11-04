@@ -11,7 +11,7 @@ doc:
   - |
     Description:
     This pipeline extracts zonal statistics for STAC catalog items in a country or subnational region of interest.
-  - "Lifecycle tag: subpipeline."
+  - "Lifecycle tag: Core."
   - |
     Authors:
     Jory Griffith (Pipeline development, jory.griffith@mcgill.ca, https://orcid.org/0000-0001-6020-6690)
@@ -310,7 +310,7 @@ steps:
               );
             }
         DockerRequirement:
-          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-57a4a4a
+          dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335
         EnvVarRequirement:
           envDef:
             CONDA_PKGS_DIRS: /conda-env-yml/pkgs

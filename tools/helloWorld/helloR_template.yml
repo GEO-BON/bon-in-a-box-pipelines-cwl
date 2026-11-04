@@ -27,7 +27,7 @@ intensity: 3  # default value of type 'int'. (optional)
 freeflow_text: |
     This is a multiline example.
     Once there is a line break in the example, it becomes a textarea in the UI.
- # default value of type 'File'. (optional)
+ # default value of type 'string'. (optional)
 environment:  # type 'File' (optional)
     class: File
     path: a/file/path
