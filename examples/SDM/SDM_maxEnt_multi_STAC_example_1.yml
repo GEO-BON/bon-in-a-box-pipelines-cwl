@@ -1,0 +1,84 @@
+# Environment inputs. Refer to the CWL file for more information about each input.
+
+environment: RUNNER.ENV FILE HERE AS URL or file://
+# runFolder:  # type 'Directory' (optional)
+#     class: Directory
+#     path: file:///home/jean-michel/code/cwl-temp/outputs
+# envFolder:  # default value of type 'Directory'.
+#     class: Directory
+#     path: file:///home/jean-michel/code/cwl-temp/envs
+# scripts_root:  # type 'Directory' (optional)
+#     class: Directory
+#     path: a/directory/path
+condaPackURL: "https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/"  # default value of type 'string'.
+
+
+# Script inputs. Refer to the CWL file for more information about each input.
+
+pipeline@46: 1  # default value of type 'int'. (optional)
+pipeline@152: null
+pipeline@151: null
+pipeline@149: null
+pipeline@148: null
+pipeline@147: 2  # default value of type 'int'. (optional)
+pipeline@146: "2024"  # default value of type 'string'. (optional)
+pipeline@145: "2010"  # default value of type 'string'. (optional)
+pipeline@140:  # "file:///home/jean-michel/code/cwl-temp/export/workflows/SDM/SDM_maxEnt.cwl#pipeline@140/bboxCRS" record type.
+  CRS:
+    CRSBboxWGS84:
+      - -79.85
+      - 44.99
+      - -57.1
+      - 62.62
+    authority: EPSG
+    code: 6622
+    name: NAD83(CSRS)v2 / Quebec Lambert
+    proj4Def: >-
+      +proj=lcc +lat_0=44 +lon_0=-68.5 +lat_1=60 +lat_2=46 +x_0=0 +y_0=0
+      +ellps=GRS80 +units=m +no_defs +type=crs
+    unit: metre
+    wktDef: >-
+      PROJCS["NAD83(CSRS)v2 / Quebec
+      Lambert",GEOGCS["NAD83(CSRS)v2",DATUM["North_American_Datum_of_1983_CSRS_version_2",SPHEROID["GRS
+      1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","1193"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","8237"]],PROJECTION["Lambert_Conformal_Conic_2SP"],PARAMETER["latitude_of_origin",44],PARAMETER["central_meridian",-68.5],PARAMETER["standard_parallel_1",60],PARAMETER["standard_parallel_2",46],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","6622"]]
+  bbox:
+    - -836081
+    - 291520
+    - -495420
+    - 791148
+  country:
+    ISO3: CAN
+    bboxWGS84:
+      - -141.00186157226562
+      - 41.67656707763672
+      - -52.61936569213867
+      - 83.13709259033203
+    englishName: Canada
+  region:
+    bboxWGS84:
+      - -79.762878418
+      - 44.9913673401
+      - -57.1054801941
+      - 62.5824661255
+    countryEnglishName: Canada
+    regionID: 82249235B52639524229375
+    regionName: Quebec
+pipeline@128: 10000  # default value of type 'float'.
+pipeline@121:  # array of type 'string'
+  - vulpes vulpes
+data>loadFromStac.yml@150|stac_url: "https://stac.geobon.org/"  # default value of type 'string'. (optional)
+data>loadFromStac.yml@150|collections_items: ["chelsa-clim|bio4"]  # array of type 'string' (optional)
+data>loadFromStac.yml@144|stac_url: "https://stac.geobon.org/"  # default value of type 'string'. (optional)
+data>loadFromStac.yml@144|collections_items: ["chelsa-clim|bio1", "chelsa-clim|bio2"]  # array of type 'string' (optional)
+data>GBIFHeatmapFromSTAC.yml@139|taxa: "plants"  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/SDM/SDM_maxEnt_multi_STAC.cwl#main/data>GBIFHeatmapFromSTAC.yml@139|taxa/reptiles", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/SDM/SDM_maxEnt_multi_STAC.cwl#main/data>GBIFHeatmapFromSTAC.yml@139|taxa/plants", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/SDM/SDM_maxEnt_multi_STAC.cwl#main/data>GBIFHeatmapFromSTAC.yml@139|taxa/mammals", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/SDM/SDM_maxEnt_multi_STAC.cwl#main/data>GBIFHeatmapFromSTAC.yml@139|taxa/birds", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/SDM/SDM_maxEnt_multi_STAC.cwl#main/data>GBIFHeatmapFromSTAC.yml@139|taxa/arthropods", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/SDM/SDM_maxEnt_multi_STAC.cwl#main/data>GBIFHeatmapFromSTAC.yml@139|taxa/amphibians", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/SDM/SDM_maxEnt_multi_STAC.cwl#main/data>GBIFHeatmapFromSTAC.yml@139|taxa/all"
+STAC>createCollection.yml@153|collection_name: "biab-collection"  # default value of type 'string'. (optional)
+STAC>createCollection.yml@153|collection_license: "CC-BY"  # default value of type 'string'. (optional)
+STAC>createCollection.yml@153|collection_description: "SDM of vulpes vulpes."  # default value of type 'string'. (optional)
+SDM>selectBackground.yml@40|n_background: 10000  # default value of type 'int'. (optional)
+SDM>selectBackground.yml@40|method_background: "weighted_raster"  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/SDM/SDM_maxEnt_multi_STAC.cwl#main/SDM>selectBackground.yml@40|method_background/random", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/SDM/SDM_maxEnt_multi_STAC.cwl#main/SDM>selectBackground.yml@40|method_background/inclusion_buffer", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/SDM/SDM_maxEnt_multi_STAC.cwl#main/SDM>selectBackground.yml@40|method_background/weighted_raster", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/SDM/SDM_maxEnt_multi_STAC.cwl#main/SDM>selectBackground.yml@40|method_background/unweighted_raster", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/SDM/SDM_maxEnt_multi_STAC.cwl#main/SDM>selectBackground.yml@40|method_background/thickening"
+SDM>runMaxent.yml@108|rm:  # array of type 'float'
+  - 0.5
+  - 1
+  - 2
+SDM>runMaxent.yml@108|partition_type: "randomkfold"  # enum; valid values: "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/SDM/SDM_maxEnt_multi_STAC.cwl#main/SDM>runMaxent.yml@108|partition_type/randomkfold", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/SDM/SDM_maxEnt_multi_STAC.cwl#main/SDM>runMaxent.yml@108|partition_type/jackknife", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/SDM/SDM_maxEnt_multi_STAC.cwl#main/SDM>runMaxent.yml@108|partition_type/block", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/SDM/SDM_maxEnt_multi_STAC.cwl#main/SDM>runMaxent.yml@108|partition_type/checkerboard1", "https://raw.githubusercontent.com/GEO-BON/bon-in-a-box-pipelines-cwl/refs/heads/main/workflows-packed/SDM/SDM_maxEnt_multi_STAC.cwl#main/SDM>runMaxent.yml@108|partition_type/checkerboard2"
+SDM>runMaxent.yml@108|fc: ["L", "LQ", "LQHP"]  # array of type 'string' (optional)
