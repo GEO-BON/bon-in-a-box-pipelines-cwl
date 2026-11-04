@@ -71,6 +71,10 @@
                 {
                     "networkAccess": true,
                     "class": "NetworkAccess"
+                },
+                {
+                    "ramMin": 5120,
+                    "class": "ResourceRequirement"
                 }
             ],
             "baseCommand": [
@@ -471,6 +475,10 @@
                 {
                     "networkAccess": true,
                     "class": "NetworkAccess"
+                },
+                {
+                    "ramMin": 5120,
+                    "class": "ResourceRequirement"
                 }
             ],
             "baseCommand": [
@@ -959,6 +967,7 @@
                 },
                 {
                     "ramMin": 6144,
+                    "ramMax": 23841,
                     "coresMin": 2,
                     "coresMax": 4,
                     "class": "ResourceRequirement"

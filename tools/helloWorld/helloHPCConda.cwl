@@ -104,8 +104,9 @@ requirements:
       PYTHONUNBUFFERED: "1"
 
   ResourceRequirement:
-    ramMin: 1024
+    ramMin: 953
     coresMin: 1
+    coresMax: 1
 
 baseCommand: ["bash", "-c"]
 arguments:

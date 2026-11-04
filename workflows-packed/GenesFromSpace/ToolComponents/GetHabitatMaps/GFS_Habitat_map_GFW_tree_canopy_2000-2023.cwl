@@ -70,6 +70,10 @@
                 {
                     "networkAccess": true,
                     "class": "NetworkAccess"
+                },
+                {
+                    "ramMin": 5120,
+                    "class": "ResourceRequirement"
                 }
             ],
             "baseCommand": [

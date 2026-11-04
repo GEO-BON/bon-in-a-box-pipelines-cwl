@@ -118,6 +118,7 @@ requirements:
 
   ResourceRequirement:
     ramMin: 6144
+    ramMax: 23841
     coresMin: 2
     coresMax: 4
 

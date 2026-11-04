@@ -518,9 +518,9 @@ steps:
           name: data__loadFromStac
           "'
           
-          bash -c 'getPackedEnv "..__..__..__home__jean-michel__code__pipeline-engine__script-stubs__openEO__LAI.udp" "channels: [conda-forge]
+          bash -c 'getPackedEnv "openEOWrapper_py" "channels: [conda-forge]
           dependencies: [openeo, pyyaml]
-          name: ..__..__..__home__jean-michel__code__pipeline-engine__script-stubs__openEO__LAI.udp
+          name: openEOWrapper_py
           "'
           
           bash -c 'getPackedEnv "summarise_layers__summarise_layers" "channels: [conda-forge, r]
@@ -763,7 +763,7 @@ steps:
 
 
   LAI.udp@161:
-    run: ../../../../home/jean-michel/code/pipeline-engine/script-stubs/openEO/LAI.udp.cwl
+    run: ../../../../home/jean-michel/code/pipeline-engine/output/.local/openEO/LAI.udp.cwl
     in:
       spatial_extent: pipeline@140
       start_date: pipeline@165
@@ -772,7 +772,7 @@ steps:
       temp_aggregator: { default: max }
       envFolder:
         source: preparePackedEnvs/envFolder
-        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/..__..__..__home__jean-michel__code__pipeline-engine__script-stubs__openEO__LAI.udp' } : null)"
+        valueFrom: "$(self ? { class: 'Directory', location: self.location + '/openEOWrapper_py' } : null)"
       envFolderWritable:
         default: false
       runFolder:

@@ -70,6 +70,10 @@
                 {
                     "networkAccess": true,
                     "class": "NetworkAccess"
+                },
+                {
+                    "ramMin": 5120,
+                    "class": "ResourceRequirement"
                 }
             ],
             "baseCommand": [
@@ -236,6 +240,10 @@
                 {
                     "networkAccess": true,
                     "class": "NetworkAccess"
+                },
+                {
+                    "ramMin": 5120,
+                    "class": "ResourceRequirement"
                 }
             ],
             "baseCommand": [
@@ -470,8 +478,9 @@
                 },
                 {
                     "ramMin": 6144,
+                    "ramMax": 22888,
                     "coresMin": 2,
-                    "coresMax": 12,
+                    "coresMax": 7,
                     "class": "ResourceRequirement"
                 }
             ],
@@ -832,6 +841,10 @@
                 {
                     "networkAccess": true,
                     "class": "NetworkAccess"
+                },
+                {
+                    "ramMin": 5120,
+                    "class": "ResourceRequirement"
                 }
             ],
             "baseCommand": [
@@ -1065,6 +1078,10 @@
                 {
                     "networkAccess": true,
                     "class": "NetworkAccess"
+                },
+                {
+                    "ramMin": 5120,
+                    "class": "ResourceRequirement"
                 }
             ],
             "baseCommand": [
@@ -1303,6 +1320,10 @@
                 {
                     "networkAccess": true,
                     "class": "NetworkAccess"
+                },
+                {
+                    "ramMin": 5120,
+                    "class": "ResourceRequirement"
                 }
             ],
             "baseCommand": [
@@ -1582,6 +1603,10 @@
                 {
                     "networkAccess": true,
                     "class": "NetworkAccess"
+                },
+                {
+                    "ramMin": 5120,
+                    "class": "ResourceRequirement"
                 }
             ],
             "baseCommand": [
@@ -1778,6 +1803,10 @@
                 {
                     "networkAccess": true,
                     "class": "NetworkAccess"
+                },
+                {
+                    "ramMin": 5120,
+                    "class": "ResourceRequirement"
                 }
             ],
             "baseCommand": [
@@ -2039,6 +2068,10 @@
                 {
                     "networkAccess": true,
                     "class": "NetworkAccess"
+                },
+                {
+                    "ramMin": 5120,
+                    "class": "ResourceRequirement"
                 }
             ],
             "baseCommand": [
@@ -2330,6 +2363,10 @@
                 {
                     "networkAccess": true,
                     "class": "NetworkAccess"
+                },
+                {
+                    "ramMin": 5120,
+                    "class": "ResourceRequirement"
                 }
             ],
             "baseCommand": [
@@ -2681,6 +2718,10 @@
                 {
                     "networkAccess": true,
                     "class": "NetworkAccess"
+                },
+                {
+                    "ramMin": 5120,
+                    "class": "ResourceRequirement"
                 }
             ],
             "baseCommand": [
