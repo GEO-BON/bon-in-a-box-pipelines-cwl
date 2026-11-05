@@ -1,0 +1,53 @@
+# Environment inputs. Refer to the CWL file for more information about each input.
+
+# environment: runner.env file not needed for this workflow
+environment: file:///home/jean-michel/code/pipeline-engine/pipeline-repo/runner.env
+runFolder:
+    class: Directory
+    path: file:///home/jean-michel/code/cwl-temp/outputs
+envFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: file:///home/jean-michel/code/cwl-temp/envs
+# scripts_root:  # type 'Directory' (optional)
+#     class: Directory
+#     path: leave commented to use cripts from the docker
+condaPackURL: "https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/"  # default value of type 'string'.
+
+
+# Script inputs. Refer to the CWL file for more information about each input.
+
+STAC>createCollection.yml@156|collection_description: Chelsa-clim bio1 for Madagascar
+STAC>createCollection.yml@156|collection_license: CC0
+STAC>createCollection.yml@156|collection_name: biab-collection
+data>loadFromStac.yml@155|aggregation: first
+data>loadFromStac.yml@155|bbox_crs:
+  CRS:
+    CRSBboxWGS84:
+      - 43.18
+      - -25.64
+      - 50.56
+      - -11.89
+    authority: EPSG
+    code: 29702
+    name: Tananarive (Paris) / Laborde Grid approximation
+    proj4Def: >-
+      +proj=omerc +lat_0=-18.9 +lonc=44.1 +alpha=18.9 +gamma=18.9 +k=0.9995
+      +x_0=400000 +y_0=800000 +ellps=intl +pm=paris
+      +towgs84=-198.383,-240.517,-107.909,0,0,0,0 +units=m +no_defs +type=crs
+    unit: metre
+    wktDef: null
+  bbox:
+    - 45962
+    - 50877
+    - 842246
+    - 1569090
+data>loadFromStac.yml@155|collections_items:
+  - chelsa-clim|bio1
+data>loadFromStac.yml@155|resampling: near
+data>loadFromStac.yml@155|spatial_res: 10000
+data>loadFromStac.yml@155|stac_url: https://stac.geobon.org/
+data>loadFromStac.yml@155|study_area: null
+data>loadFromStac.yml@155|t0: null
+data>loadFromStac.yml@155|t1: null
+data>loadFromStac.yml@155|temporal_res: null
+
