@@ -18,7 +18,6 @@ condaPackURL: "https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8a
 STAC>createCollection.yml@156|collection_description: Chelsa-clim bio1 for Madagascar
 STAC>createCollection.yml@156|collection_license: CC0
 STAC>createCollection.yml@156|collection_name: biab-collection
-STAC>createSTAC.yml@158|stac_name: biab-stac
 data>loadFromStac.yml@155|aggregation: first
 data>loadFromStac.yml@155|bbox_crs:
   CRS:

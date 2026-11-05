@@ -202,186 +202,6 @@
         },
         {
             "class": "CommandLineTool",
-            "label": "STAC Collection to Catalog",
-            "doc": [
-                "Description:\nConverts STAC collection(s) into a STAC catalog. A STAC catalog is an aggregation of STAC collections.\n",
-                "Lifecycle tag: Core.",
-                "Authors:\nLaetitia Tremblay (laetitia.tremblay@mcgill.ca)\n"
-            ],
-            "requirements": [
-                {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:latest",
-                    "class": "DockerRequirement"
-                },
-                {
-                    "envDef": [
-                        {
-                            "envValue": "/opt/conda/envs:/conda-env-yml/envs",
-                            "envName": "CONDA_ENVS_PATH"
-                        },
-                        {
-                            "envValue": "$(inputs.condaPackURL)",
-                            "envName": "CONDA_PACK_URL"
-                        },
-                        {
-                            "envValue": "/conda-env-yml/pkgs",
-                            "envName": "CONDA_PKGS_DIRS"
-                        },
-                        {
-                            "envValue": "$(inputs.runFolder ? inputs.runFolder.path : runtime.outdir)",
-                            "envName": "OUTPUT_LOCATION"
-                        },
-                        {
-                            "envValue": "1",
-                            "envName": "PYTHONUNBUFFERED"
-                        },
-                        {
-                            "envValue": "/scripts",
-                            "envName": "SCRIPT_LOCATION"
-                        },
-                        {
-                            "envValue": "$(inputs.scriptPath)",
-                            "envName": "SCRIPT_PATH"
-                        },
-                        {
-                            "envValue": "/script-stubs",
-                            "envName": "SCRIPT_STUBS_LOCATION"
-                        },
-                        {
-                            "envValue": "/userdata",
-                            "envName": "USERDATA_LOCATION"
-                        }
-                    ],
-                    "class": "EnvVarRequirement"
-                },
-                {
-                    "listing": "${\n  return [\n    {\n      entry: { \"class\": \"Directory\", \"basename\": \"conda-env-yml\", \"listing\": [] },\n      entryname: \"/conda-env-yml\",\n      writable: true\n    }\n  ].concat(\n    inputs.envFolder\n      ? {\n          entry: inputs.envFolder,\n          entryname: \"/conda-envs\",\n          writable: inputs.envFolderWritable\n        }\n      : { // fallback\n          entry: { \"class\": \"Directory\", \"basename\": \"conda-envs\", \"listing\": [] },\n          entryname: \"/conda-envs\",\n          writable: true\n        }\n  ).concat(\n    inputs.environment\n      ? [{ entry: inputs.environment, entryname: \"/runner.env\" }]\n      : []\n  ).concat(\n    inputs.runFolder\n      ? [{ entry: inputs.runFolder, writable: true }]\n      : []\n  ).concat( // For debugging, overrides /scripts\n    inputs.scripts_root\n      ? [{ entry: inputs.scripts_root, entryname: \"/scripts\" }]\n      : []\n  );\n}\n",
-                    "class": "InitialWorkDirRequirement"
-                },
-                {
-                    "expressionLib": [
-                        "function extractOutput(outputFiles, key) {\n  if (!outputFiles || outputFiles.length === 0) return null;\n  var value = JSON.parse(outputFiles[0].contents)[key]\n  if (value === undefined) return null\n\n  if(inputs.runFolder != null) {\n    if(Array.isArray(value)) {\n      value = value.map(function (item) {\n        if(typeof item.replace === \"function\")\n          return item.replace(inputs.runFolder.path, runtime.outdir);\n        else return item\n      });\n    } else if(typeof value.replace === \"function\") {\n      value = value.replace(inputs.runFolder.path, runtime.outdir);\n    }\n  }\n  return value;\n}\n"
-                    ],
-                    "class": "InlineJavascriptRequirement"
-                },
-                {
-                    "inplaceUpdate": true,
-                    "class": "InplaceUpdateRequirement"
-                },
-                {
-                    "networkAccess": true,
-                    "class": "NetworkAccess"
-                },
-                {
-                    "ramMin": 5120,
-                    "class": "ResourceRequirement"
-                }
-            ],
-            "baseCommand": [
-                "bash",
-                "-c"
-            ],
-            "arguments": [
-                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\ntouch \"$log\"\ntail -f \"$log\" &\ntailPid=$!\ncleanupTail() {\n  kill \"$tailPid\" 2>/dev/null\n  wait \"$tailPid\" 2>/dev/null\n}\ntrap cleanupTail EXIT\n\nmkdir -p /conda-env-yml/pkgs /conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    stac_collections: (inputs.stac_collections || []).map(function(file) { return file.path; }),\n    stac_name: inputs.stac_name,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" >> \"$log\"\necho \"Inputs:\" >> \"$log\"\ncat \"$OUTPUT_LOCATION/input.json\" >> \"$log\"\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"STAC__createSTAC\" \\\n\"channels: [conda-forge]\ndependencies: [pystac, jsonschema]\nname: STAC__createSTAC\n\" /conda-envs \"$CONDA_PACK_URL\" >> \"$log\" 2>&1\n\npython3 \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.py \\\n  $OUTPUT_LOCATION \\\n  \"$SCRIPT_LOCATION/$SCRIPT_PATH\" \\\n  >> \"$log\" 2>&1\nscriptExitCode=$?\necho \"Script exited with code $scriptExitCode\" >> \"$log\"\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" >> \"$log\"\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh STAC__createSTAC /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
-            ],
-            "inputs": [
-                {
-                    "type": "string",
-                    "doc": "Base URL to check for conda-pack environments.",
-                    "default": "https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/",
-                    "id": "#createSTAC.cwl/condaPackURL"
-                },
-                {
-                    "type": [
-                        "null",
-                        "Directory"
-                    ],
-                    "doc": "Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.",
-                    "id": "#createSTAC.cwl/envFolder"
-                },
-                {
-                    "type": "boolean",
-                    "doc": "Whether the envFolder should be writable. If false, the folder will be mounted read-only. In that case, the conda environment needs to be present as an unpacked conda-pack beforehand otherwise the script can't run. envFolderWritable must be false when running in a workflow, but can be true when ran as an individual tool.",
-                    "default": true,
-                    "id": "#createSTAC.cwl/envFolderWritable"
-                },
-                {
-                    "type": [
-                        "null",
-                        "File"
-                    ],
-                    "doc": "Optional. BON in a Box runner.env file, necessary for scripts requiring credentials. If not provided, an empty one will be used.",
-                    "id": "#createSTAC.cwl/environment"
-                },
-                {
-                    "type": [
-                        "null",
-                        "Directory"
-                    ],
-                    "doc": "Optional. This folder will keep the input.json, output.json, logs.txt, and any other file saved by the script. If left blank, a temporary folder will be used and discarded after the run.",
-                    "id": "#createSTAC.cwl/runFolder"
-                },
-                {
-                    "type": "string",
-                    "doc": "Path to the script, relative to scripts root.",
-                    "default": "STAC/createSTAC.py",
-                    "id": "#createSTAC.cwl/scriptPath"
-                },
-                {
-                    "type": [
-                        "null",
-                        "Directory"
-                    ],
-                    "doc": "Root folder for scripts. Use this to override the image's scripts while debugging.",
-                    "id": "#createSTAC.cwl/scripts_root"
-                },
-                {
-                    "type": [
-                        "null",
-                        {
-                            "type": "array",
-                            "items": "Directory"
-                        }
-                    ],
-                    "label": "STAC collections",
-                    "doc": "Input STAC collection(s) to convert to a STAC catalog. Can be a single collection or a list of collections.",
-                    "id": "#createSTAC.cwl/stac_collections"
-                },
-                {
-                    "type": [
-                        "null",
-                        "string"
-                    ],
-                    "label": "STAC Name",
-                    "doc": "Name of the STAC catalog to be created, using lowercase letters and hyphens only. Default is \"biab-stac\".",
-                    "default": "biab-stac",
-                    "id": "#createSTAC.cwl/stac_name"
-                }
-            ],
-            "outputs": [
-                {
-                    "type": "File",
-                    "outputBinding": {
-                        "glob": "logs.txt"
-                    },
-                    "id": "#createSTAC.cwl/logs"
-                },
-                {
-                    "type": "Directory",
-                    "label": "STAC Catalog",
-                    "doc": "STAC Catalog linking to the provided collections.\nThe official MIME type is application/json however, we use application/stac+json to indicate that this is a STAC catalog and differentiate from other json files.\n",
-                    "outputBinding": {
-                        "glob": "output.json",
-                        "loadContents": true,
-                        "outputEval": "${\n  var value = extractOutput(self, \"stac_catalog\");\n  if (value === null) return null;\n  value = value.substring(0, value.lastIndexOf('/'));\n  return { class: \"Directory\", location: \"file://\" + value };\n}\n"
-                    },
-                    "id": "#createSTAC.cwl/stac_catalog_out"
-                }
-            ],
-            "id": "#createSTAC.cwl"
-        },
-        {
-            "class": "CommandLineTool",
             "label": "Load from STAC",
             "doc": [
                 "Description:\nExtract individual unprocessed items from various collections on the GEO BON STAC catalog.\n",
@@ -778,16 +598,6 @@
                     "id": "#main/STAC>createCollection.yml@156|collection_name"
                 },
                 {
-                    "type": [
-                        "null",
-                        "string"
-                    ],
-                    "label": "STAC Name",
-                    "doc": "Name of the STAC catalog to be created, using lowercase letters and hyphens only. Default is \"biab-stac\".",
-                    "default": "biab-stac",
-                    "id": "#main/STAC>createSTAC.yml@158|stac_name"
-                },
-                {
                     "type": "string",
                     "doc": "Base URL to check for conda-pack environments.",
                     "default": "https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8ae21e4999fe402e/conda-pack/",
@@ -1071,52 +881,6 @@
                     "id": "#main/STAC>createCollection.yml@156"
                 },
                 {
-                    "run": "#createSTAC.cwl",
-                    "in": [
-                        {
-                            "source": "#main/condaPackURL",
-                            "id": "#main/STAC>createSTAC.yml@158/condaPackURL"
-                        },
-                        {
-                            "source": "#main/preparePackedEnvs/envFolder",
-                            "valueFrom": "$(self ? { class: 'Directory', location: self.location + '/STAC__createSTAC' } : null)",
-                            "id": "#main/STAC>createSTAC.yml@158/envFolder"
-                        },
-                        {
-                            "default": false,
-                            "id": "#main/STAC>createSTAC.yml@158/envFolderWritable"
-                        },
-                        {
-                            "source": "#main/prepareRunnerEnv/environmentFile",
-                            "id": "#main/STAC>createSTAC.yml@158/environment"
-                        },
-                        {
-                            "source": "#main/runFolder",
-                            "valueFrom": "$(self ? { class: 'Directory', location: self.location + '/STAC__createSTAC/158' } : null)",
-                            "id": "#main/STAC>createSTAC.yml@158/runFolder"
-                        },
-                        {
-                            "source": "#main/scripts_root",
-                            "id": "#main/STAC>createSTAC.yml@158/scripts_root"
-                        },
-                        {
-                            "source": [
-                                "#main/STAC>createCollection.yml@156/stac_collection_out"
-                            ],
-                            "linkMerge": "merge_flattened",
-                            "id": "#main/STAC>createSTAC.yml@158/stac_collections"
-                        },
-                        {
-                            "source": "#main/STAC>createSTAC.yml@158|stac_name",
-                            "id": "#main/STAC>createSTAC.yml@158/stac_name"
-                        }
-                    ],
-                    "out": [
-                        "#main/STAC>createSTAC.yml@158/stac_catalog_out"
-                    ],
-                    "id": "#main/STAC>createSTAC.yml@158"
-                },
-                {
                     "run": "#loadFromStac.cwl",
                     "in": [
                         {
@@ -1246,7 +1010,7 @@
                             "-c"
                         ],
                         "arguments": [
-                            "echo \"Exporting all environments\"\nmkdir -p \"$OUTPUT_LOCATION\" \"$CONDA_PKGS_DIRS\" /conda-env-yml/envs\n\nfunction getPackedEnv {\n  condaEnvName=$1\n  condaEnvYml=$2\n  # We use a dedicated env folder to avoid copying the whole env folder between steps in a k8 context\n  dedicatedEnvFolder=$(inputs.envFolderWrite.path)/$condaEnvName\n  mkdir -p \"$dedicatedEnvFolder\"\n\n  echo \"Exporting $condaEnvName...\"\n  source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh \"$OUTPUT_LOCATION\" \"$condaEnvName\" \\\n    \"$condaEnvYml\" \"$dedicatedEnvFolder\" \"$CONDA_PACK_URL\" --noActivate\n  source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh \"$condaEnvName\" \"$dedicatedEnvFolder\"\n  echo \"Done.\"\n}\nexport -f getPackedEnv\n\nbash -c 'getPackedEnv \"data__loadFromStac\" \"channels: [conda-forge, r]\ndependencies: [libgdal, r-lubridate, proj, r-proj, r-gdalcubes=0.7.4, r-rstac, r-dplyr,\n  r-rcurl, r-rjson, r-sf, r-stars, r-terra]\nname: data__loadFromStac\n\"'\n\nbash -c 'getPackedEnv \"STAC__createCollection\" \"channels: [conda-forge]\ndependencies: [pystac, gdal, jsonschema, rasterio, shapely, pyproj, geopandas, rasterstats,\n  numpy]\nname: STAC__createCollection\n\"'\n\nbash -c 'getPackedEnv \"STAC__createSTAC\" \"channels: [conda-forge]\ndependencies: [pystac, jsonschema]\nname: STAC__createSTAC\n\"'\n"
+                            "echo \"Exporting all environments\"\nmkdir -p \"$OUTPUT_LOCATION\" \"$CONDA_PKGS_DIRS\" /conda-env-yml/envs\n\nfunction getPackedEnv {\n  condaEnvName=$1\n  condaEnvYml=$2\n  # We use a dedicated env folder to avoid copying the whole env folder between steps in a k8 context\n  dedicatedEnvFolder=$(inputs.envFolderWrite.path)/$condaEnvName\n  mkdir -p \"$dedicatedEnvFolder\"\n\n  echo \"Exporting $condaEnvName...\"\n  source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh \"$OUTPUT_LOCATION\" \"$condaEnvName\" \\\n    \"$condaEnvYml\" \"$dedicatedEnvFolder\" \"$CONDA_PACK_URL\" --noActivate\n  source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh \"$condaEnvName\" \"$dedicatedEnvFolder\"\n  echo \"Done.\"\n}\nexport -f getPackedEnv\n\nbash -c 'getPackedEnv \"data__loadFromStac\" \"channels: [conda-forge, r]\ndependencies: [libgdal, r-lubridate, proj, r-proj, r-gdalcubes=0.7.4, r-rstac, r-dplyr,\n  r-rcurl, r-rjson, r-sf, r-stars, r-terra]\nname: data__loadFromStac\n\"'\n\nbash -c 'getPackedEnv \"STAC__createCollection\" \"channels: [conda-forge]\ndependencies: [pystac, gdal, jsonschema, rasterio, shapely, pyproj, geopandas, rasterstats,\n  numpy]\nname: STAC__createCollection\n\"'\n"
                         ],
                         "inputs": [
                             {
@@ -1363,10 +1127,10 @@
             "outputs": [
                 {
                     "type": "Directory",
-                    "label": "STAC Catalog",
-                    "doc": "STAC Catalog linking to the provided collections.\nThe official MIME type is application/json however, we use application/stac+json to indicate that this is a STAC catalog and differentiate from other json files.\n",
-                    "outputSource": "#main/STAC>createSTAC.yml@158/stac_catalog_out",
-                    "id": "#main/STAC>createSTAC.yml@158|stac_catalog_out"
+                    "label": "STAC Collection",
+                    "doc": "JSON file representing a STAC collection containing the provided GeoTIFFs The official MIME type is application/json however, we use application/stac+json to indicate that this is a STAC catalog and differentiate from other json files.\n",
+                    "outputSource": "#main/STAC>createCollection.yml@156/stac_collection_out",
+                    "id": "#main/STAC>createCollection.yml@156|stac_collection_out"
                 }
             ],
             "id": "#main"
