@@ -1,13 +1,12 @@
 # Environment inputs. Refer to the CWL file for more information about each input.
 
 # environment: runner.env file not needed for this workflow
-environment: file:///home/jean-michel/code/pipeline-engine/pipeline-repo/runner.env
-runFolder:
-    class: Directory
-    path: file:///home/jean-michel/code/cwl-temp/outputs
-envFolder:  # type 'Directory' (optional)
-    class: Directory
-    path: file:///home/jean-michel/code/cwl-temp/envs
+# runFolder:
+#     class: Directory
+#     path: file:///home/jean-michel/code/cwl-temp/outputs
+# envFolder:  # type 'Directory' (optional)
+#     class: Directory
+#     path: file:///home/jean-michel/code/cwl-temp/envs
 # scripts_root:  # type 'Directory' (optional)
 #     class: Directory
 #     path: leave commented to use cripts from the docker
@@ -19,6 +18,7 @@ condaPackURL: "https://object-arbutus.alliancecan.ca/swift/v1/3857940e33774dca8a
 STAC>createCollection.yml@156|collection_description: Chelsa-clim bio1 for Madagascar
 STAC>createCollection.yml@156|collection_license: CC0
 STAC>createCollection.yml@156|collection_name: biab-collection
+STAC>createSTAC.yml@158|stac_name: biab-stac
 data>loadFromStac.yml@155|aggregation: first
 data>loadFromStac.yml@155|bbox_crs:
   CRS:
