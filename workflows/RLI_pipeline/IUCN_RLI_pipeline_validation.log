@@ -7,14 +7,14 @@
                                                                 "string"[0m
 [1;30mERROR[0m [31mTool definition failed validation:
 
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:450:45: Source 'api_citation_out' of type
+../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:455:45: Source 'api_citation_out' of type
                                                                "string" is incompatible
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:618:5:     with sink
+../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:623:5:     with sink
                                                                  'IUCNRedlistIndex>IUCN_redlist_historyAssesment.yml@55|api_citation_out'
                                                                  of type "File"
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:535:34: Source 'taxonomic_group_out' of type
+../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:540:34: Source 'taxonomic_group_out' of type
                                                                {"type": "array", "items": "string"}
                                                                is incompatible
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:600:5:     with sink
+../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:605:5:     with sink
                                                                  'IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82|taxonomic_group_out'
                                                                  of type "File"[0m

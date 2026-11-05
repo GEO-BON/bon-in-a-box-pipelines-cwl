@@ -1,5 +1,5 @@
 [1;30mINFO[0m /home/jean-michel/.local/bin/cwl-runner 3.2.20260413085819
 [1;30mINFO[0m Resolved '/home/jean-michel/code/cwl/workflows/SDM/SDM_BRT.cwl' to 'file:///home/jean-michel/code/cwl/workflows/SDM/SDM_BRT.cwl'
 [1;30mERROR[0m [31mTool definition failed validation:
-file:///home/jean-michel/code/cwl/workflows/SDM/SDM_BRT.cwl:508:183: mapping values are not allowed
+file:///home/jean-michel/code/cwl/workflows/SDM/SDM_BRT.cwl:513:183: mapping values are not allowed
                                                                      here[0m
