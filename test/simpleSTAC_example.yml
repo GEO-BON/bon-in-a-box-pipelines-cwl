@@ -4,9 +4,9 @@
 # runFolder:
 #     class: Directory
 #     path: file:///home/jean-michel/code/cwl-temp/outputs
-# envFolder:  # type 'Directory' (optional)
-#     class: Directory
-#     path: file:///home/jean-michel/code/cwl-temp/envs
+envFolder:  # type 'Directory' (optional)
+    class: Directory
+    path: file:///home/jean-michel/code/cwl-temp/envs
 # scripts_root:  # type 'Directory' (optional)
 #     class: Directory
 #     path: leave commented to use cripts from the docker
