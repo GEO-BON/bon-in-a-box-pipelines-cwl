@@ -64,24 +64,14 @@ requirements:
   InitialWorkDirRequirement:
     listing: |
       ${
-        return [
-          {
-            entry: { "class": "Directory", "basename": "conda-env-yml", "listing": [] },
-            entryname: "/conda-env-yml",
-            writable: true
-          }
-        ].concat(
+        return (
           inputs.envFolder
-            ? {
+            ? [{
                 entry: inputs.envFolder,
                 entryname: "/conda-envs",
                 writable: inputs.envFolderWritable
-              }
-            : { // fallback
-                entry: { "class": "Directory", "basename": "conda-envs", "listing": [] },
-                entryname: "/conda-envs",
-                writable: true
-              }
+              }]
+            : []
         ).concat(
           inputs.environment
             ? [{ entry: inputs.environment, entryname: "/runner.env" }]
@@ -99,15 +89,15 @@ requirements:
 
 
   DockerRequirement:
-    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335
+    dockerPull: ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-5f300f2
     # dockerImageId: conda-cwl-runner-local
     # dockerFile:
     #     $include: ../runners/cwl/conda-cwl.dockerfile
 
   EnvVarRequirement:
     envDef:
-      CONDA_PKGS_DIRS: /conda-env-yml/pkgs
-      CONDA_ENVS_PATH: /opt/conda/envs:/conda-env-yml/envs
+      CONDA_PKGS_DIRS: /tmp/conda-env-yml/pkgs
+      CONDA_ENVS_PATH: /opt/conda/envs:/tmp/conda-env-yml/envs
       CONDA_PACK_URL: $(inputs.condaPackURL)
       SCRIPT_LOCATION: /scripts
       SCRIPT_PATH: $(inputs.scriptPath)
@@ -136,7 +126,7 @@ arguments:
     }
     trap cleanupTail EXIT
 
-    mkdir -p /conda-env-yml/pkgs /conda-env-yml/envs
+    mkdir -p /tmp/conda-env-yml/pkgs /tmp/conda-env-yml/envs
 
     cat > "$OUTPUT_LOCATION/input.json" <<'JSON'
     ${
@@ -281,8 +271,8 @@ inputs:
   pa_size_threshold:
     type: float?
     label: PA size threshold
-    doc: Size threshold for PAs, in meters squared. Protected areas smaller than this area will be removed. A threshold of 1km2 was used in Saura et al. 2017 because at larger scales, protected areas less than 1km2 (1000 m2) do not have a large impact on ProtConn values. Removing small protected areas significantly speeds up calculation and is recommended for large areas. To not PAs filter by size threshold, input a value of 0.
-    default: 1000
+    doc: Size threshold for PAs, in meters squared. Protected areas smaller than this area will be removed. A threshold of 1km2 was used in Saura et al. 2017 because at larger scales, protected areas less than 1km2 (1000 m2) do not have a large impact on ProtConn values. Removing small protected areas significantly speeds up calculation and is recommended for large areas. To not filter PAs by size threshold, input a value of 0.
+    default: 1000000
 
   years:
     type: int?

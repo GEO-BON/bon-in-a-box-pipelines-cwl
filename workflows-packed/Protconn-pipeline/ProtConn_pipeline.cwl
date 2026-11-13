@@ -10,13 +10,13 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-5f300f2",
                     "class": "DockerRequirement"
                 },
                 {
                     "envDef": [
                         {
-                            "envValue": "/opt/conda/envs:/conda-env-yml/envs",
+                            "envValue": "/opt/conda/envs:/tmp/conda-env-yml/envs",
                             "envName": "CONDA_ENVS_PATH"
                         },
                         {
@@ -24,7 +24,7 @@
                             "envName": "CONDA_PACK_URL"
                         },
                         {
-                            "envValue": "/conda-env-yml/pkgs",
+                            "envValue": "/tmp/conda-env-yml/pkgs",
                             "envName": "CONDA_PKGS_DIRS"
                         },
                         {
@@ -55,7 +55,7 @@
                     "class": "EnvVarRequirement"
                 },
                 {
-                    "listing": "${\n  return [\n    {\n      entry: { \"class\": \"Directory\", \"basename\": \"conda-env-yml\", \"listing\": [] },\n      entryname: \"/conda-env-yml\",\n      writable: true\n    }\n  ].concat(\n    inputs.envFolder\n      ? {\n          entry: inputs.envFolder,\n          entryname: \"/conda-envs\",\n          writable: inputs.envFolderWritable\n        }\n      : { // fallback\n          entry: { \"class\": \"Directory\", \"basename\": \"conda-envs\", \"listing\": [] },\n          entryname: \"/conda-envs\",\n          writable: true\n        }\n  ).concat(\n    inputs.environment\n      ? [{ entry: inputs.environment, entryname: \"/runner.env\" }]\n      : []\n  ).concat(\n    inputs.runFolder\n      ? [{ entry: inputs.runFolder, writable: true }]\n      : []\n  ).concat( // For debugging, overrides /scripts\n    inputs.scripts_root\n      ? [{ entry: inputs.scripts_root, entryname: \"/scripts\" }]\n      : []\n  );\n}\n",
+                    "listing": "${\n  return (\n    inputs.envFolder\n      ? [{\n          entry: inputs.envFolder,\n          entryname: \"/conda-envs\",\n          writable: inputs.envFolderWritable\n        }]\n      : []\n  ).concat(\n    inputs.environment\n      ? [{ entry: inputs.environment, entryname: \"/runner.env\" }]\n      : []\n  ).concat(\n    inputs.runFolder\n      ? [{ entry: inputs.runFolder, writable: true }]\n      : []\n  ).concat( // For debugging, overrides /scripts\n    inputs.scripts_root\n      ? [{ entry: inputs.scripts_root, entryname: \"/scripts\" }]\n      : []\n  );\n}\n",
                     "class": "InitialWorkDirRequirement"
                 },
                 {
@@ -82,7 +82,7 @@
                 "-c"
             ],
             "arguments": [
-                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\ntouch \"$log\"\ntail -f \"$log\" &\ntailPid=$!\ncleanupTail() {\n  kill \"$tailPid\" 2>/dev/null\n  wait \"$tailPid\" 2>/dev/null\n}\ntrap cleanupTail EXIT\n\nmkdir -p /conda-env-yml/pkgs /conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    study_area_polygon: inputs.study_area_polygon ? inputs.study_area_polygon.path : null,\n    protected_area_file: inputs.protected_area_file ? inputs.protected_area_file.path : null,\n    crs: inputs.crs,\n    status_type: inputs.status_type,\n    include_unesco: inputs.include_unesco,\n    buffer_points: inputs.buffer_points,\n    include_marine: inputs.include_marine,\n    include_oecm: inputs.include_oecm,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" >> \"$log\"\necho \"Inputs:\" >> \"$log\"\ncat \"$OUTPUT_LOCATION/input.json\" >> \"$log\"\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"data__cleanWDPA\" \\\n\"channels: [conda-forge, r]\ndependencies: [r-rjson=0.2.23, r-sf=1.1-0, r-lwgeom, r-remotes, r-lubridate=1.9.5,\n  r-tidyverse=2.0.0]\nname: data__cleanWDPA\n\" /conda-envs \"$CONDA_PACK_URL\" >> \"$log\" 2>&1\n\nRscript \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \\\n  $OUTPUT_LOCATION \\\n  \"$SCRIPT_LOCATION/$SCRIPT_PATH\" \\\n  >> \"$log\" 2>&1\nscriptExitCode=$?\necho \"Script exited with code $scriptExitCode\" >> \"$log\"\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" >> \"$log\"\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh data__cleanWDPA /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
+                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\ntouch \"$log\"\ntail -f \"$log\" &\ntailPid=$!\ncleanupTail() {\n  kill \"$tailPid\" 2>/dev/null\n  wait \"$tailPid\" 2>/dev/null\n}\ntrap cleanupTail EXIT\n\nmkdir -p /tmp/conda-env-yml/pkgs /tmp/conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    study_area_polygon: inputs.study_area_polygon ? inputs.study_area_polygon.path : null,\n    protected_area_file: inputs.protected_area_file ? inputs.protected_area_file.path : null,\n    crs: inputs.crs,\n    status_type: inputs.status_type,\n    include_unesco: inputs.include_unesco,\n    buffer_points: inputs.buffer_points,\n    include_marine: inputs.include_marine,\n    include_oecm: inputs.include_oecm,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" >> \"$log\"\necho \"Inputs:\" >> \"$log\"\ncat \"$OUTPUT_LOCATION/input.json\" >> \"$log\"\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"data__cleanWDPA\" \\\n\"channels: [conda-forge, r]\ndependencies: [r-rjson=0.2.23, r-sf=1.1-0, r-lwgeom, r-remotes, r-lubridate=1.9.5,\n  r-tidyverse=2.0.0]\nname: data__cleanWDPA\n\" /conda-envs \"$CONDA_PACK_URL\" >> \"$log\" 2>&1\n\nRscript \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \\\n  $OUTPUT_LOCATION \\\n  \"$SCRIPT_LOCATION/$SCRIPT_PATH\" \\\n  >> \"$log\" 2>&1\nscriptExitCode=$?\necho \"Script exited with code $scriptExitCode\" >> \"$log\"\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" >> \"$log\"\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh data__cleanWDPA /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
             ],
             "inputs": [
                 {
@@ -414,13 +414,13 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-5f300f2",
                     "class": "DockerRequirement"
                 },
                 {
                     "envDef": [
                         {
-                            "envValue": "/opt/conda/envs:/conda-env-yml/envs",
+                            "envValue": "/opt/conda/envs:/tmp/conda-env-yml/envs",
                             "envName": "CONDA_ENVS_PATH"
                         },
                         {
@@ -428,7 +428,7 @@
                             "envName": "CONDA_PACK_URL"
                         },
                         {
-                            "envValue": "/conda-env-yml/pkgs",
+                            "envValue": "/tmp/conda-env-yml/pkgs",
                             "envName": "CONDA_PKGS_DIRS"
                         },
                         {
@@ -459,7 +459,7 @@
                     "class": "EnvVarRequirement"
                 },
                 {
-                    "listing": "${\n  return [\n    {\n      entry: { \"class\": \"Directory\", \"basename\": \"conda-env-yml\", \"listing\": [] },\n      entryname: \"/conda-env-yml\",\n      writable: true\n    }\n  ].concat(\n    inputs.envFolder\n      ? {\n          entry: inputs.envFolder,\n          entryname: \"/conda-envs\",\n          writable: inputs.envFolderWritable\n        }\n      : { // fallback\n          entry: { \"class\": \"Directory\", \"basename\": \"conda-envs\", \"listing\": [] },\n          entryname: \"/conda-envs\",\n          writable: true\n        }\n  ).concat(\n    inputs.environment\n      ? [{ entry: inputs.environment, entryname: \"/runner.env\" }]\n      : []\n  ).concat(\n    inputs.runFolder\n      ? [{ entry: inputs.runFolder, writable: true }]\n      : []\n  ).concat( // For debugging, overrides /scripts\n    inputs.scripts_root\n      ? [{ entry: inputs.scripts_root, entryname: \"/scripts\" }]\n      : []\n  );\n}\n",
+                    "listing": "${\n  return (\n    inputs.envFolder\n      ? [{\n          entry: inputs.envFolder,\n          entryname: \"/conda-envs\",\n          writable: inputs.envFolderWritable\n        }]\n      : []\n  ).concat(\n    inputs.environment\n      ? [{ entry: inputs.environment, entryname: \"/runner.env\" }]\n      : []\n  ).concat(\n    inputs.runFolder\n      ? [{ entry: inputs.runFolder, writable: true }]\n      : []\n  ).concat( // For debugging, overrides /scripts\n    inputs.scripts_root\n      ? [{ entry: inputs.scripts_root, entryname: \"/scripts\" }]\n      : []\n  );\n}\n",
                     "class": "InitialWorkDirRequirement"
                 },
                 {
@@ -486,7 +486,7 @@
                 "-c"
             ],
             "arguments": [
-                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\ntouch \"$log\"\ntail -f \"$log\" &\ntailPid=$!\ncleanupTail() {\n  kill \"$tailPid\" 2>/dev/null\n  wait \"$tailPid\" 2>/dev/null\n}\ntrap cleanupTail EXIT\n\nmkdir -p /conda-env-yml/pkgs /conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    polygon_type: inputs.polygon_type,\n    country_region_bbox: inputs.country_region_bbox,\n    buffer: inputs.buffer,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" >> \"$log\"\necho \"Inputs:\" >> \"$log\"\ncat \"$OUTPUT_LOCATION/input.json\" >> \"$log\"\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"data__load_polygons\" \\\n\"channels: [conda-forge]\ndependencies: [r-rjson, r-dbplyr=2.5.2, r-dplyr=1.2.1, r-duckdb=1.4.4, r-fs=2.1.0,\n  r-arrow=24.0.0, r-nanoarrow=0.8.0, r-geoarrow=0.4.2, r-sf=1.1-0, r-stringi=1.8.7,\n  r-stringr=1.6.0, r-tidyr=1.3.2, r-uuid=1.2_2, r-remotes=2.5.0]\nname: data__load_polygons\n\" /conda-envs \"$CONDA_PACK_URL\" >> \"$log\" 2>&1\n\nRscript \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \\\n  $OUTPUT_LOCATION \\\n  \"$SCRIPT_LOCATION/$SCRIPT_PATH\" \\\n  >> \"$log\" 2>&1\nscriptExitCode=$?\necho \"Script exited with code $scriptExitCode\" >> \"$log\"\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" >> \"$log\"\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh data__load_polygons /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
+                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\ntouch \"$log\"\ntail -f \"$log\" &\ntailPid=$!\ncleanupTail() {\n  kill \"$tailPid\" 2>/dev/null\n  wait \"$tailPid\" 2>/dev/null\n}\ntrap cleanupTail EXIT\n\nmkdir -p /tmp/conda-env-yml/pkgs /tmp/conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    polygon_type: inputs.polygon_type,\n    country_region_bbox: inputs.country_region_bbox,\n    buffer: inputs.buffer,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" >> \"$log\"\necho \"Inputs:\" >> \"$log\"\ncat \"$OUTPUT_LOCATION/input.json\" >> \"$log\"\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"data__load_polygons\" \\\n\"channels: [conda-forge]\ndependencies: [r-rjson, r-dbplyr=2.5.2, r-dplyr=1.2.1, r-duckdb=1.4.4, r-fs=2.1.0,\n  r-arrow=24.0.0, r-nanoarrow=0.8.0, r-geoarrow=0.4.2, r-sf=1.1-0, r-stringi=1.8.7,\n  r-stringr=1.6.0, r-tidyr=1.3.2, r-uuid=1.2_2, r-remotes=2.5.0]\nname: data__load_polygons\n\" /conda-envs \"$CONDA_PACK_URL\" >> \"$log\" 2>&1\n\nRscript \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \\\n  $OUTPUT_LOCATION \\\n  \"$SCRIPT_LOCATION/$SCRIPT_PATH\" \\\n  >> \"$log\" 2>&1\nscriptExitCode=$?\necho \"Script exited with code $scriptExitCode\" >> \"$log\"\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" >> \"$log\"\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh data__load_polygons /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
             ],
             "inputs": [
                 {
@@ -903,13 +903,13 @@
             ],
             "requirements": [
                 {
-                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
+                    "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-5f300f2",
                     "class": "DockerRequirement"
                 },
                 {
                     "envDef": [
                         {
-                            "envValue": "/opt/conda/envs:/conda-env-yml/envs",
+                            "envValue": "/opt/conda/envs:/tmp/conda-env-yml/envs",
                             "envName": "CONDA_ENVS_PATH"
                         },
                         {
@@ -917,7 +917,7 @@
                             "envName": "CONDA_PACK_URL"
                         },
                         {
-                            "envValue": "/conda-env-yml/pkgs",
+                            "envValue": "/tmp/conda-env-yml/pkgs",
                             "envName": "CONDA_PKGS_DIRS"
                         },
                         {
@@ -948,7 +948,7 @@
                     "class": "EnvVarRequirement"
                 },
                 {
-                    "listing": "${\n  return [\n    {\n      entry: { \"class\": \"Directory\", \"basename\": \"conda-env-yml\", \"listing\": [] },\n      entryname: \"/conda-env-yml\",\n      writable: true\n    }\n  ].concat(\n    inputs.envFolder\n      ? {\n          entry: inputs.envFolder,\n          entryname: \"/conda-envs\",\n          writable: inputs.envFolderWritable\n        }\n      : { // fallback\n          entry: { \"class\": \"Directory\", \"basename\": \"conda-envs\", \"listing\": [] },\n          entryname: \"/conda-envs\",\n          writable: true\n        }\n  ).concat(\n    inputs.environment\n      ? [{ entry: inputs.environment, entryname: \"/runner.env\" }]\n      : []\n  ).concat(\n    inputs.runFolder\n      ? [{ entry: inputs.runFolder, writable: true }]\n      : []\n  ).concat( // For debugging, overrides /scripts\n    inputs.scripts_root\n      ? [{ entry: inputs.scripts_root, entryname: \"/scripts\" }]\n      : []\n  );\n}\n",
+                    "listing": "${\n  return (\n    inputs.envFolder\n      ? [{\n          entry: inputs.envFolder,\n          entryname: \"/conda-envs\",\n          writable: inputs.envFolderWritable\n        }]\n      : []\n  ).concat(\n    inputs.environment\n      ? [{ entry: inputs.environment, entryname: \"/runner.env\" }]\n      : []\n  ).concat(\n    inputs.runFolder\n      ? [{ entry: inputs.runFolder, writable: true }]\n      : []\n  ).concat( // For debugging, overrides /scripts\n    inputs.scripts_root\n      ? [{ entry: inputs.scripts_root, entryname: \"/scripts\" }]\n      : []\n  );\n}\n",
                     "class": "InitialWorkDirRequirement"
                 },
                 {
@@ -978,7 +978,7 @@
                 "-c"
             ],
             "arguments": [
-                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\ntouch \"$log\"\ntail -f \"$log\" &\ntailPid=$!\ncleanupTail() {\n  kill \"$tailPid\" 2>/dev/null\n  wait \"$tailPid\" 2>/dev/null\n}\ntrap cleanupTail EXIT\n\nmkdir -p /conda-env-yml/pkgs /conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    study_area_polygon: (inputs.study_area_polygon || []).map(function(file) { return file.path; }),\n    protected_area_polygon: (inputs.protected_area_polygon || []).map(function(file) { return file.path; }),\n    buffer: inputs.buffer,\n    date_column_name: inputs.date_column_name,\n    crs: inputs.crs,\n    distance_threshold: inputs.distance_threshold,\n    pa_size_threshold: inputs.pa_size_threshold,\n    years: inputs.years,\n    time_series: inputs.time_series,\n    include_na_dates: inputs.include_na_dates,\n    start_year: inputs.start_year,\n    year_int: inputs.year_int,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" >> \"$log\"\necho \"Inputs:\" >> \"$log\"\ncat \"$OUTPUT_LOCATION/input.json\" >> \"$log\"\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"protconn_analysis__protconn_analysis\" \\\n\"channels: [conda-forge]\ndependencies: [r-ggrepel, r-proj, r-remotes, r-rjson, r-tidyverse, r-units, r-boot,\n  r-cpprouting, r-data.table, r-formattable, r-furrr, r-future, r-gdistance, r-ggplot2,\n  r-ggpubr, r-googledrive, r-igraph, r-magrittr, r-ps, r-purrr, r-rappdirs, r-raster,\n  r-rlang, r-rmapshaper, r-sf, r-terra, r-rcppeigen, r-rcppthread, r-adegenet, r-ecodist,\n  r-foreign, r-hierfstat, r-pegas, r-spatstat.geom, r-spatstat.linnet, r-vegan]\nname: protconn_analysis__protconn_analysis\n\" /conda-envs \"$CONDA_PACK_URL\" >> \"$log\" 2>&1\n\nRscript \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \\\n  $OUTPUT_LOCATION \\\n  \"$SCRIPT_LOCATION/$SCRIPT_PATH\" \\\n  >> \"$log\" 2>&1\nscriptExitCode=$?\necho \"Script exited with code $scriptExitCode\" >> \"$log\"\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" >> \"$log\"\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh protconn_analysis__protconn_analysis /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
+                "log=$OUTPUT_LOCATION/logs.txt\nrm -f $log\ntouch \"$log\"\ntail -f \"$log\" &\ntailPid=$!\ncleanupTail() {\n  kill \"$tailPid\" 2>/dev/null\n  wait \"$tailPid\" 2>/dev/null\n}\ntrap cleanupTail EXIT\n\nmkdir -p /tmp/conda-env-yml/pkgs /tmp/conda-env-yml/envs\n\ncat > \"$OUTPUT_LOCATION/input.json\" <<'JSON'\n${\n  return JSON.stringify({\n    study_area_polygon: (inputs.study_area_polygon || []).map(function(file) { return file.path; }),\n    protected_area_polygon: (inputs.protected_area_polygon || []).map(function(file) { return file.path; }),\n    buffer: inputs.buffer,\n    date_column_name: inputs.date_column_name,\n    crs: inputs.crs,\n    distance_threshold: inputs.distance_threshold,\n    pa_size_threshold: inputs.pa_size_threshold,\n    years: inputs.years,\n    time_series: inputs.time_series,\n    include_na_dates: inputs.include_na_dates,\n    start_year: inputs.start_year,\n    year_int: inputs.year_int,\n  }, null, 2);\n}\nJSON\necho \"Running in $OUTPUT_LOCATION\" >> \"$log\"\necho \"Inputs:\" >> \"$log\"\ncat \"$OUTPUT_LOCATION/input.json\" >> \"$log\"\n\nsource $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh $OUTPUT_LOCATION \"protconn_analysis__protconn_analysis\" \\\n\"channels: [conda-forge]\ndependencies: [r-ggrepel, r-proj, r-remotes, r-rjson, r-tidyverse, r-units, r-boot,\n  r-cpprouting, r-data.table, r-formattable, r-furrr, r-future, r-gdistance, r-ggplot2,\n  r-ggpubr, r-googledrive, r-igraph, r-magrittr, r-ps, r-purrr, r-rappdirs, r-raster,\n  r-rlang, r-rmapshaper, r-sf, r-terra, r-rcppeigen, r-rcppthread, r-adegenet, r-ecodist,\n  r-foreign, r-hierfstat, r-pegas, r-spatstat.geom, r-spatstat.linnet, r-vegan]\nname: protconn_analysis__protconn_analysis\n\" /conda-envs \"$CONDA_PACK_URL\" >> \"$log\" 2>&1\n\nRscript \\\n  $SCRIPT_STUBS_LOCATION/system/scriptWrapper.R \\\n  $OUTPUT_LOCATION \\\n  \"$SCRIPT_LOCATION/$SCRIPT_PATH\" \\\n  >> \"$log\" 2>&1\nscriptExitCode=$?\necho \"Script exited with code $scriptExitCode\" >> \"$log\"\n\nif [[ \"$OUTPUT_LOCATION\" != \"$(runtime.outdir)\" ]]; then\n  echo \"Copying results from run folder to CWL output directory\" >> \"$log\"\n  cp -a \"$OUTPUT_LOCATION\"/. \"$(runtime.outdir)\"/\nfi\n\nsource $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh protconn_analysis__protconn_analysis /conda-envs >> \"$log\" 2>&1\n\nexit \"$scriptExitCode\"\n"
             ],
             "inputs": [
                 {
@@ -1212,8 +1212,8 @@
                         "float"
                     ],
                     "label": "PA size threshold",
-                    "doc": "Size threshold for PAs, in meters squared. Protected areas smaller than this area will be removed. A threshold of 1km2 was used in Saura et al. 2017 because at larger scales, protected areas less than 1km2 (1000 m2) do not have a large impact on ProtConn values. Removing small protected areas significantly speeds up calculation and is recommended for large areas. To not PAs filter by size threshold, input a value of 0.",
-                    "default": 1000,
+                    "doc": "Size threshold for PAs, in meters squared. Protected areas smaller than this area will be removed. A threshold of 1km2 was used in Saura et al. 2017 because at larger scales, protected areas less than 1km2 (1000 m2) do not have a large impact on ProtConn values. Removing small protected areas significantly speeds up calculation and is recommended for large areas. To not filter PAs by size threshold, input a value of 0.",
+                    "default": 1000000,
                     "id": "#protconn_analysis.cwl/pa_size_threshold"
                 },
                 {
@@ -1470,7 +1470,7 @@
                         "null",
                         "Directory"
                     ],
-                    "doc": "Folder for conda-pack to export environments. This avoids downloading/resolving the same environment multiple times.",
+                    "doc": "Optional folder for conda-pack environments, allowing reuse between runs. If omitted, environments are prepared in a CWL-managed temporary directory and shared between steps for this run only.",
                     "id": "#main/envFolder"
                 },
                 {
@@ -1736,7 +1736,7 @@
                     ],
                     "label": "PA size threshold",
                     "doc": "Size threshold for PAs, in meters squared. Protected areas smaller than this area will be removed. A threshold of 1000m2 was used in Saura et al. 2017 because at larger scales, protected areas less than 1000m2 do not have a large impact on ProtConn values. Removing small protected areas significantly speeds up calculation and is recommended for large areas. Input a value of 0 to keep all protected areas.",
-                    "default": 1000,
+                    "default": 1000000,
                     "id": "#main/protconn_analysis>protconn_analysis.yml@42|pa_size_threshold"
                 },
                 {
@@ -1962,12 +1962,11 @@
                     "id": "#main/data>load_polygons.yml@64"
                 },
                 {
-                    "when": "$(inputs.envFolderWrite != null)",
                     "run": {
                         "class": "CommandLineTool",
                         "requirements": [
                             {
-                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-2d34335",
+                                "dockerPull": "ghcr.io/geo-bon/bon-in-a-box-pipelines/runner-conda-cwl:sha-5f300f2",
                                 "class": "DockerRequirement"
                             },
                             {
@@ -1989,6 +1988,10 @@
                                         "envName": "OUTPUT_LOCATION"
                                     },
                                     {
+                                        "envValue": "$(inputs.envFolderWrite ? inputs.envFolderWrite.path : runtime.outdir + '/packed-envs')",
+                                        "envName": "PACKED_ENVS_LOCATION"
+                                    },
+                                    {
                                         "envValue": "/script-stubs",
                                         "envName": "SCRIPT_STUBS_LOCATION"
                                     }
@@ -1996,7 +1999,7 @@
                                 "class": "EnvVarRequirement"
                             },
                             {
-                                "listing": "${\n  return [\n    { entry: inputs.envFolderWrite, writable: true },\n    {\n      entry: { \"class\": \"Directory\", \"basename\": \"conda-env-yml\", \"listing\": [] },\n      entryname: \"/conda-env-yml\",\n      writable: true\n    }\n  ].concat(\n    inputs.runFolderWrite\n      ? [{ entry: inputs.runFolder, writable: true }]\n      : []\n  );\n}\n",
+                                "listing": "${\n  return [\n    {\n      entry: inputs.envFolderWrite || { \"class\": \"Directory\", \"listing\": [] },\n      entryname: \"packed-envs\",\n      writable: true\n    },\n    {\n      entry: { \"class\": \"Directory\", \"basename\": \"conda-env-yml\", \"listing\": [] },\n      entryname: \"/conda-env-yml\",\n      writable: true\n    }\n  ].concat(\n    inputs.runFolderWrite\n      ? [{ entry: inputs.runFolderWrite, writable: true }]\n      : []\n  );\n}\n",
                                 "class": "InitialWorkDirRequirement"
                             },
                             {
@@ -2016,7 +2019,7 @@
                             "-c"
                         ],
                         "arguments": [
-                            "echo \"Exporting all environments\"\nmkdir -p \"$OUTPUT_LOCATION\" \"$CONDA_PKGS_DIRS\" /conda-env-yml/envs\n\nfunction getPackedEnv {\n  condaEnvName=$1\n  condaEnvYml=$2\n  # We use a dedicated env folder to avoid copying the whole env folder between steps in a k8 context\n  dedicatedEnvFolder=$(inputs.envFolderWrite.path)/$condaEnvName\n  mkdir -p \"$dedicatedEnvFolder\"\n\n  echo \"Exporting $condaEnvName...\"\n  source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh \"$OUTPUT_LOCATION\" \"$condaEnvName\" \\\n    \"$condaEnvYml\" \"$dedicatedEnvFolder\" \"$CONDA_PACK_URL\" --noActivate\n  source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh \"$condaEnvName\" \"$dedicatedEnvFolder\"\n  echo \"Done.\"\n}\nexport -f getPackedEnv\n\nbash -c 'getPackedEnv \"protconn_analysis__protconn_analysis\" \"channels: [conda-forge]\ndependencies: [r-ggrepel, r-proj, r-remotes, r-rjson, r-tidyverse, r-units, r-boot,\n  r-cpprouting, r-data.table, r-formattable, r-furrr, r-future, r-gdistance, r-ggplot2,\n  r-ggpubr, r-googledrive, r-igraph, r-magrittr, r-ps, r-purrr, r-rappdirs, r-raster,\n  r-rlang, r-rmapshaper, r-sf, r-terra, r-rcppeigen, r-rcppthread, r-adegenet, r-ecodist,\n  r-foreign, r-hierfstat, r-pegas, r-spatstat.geom, r-spatstat.linnet, r-vegan]\nname: protconn_analysis__protconn_analysis\n\"'\n\nbash -c 'getPackedEnv \"data__cleanWDPA\" \"channels: [conda-forge, r]\ndependencies: [r-rjson=0.2.23, r-sf=1.1-0, r-lwgeom, r-remotes, r-lubridate=1.9.5,\n  r-tidyverse=2.0.0]\nname: data__cleanWDPA\n\"'\n\nbash -c 'getPackedEnv \"data__load_polygons\" \"channels: [conda-forge]\ndependencies: [r-rjson, r-dbplyr=2.5.2, r-dplyr=1.2.1, r-duckdb=1.4.4, r-fs=2.1.0,\n  r-arrow=24.0.0, r-nanoarrow=0.8.0, r-geoarrow=0.4.2, r-sf=1.1-0, r-stringi=1.8.7,\n  r-stringr=1.6.0, r-tidyr=1.3.2, r-uuid=1.2_2, r-remotes=2.5.0]\nname: data__load_polygons\n\"'\n"
+                            "echo \"Exporting all environments\"\nmkdir -p \"$OUTPUT_LOCATION\" \"$CONDA_PKGS_DIRS\" /conda-env-yml/envs || exit 1\n\nfunction getPackedEnv {\n  condaEnvName=$1\n  condaEnvYml=$2\n  # We use a dedicated env folder to avoid copying the whole env folder between steps in a k8 context\n  dedicatedEnvFolder=\"$PACKED_ENVS_LOCATION/$condaEnvName\"\n  mkdir -p \"$dedicatedEnvFolder\" || return 1\n\n  echo \"Exporting $condaEnvName...\"\n  source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh \"$OUTPUT_LOCATION\" \"$condaEnvName\" \\\n    \"$condaEnvYml\" \"$dedicatedEnvFolder\" \"$CONDA_PACK_URL\" --noActivate || return 1\n  source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh \"$condaEnvName\" \"$dedicatedEnvFolder\" || return 1\n  echo \"Done.\"\n}\nexport -f getPackedEnv\n\nbash -c 'getPackedEnv \"protconn_analysis__protconn_analysis\" \"channels: [conda-forge]\ndependencies: [r-ggrepel, r-proj, r-remotes, r-rjson, r-tidyverse, r-units, r-boot,\n  r-cpprouting, r-data.table, r-formattable, r-furrr, r-future, r-gdistance, r-ggplot2,\n  r-ggpubr, r-googledrive, r-igraph, r-magrittr, r-ps, r-purrr, r-rappdirs, r-raster,\n  r-rlang, r-rmapshaper, r-sf, r-terra, r-rcppeigen, r-rcppthread, r-adegenet, r-ecodist,\n  r-foreign, r-hierfstat, r-pegas, r-spatstat.geom, r-spatstat.linnet, r-vegan]\nname: protconn_analysis__protconn_analysis\n\"' || exit 1\n\nbash -c 'getPackedEnv \"data__cleanWDPA\" \"channels: [conda-forge, r]\ndependencies: [r-rjson=0.2.23, r-sf=1.1-0, r-lwgeom, r-remotes, r-lubridate=1.9.5,\n  r-tidyverse=2.0.0]\nname: data__cleanWDPA\n\"' || exit 1\n\nbash -c 'getPackedEnv \"data__load_polygons\" \"channels: [conda-forge]\ndependencies: [r-rjson, r-dbplyr=2.5.2, r-dplyr=1.2.1, r-duckdb=1.4.4, r-fs=2.1.0,\n  r-arrow=24.0.0, r-nanoarrow=0.8.0, r-geoarrow=0.4.2, r-sf=1.1-0, r-stringi=1.8.7,\n  r-stringr=1.6.0, r-tidyr=1.3.2, r-uuid=1.2_2, r-remotes=2.5.0]\nname: data__load_polygons\n\"' || exit 1\n"
                         ],
                         "inputs": [
                             {
@@ -2042,8 +2045,7 @@
                             {
                                 "type": "Directory",
                                 "outputBinding": {
-                                    "glob": ".",
-                                    "outputEval": "$(inputs.envFolderWrite)"
+                                    "glob": "packed-envs"
                                 },
                                 "id": "#main/preparePackedEnvs/run/envFolder"
                             }

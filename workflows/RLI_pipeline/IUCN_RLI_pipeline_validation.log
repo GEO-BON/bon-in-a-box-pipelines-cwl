@@ -1,20 +1,20 @@
-[1;30mINFO[0m /home/jean-michel/.local/bin/cwl-runner 3.2.20260413085819
-[1;30mINFO[0m Resolved '/home/jean-michel/code/cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl' to 'file:///home/jean-michel/code/cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl'
+[1;30mINFO[0m /usr/bin/cwl-runner 3.1.20240112164112
+[1;30mINFO[0m Resolved '/home/jmlord/code/cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl' to 'file:///home/jmlord/code/cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl'
 [1;30mWARNING[0m [33mWorkflow checker warning:
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:247:5: Source 'environment' of type ["null",
+../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:249:5: Source 'environment' of type ["null",
                                                               "string"] may be incompatible
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:275:7:   with sink 'environment' of type
+../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:277:7:   with sink 'environment' of type
                                                                 "string"[0m
 [1;30mERROR[0m [31mTool definition failed validation:
 
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:455:45: Source 'api_citation_out' of type
+../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:460:45: Source 'api_citation_out' of type
                                                                "string" is incompatible
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:623:5:     with sink
+../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:628:5:     with sink
                                                                  'IUCNRedlistIndex>IUCN_redlist_historyAssesment.yml@55|api_citation_out'
                                                                  of type "File"
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:540:34: Source 'taxonomic_group_out' of type
+../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:545:34: Source 'taxonomic_group_out' of type
                                                                {"type": "array", "items": "string"}
                                                                is incompatible
-../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:605:5:     with sink
+../../cwl/workflows/RLI_pipeline/IUCN_RLI_pipeline.cwl:610:5:     with sink
                                                                  'IUCNRedlistIndex>IUCN_redlist_spGroup.yml@82|taxonomic_group_out'
                                                                  of type "File"[0m
