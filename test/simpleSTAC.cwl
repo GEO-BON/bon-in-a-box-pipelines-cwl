@@ -982,6 +982,10 @@
                                         "envName": "OUTPUT_LOCATION"
                                     },
                                     {
+                                        "envValue": "$(inputs.envFolderWrite ? inputs.envFolderWrite.path : runtime.outdir + '/packed-envs')",
+                                        "envName": "PACKED_ENVS_LOCATION"
+                                    },
+                                    {
                                         "envValue": "/script-stubs",
                                         "envName": "SCRIPT_STUBS_LOCATION"
                                     }
@@ -1009,7 +1013,7 @@
                             "-c"
                         ],
                         "arguments": [
-                            "echo \"Exporting all environments\"\nmkdir -p \"$OUTPUT_LOCATION\" \"$CONDA_PKGS_DIRS\" /conda-env-yml/envs || exit 1\n\nfunction getPackedEnv {\n  condaEnvName=$1\n  condaEnvYml=$2\n  # We use a dedicated env folder to avoid copying the whole env folder between steps in a k8 context\n  dedicatedEnvFolder=\"$(runtime.outdir)/packed-envs/$condaEnvName\"\n  mkdir -p \"$dedicatedEnvFolder\" || return 1\n\n  echo \"Exporting $condaEnvName...\"\n  source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh \"$OUTPUT_LOCATION\" \"$condaEnvName\" \\\n    \"$condaEnvYml\" \"$dedicatedEnvFolder\" \"$CONDA_PACK_URL\" --noActivate || return 1\n  source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh \"$condaEnvName\" \"$dedicatedEnvFolder\" || return 1\n  echo \"Done.\"\n}\nexport -f getPackedEnv\n\nbash -c 'getPackedEnv \"data__loadFromStac\" \"channels: [conda-forge, r]\ndependencies: [libgdal, r-lubridate, proj, r-proj, r-gdalcubes=0.7.4, r-rstac, r-dplyr,\n  r-rcurl, r-rjson, r-sf, r-stars, r-terra]\nname: data__loadFromStac\n\"' || exit 1\n\nbash -c 'getPackedEnv \"STAC__createCollection\" \"channels: [conda-forge]\ndependencies: [pystac, gdal, jsonschema, rasterio, shapely, pyproj, geopandas, rasterstats,\n  numpy]\nname: STAC__createCollection\n\"' || exit 1\n"
+                            "echo \"Exporting all environments\"\nmkdir -p \"$OUTPUT_LOCATION\" \"$CONDA_PKGS_DIRS\" /conda-env-yml/envs || exit 1\n\nfunction getPackedEnv {\n  condaEnvName=$1\n  condaEnvYml=$2\n  # We use a dedicated env folder to avoid copying the whole env folder between steps in a k8 context\n  dedicatedEnvFolder=\"$PACKED_ENVS_LOCATION/$condaEnvName\"\n  mkdir -p \"$dedicatedEnvFolder\" || return 1\n\n  echo \"Exporting $condaEnvName...\"\n  source $SCRIPT_STUBS_LOCATION/system/condaEnvironment.sh \"$OUTPUT_LOCATION\" \"$condaEnvName\" \\\n    \"$condaEnvYml\" \"$dedicatedEnvFolder\" \"$CONDA_PACK_URL\" --noActivate || return 1\n  source $SCRIPT_STUBS_LOCATION/system/condaPackEnvironment.sh \"$condaEnvName\" \"$dedicatedEnvFolder\" || return 1\n  echo \"Done.\"\n}\nexport -f getPackedEnv\n\nbash -c 'getPackedEnv \"data__loadFromStac\" \"channels: [conda-forge, r]\ndependencies: [libgdal, r-lubridate, proj, r-proj, r-gdalcubes=0.7.4, r-rstac, r-dplyr,\n  r-rcurl, r-rjson, r-sf, r-stars, r-terra]\nname: data__loadFromStac\n\"' || exit 1\n\nbash -c 'getPackedEnv \"STAC__createCollection\" \"channels: [conda-forge]\ndependencies: [pystac, gdal, jsonschema, rasterio, shapely, pyproj, geopandas, rasterstats,\n  numpy]\nname: STAC__createCollection\n\"' || exit 1\n"
                         ],
                         "inputs": [
                             {
